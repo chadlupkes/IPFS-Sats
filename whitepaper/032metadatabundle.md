@@ -24,9 +24,6 @@ Every piece of content uploaded to IPFS-Sats generates a metadata object encoded
     "parent_bundle_hash": "0x012345...", // Mandatory hash of the PREVIOUS content's Bundle Hash
     "is_fork": false                      // Flag indicating this is a derivative work
   }
-}
-
-
   
   // 3. IPFS-SATS PROTOCOL DATA
   "ipfs_sats_metadata": {
