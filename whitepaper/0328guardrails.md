@@ -11,7 +11,7 @@ Verification of an asset does not rely on trusting the IPFS-Sats infrastructure,
 | Layer | Proof Element | Verification Check |
 | :--- | :--- | :--- |
 | **1. Content Integrity** | Content Hash ($\text{CID}$) | $\text{Hash}(\text{Content}) = \text{Content CID}$ (Proves the file hasn't been altered). |
-| **2. Temporal Proof** | Bitcoin $\text{OP\_RETURN}$ | $\text{Block Height}$ exists and contains $\text{AnchorHash}$ (Proves **when** the content existed). |
+| **2. Temporal Proof** | Bitcoin OP_RETURN | $\text{Block Height}$ exists and contains $\text{AnchorHash}$ (Proves **when** the content existed). |
 | **3. Creator Identity** | $\text{DID}$ Signature | $\text{Signature}$ verifies against the Creator's $\text{Public Key}$ (Proves **who** created it). |
 | **4. Provenance Chain** | $\text{Parent CID}$ | Links to a **prior** $\text{Metadata CID}$ (Proves the history and derivative relationship). |
 | **5. Economic Validity** | $\text{Wallet Address}$ | $\text{Lightning Wallet}$ responds and $\text{DAO}$ governance is auditable (Proves economic functionality). |
@@ -32,7 +32,7 @@ If **Alice** uploads content at **Bitcoin Block 875432** and **Bob** attempts to
 2.  **Temporal Conflict:** A simple query for the content's metadata will return two records. The **earlier Bitcoin Block Height (Alice's 875432)** automatically proves Alice's priority of creation.
 
 **Bob's theft attempt fails because:**
-* He cannot forge an earlier $\text{OP\_RETURN}$ timestamp on the immutable Bitcoin blockchain.
+* He cannot forge an earlier OP_RETURN timestamp on the immutable Bitcoin blockchain.
 * He cannot forge Alice's signature (Layer 3).
 * Users' payment systems are directed to pay the wallet associated with the **earlier timestamp** (Alice's wallet), negating Bob's economic incentive.
 
