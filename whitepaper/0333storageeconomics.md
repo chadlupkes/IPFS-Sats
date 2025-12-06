@@ -1,5 +1,15 @@
 ## 3.3.3 Self-Sustaining Storage Economics 💰
 
+### ⚠️ Note on Economic Modeling and Estimates
+
+It is critical to clarify that all numerical values presented in the **"Economic Modeling Examples"** (including initial deposits, yield rates, costs, and resulting APY/surplus figures) are **purely hypothetical and illustrative**.
+
+* **Illustrative Purpose:** These scenarios are intended solely to demonstrate the **mechanism and potential scale** of the self-sustaining economic loop ($\text{Yield} > \text{Cost}$).
+* **No Guarantee:** They do not represent financial advice, guarantee future results, or reflect actual market conditions. The protocol does not know or guarantee what the actual **cost of storage**, the **yield returns from liquidity leasing**, or the **future value of Bitcoin/satoshi** may be in a fully functional, live system.
+* **Fluctuations:** Actual costs and yields will be subject to market volatility, network congestion, host availability, and global economic factors.
+
+All figures presented should be interpreted as **modeling variables** used to demonstrate the concept of wealth-based persistence.
+
 The IPFS-Sats protocol creates a **self-reinforcing economic system** where the incentives of every participant—Creators, Hosts, and Users—are intrinsically aligned with the long-term health and persistence of the decentralized network.
 
 ### The Virtuous Cycle of Persistence
