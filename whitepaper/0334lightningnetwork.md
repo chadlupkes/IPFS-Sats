@@ -9,18 +9,18 @@ As of November 2025, the **Lightning Network** has transitioned from an experime
 The network's metrics demonstrate significant maturity:
 
 #### 1. Capacity & Liquidity
-* **Public Channel Capacity:** The network holds approximately **4,200 to 5,358 BTC** (valued at $\sim\$400-\$500\text{M}$).
-* **Total Effective Liquidity:** Including private channels, the total effective liquidity is estimated to be $\mathbf{\$1.5}$ **to** $\mathbf{\$2}$ **Billion**, providing a massive pool of capital to facilitate micropayments.
+* **Public Channel Capacity:** The network holds approximately **4,200 to 5,358 BTC** (valued at ~ $400 - $500 M).
+* **Total Effective Liquidity:** Including private channels, the total effective liquidity is estimated to be $1.5 **to** $2 **Billion**, providing a massive pool of capital to facilitate micropayments.
 
 #### 2. Scale & Adoption
-* **Active Nodes:** Over **20,000 active nodes** across $\mathbf{152}$ **countries**, providing a dense, globally distributed network.
-* **Payment Channels:** $\mathbf{70,000+}$ active payment channels.
+* **Active Nodes:** Over **20,000 active nodes** across 152 **countries**, providing a dense, globally distributed network.
+* **Payment Channels:** 70,000+ active payment channels.
 * **Enterprise Integration:** Major financial and crypto platforms, including **Strike, Cash App, Bitfinex**, and **Kraken**, have integrated Lightning for deposits and withdrawals.
 
 #### 3. Performance
 * **Transaction Speed:** Settlements occur in **sub-second time**.
-* **Actual Throughput:** The network is capable of handling **tens of thousands of transactions per second ($\text{TPS}$)** during peak usage.
-* **Success Rate:** Payments under $100,000\text{ sats}$ achieve a success rate of over **$95\%$**.
+* **Actual Throughput:** The network is capable of handling **tens of thousands of transactions per second {TPS}** during peak usage.
+* **Success Rate:** Payments under $100,000 sats achieve a success rate of over **95%**, which will continue to improve over time.
 
 ---
 
@@ -28,19 +28,19 @@ The network's metrics demonstrate significant maturity:
 
 Lightning's maturity is the critical factor that makes the self-sustaining storage model of IPFS-Sats practical at scale:
 
-* **Sufficient Liquidity:** The estimated $\mathbf{\$1.5}$ **Billion** in effective liquidity is enough to support the micropayment volume for **petabytes of storage** payments.
-* **Host Readiness:** The $\mathbf{20,000+}$ active nodes represent a large pool of **potential IPFS hosts** that already possess the necessary server, uptime, and financial infrastructure.
-* **Real-Time Service:** Sub-second transaction speeds are essential for **real-time verification** and **content streaming**, enabling the atomic exchange ($\text{HTLC}$) necessary for content retrieval.
+* **Sufficient Liquidity:** The estimated $1.5 **Billion** in effective liquidity is enough to support the micropayment volume for **petabytes of storage** payments.
+* **Host Readiness:** The 20,000+ active nodes represent a large pool of **potential IPFS hosts** that already possess the necessary server, uptime, and financial infrastructure.
+* **Real-Time Service:** Sub-second transaction speeds are essential for **real-time verification** and **content streaming**, enabling the atomic exchange (HTLC) necessary for content retrieval.
 * **Economic Rationality:** Sub-satoshi fees render micropayments economically viable, a feat impossible on Bitcoin's base layer.
 
 ### Integration Points
 
-IPFS-Sats is designed to be **Lightning implementation-agnostic**. Host nodes can connect to the network using any standard Lightning daemon $\text{API}$ that adheres to the established payment protocols:
+IPFS-Sats is designed to be **Lightning implementation-agnostic**. Host nodes can connect to the network using any standard Lightning daemon API that adheres to the established payment protocols:
 
 | Daemon/Library | Description |
 | :--- | :--- |
 | **LND** (Lightning Network Daemon) | Most popular, full-featured implementation. |
-| **Core Lightning** ($\text{c-lightning}$) | Lightweight and highly extensible via plugins. |
+| **Core Lightning** (c-lightning) | Lightweight and highly extensible via plugins. |
 | **LDK** (Lightning Dev Kit) | Embeddable library suitable for mobile and custom applications. |
 
 ### Summary: Lightning as Economic Foundation
