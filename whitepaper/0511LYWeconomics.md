@@ -1,8 +1,8 @@
 ## 5. Lightning Yield Wallet Economics ⚡💰
 
-The core challenge for any decentralized storage system is funding **perpetual data persistence** without relying on subscription fees or continuous external funding. The **Lightning Yield Wallet (LYW)** is the economic solution. It is the engine that transforms the creator's initial Bitcoin deposit into a **self-sustaining, yield-bearing asset** whose generated income covers the ongoing, fluctuating costs of content hosting and retrieval.
+The core challenge for any decentralized storage system is funding perpetual data persistence without relying on subscription fees or continuous external funding. The Lightning Yield Wallet (LYW) is the economic solution. It is the engine that transforms the creator's initial Bitcoin deposit into a self-sustaining, yield-bearing asset whose generated income covers the ongoing, fluctuating costs of content hosting and retrieval.
 
-The LYW achieves this by securing multiple, low-risk, wealth-based income streams. Its primary function is to monetize the principal to generate funds that compensate hosts for data provision services—the atomic $\text{sats-for-data}$ exchange.
+The LYW is a Bitcoin multi-sig address secured by the three-key architecture (Section 4), strategically designed to interact with the Bitcoin Lightning Network economy. Its function is to secure multiple streams of wealth-based income to compensate hosts for providing the essential data persistence services—the atomic $\text{sats-for-data}$ exchange.
 
 ***
 
