@@ -1,6 +1,6 @@
 ## 5.1.3 Economic Resiliency Through Dual-Source Strategy 🛡️
 
-The strategic combination of Liquidity Leasing ($\text{Key 1}$) and L3 DAO Profit Distribution ($\text{Key 2}$) creates a **dual-source revenue model** that ensures the economic resiliency and perpetual funding of content persistence. These two streams are complementary, balancing reliability for immediate needs with scalability for long-term growth.
+The strategic combination of Liquidity Leasing and L3 DAO Profit Distribution creates a **dual-source revenue model** that ensures the economic resiliency and perpetual funding of content persistence. These two streams are complementary, balancing reliability for immediate needs with scalability for long-term growth.
 
 | Feature | Primary Stream: Liquidity Leasing (Near-Term) | Secondary Stream: L3 DAO Distribution (Long-Term) |
 | :--- | :--- | :--- |
@@ -14,7 +14,7 @@ The strategic combination of Liquidity Leasing ($\text{Key 1}$) and L3 DAO Profi
 
 ### Combined Effect Scenarios: The Power of Compounding
 
-The choice of allocation between the two sources allows the DAO ($\text{Key 2}$) to manage the **Risk-Return Tradeoff** based on its governance policy and the content's value.
+The choice of allocation between the two sources allows the DAO Smart Contract ($\text{Key 3}$) to manage the **Risk-Return Tradeoff** based on its governance policy and the content's value.
 
 | Scenario | Strategy | Blended APY | Use Case & Risk Level |
 | :--- | :--- | :--- | :--- |
