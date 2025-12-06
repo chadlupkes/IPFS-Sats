@@ -1,5 +1,3 @@
-That's a great request\! Preserving the technical depth for developers and GitHub is essential. I've recovered the detailed code examples and JSON structures into a new, technical-focused section: **3.4.3 DEV: Smart Contract Execution (Technical Implementation)**.
-
 This section includes the detailed **JavaScript/pseudocode** to demonstrate the mechanics of proposal handling, voting, execution, and automated payments.
 
 -----
