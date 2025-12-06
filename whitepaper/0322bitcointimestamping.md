@@ -10,7 +10,7 @@ The timestamping operation is piggybacked onto a standard on-chain Bitcoin trans
 
 **The Anchoring Mechanism: OP\_RETURN Embedding**
 
-When a creator initializes or tops up their LYW, the channel funding transaction is constructed to include an **$OP\_RETURN$** output. This output contains a $\text{SHA256}$ hash of the content's critical data bundle, anchoring it permanently to the Bitcoin blockchain.
+When a creator initializes or tops up their LYW, the channel funding transaction is constructed to include an **OP_RETURN** output. This output contains a $\text{SHA256}$ hash of the content's critical data bundle, anchoring it permanently to the Bitcoin blockchain.
 
 **Data Hashing**
 
@@ -28,9 +28,9 @@ The on-chain transaction that establishes the Lightning channel includes the con
 | :--- | :--- | :--- |
 | **Output 1** | Lightning Channel Funding | Destination Address (e.g., $0.001 \text{ BTC}$) |
 | **Output 2** | Change | Remaining funds back to the creator |
-| **Output 3** | $OP\_RETURN$ (Timestamp) | $32\text{-byte } \text{AnchorHash}$ |
+| **Output 3** | OP_RETURN (Timestamp) | $32\text{-byte } \text{AnchorHash}$ |
 
-The $OP\_RETURN$ opcode provides a globally verifiable, immutable record with low overhead (only $\sim 10$ bytes of transaction weight) and ensures the output is provably unspendable, preventing UTXO set bloat.
+The OP_RETURN opcode provides a globally verifiable, immutable record with low overhead (only $\sim 10$ bytes of transaction weight) and ensures the output is provably unspendable, preventing UTXO set bloat.
 
 **Verification Process**
 
