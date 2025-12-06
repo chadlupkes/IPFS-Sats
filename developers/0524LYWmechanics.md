@@ -194,3 +194,17 @@ async function topUpLYW(lyw, dao, amount) {
     await updateDAO(dao);
 }
 ```
+
+## The Lightning Yield Wallet's Self-Sustaining Model: Summary of the Closed-Loop Cycle ♻️
+
+The **Lightning Yield Wallet ($\text{LYW}$)** transforms content persistence into a passive, self-funding investment by creating a closed-loop economic system. This model guarantees long-term content availability by linking financial yield directly to verifiable hosting incentives, replacing the traditional "pay monthly or lose data" model with a "deposit once, earn forever" mechanism.
+
+The entire self-sustaining cycle flows through these seven steps:
+
+1.  **Initial Deposit:** The creator funds the $\text{LYW}$ by depositing $\text{sats}$, which are used to open a **Lightning Network channel** for the content's lifespan.
+2.  **Yield Generation:** The principal of the $\text{LYW}$ is deployed into liquidity markets (e.g., liquidity leasing and $\text{L3}$ DAOs) to **generate continuous Bitcoin yield**.
+3.  **Automatic Distribution:** The earned yield is automatically split according to the DAO's configuration (**Creator/Compound Split**) to compensate the creator and fuel growth.
+4.  **Host Payments:** The **compound pool** funds ongoing, atomic micropayments ($\text{Proof-of-Storage}$) to hosts, ensuring the content's persistent storage and high availability.
+5.  **Surplus Compounding:** Any surplus remaining after host payments and creator payouts is **compounded back** into the $\text{LYW}$ balance, increasing the principal and generating greater future yield.
+6.  **Monitoring and Alerting:** A transparent **Health Monitoring system (5.2.4)** continuously assesses the wallet's financial runway, providing advance warnings to the creator before funds become critical.
+7.  **Failsafes:** Automated mechanisms, including the **30-day grace period** and **Creator Node Self-Pinning**, prevent data loss even if the funding eventually depletes, ensuring content degrades gracefully back to the original source.
