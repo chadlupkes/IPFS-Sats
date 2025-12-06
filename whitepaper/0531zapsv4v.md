@@ -1,6 +1,6 @@
 ## 5.3 Zap Integration: Accelerating the Living Economy ✨
 
-While the **Lightning Yield Wallet ($\text{LYW}$)** provides the crucial baseline for economic sustainability through passive yield generation, **Zaps** create the dynamic, community-driven layer that accelerates growth, rewards quality, and enables organic content curation. Zaps transform IPFS-Sats from a mechanical self-sustaining system into a living economy where value flows directly from consumers to creators based on genuine appreciation, not algorithmic manipulation or platform intermediation.
+While the **Lightning Yield Wallet (LYW)** provides the crucial baseline for economic sustainability through passive yield generation, **Zaps** create the dynamic, community-driven layer that accelerates growth, rewards quality, and enables organic content curation. Zaps transform IPFS-Sats from a mechanical self-sustaining system into a living economy where value flows directly from consumers to creators based on genuine appreciation, not algorithmic manipulation or platform intermediation.
 
 This section explores how zaps work, why they matter, and how they create powerful network effects that benefit the entire ecosystem.
 
@@ -15,7 +15,7 @@ The integration of Zaps is built upon the **Value-for-Value (V4V)** economic mod
 | Feature | Traditional Purchase | Subscription Model | Advertising Model | **Value-for-Value (Zaps)** |
 | :--- | :--- | :--- | :--- | :--- |
 | **Access** | Blocked by paywall | Gated/Locked-in | Free (with ads) | **Free/Voluntary** |
-| **Creator Share** | $\sim 70\%$ (Platform takes $30\%$) | $50\% - 70\%$ | $5\% - 45\%$ | **$98\%+$** (Minus routing fee) |
+| **Creator Share** | ~ 70% (Platform takes 30%) | 50% - 70% | 5% - 45% | **98%+** (Minus routing fee) |
 | **Consumer Choice** | Binary (Buy or not) | Locked in monthly | No payment needed | **Continuous Spectrum (Pay what you want)** |
 | **Discovery** | Limited (No try before buy) | Behind paywall | Good (Free access) | **Excellent (Free access, voluntary support)** |
 
@@ -45,4 +45,4 @@ if (userLikesIt) {
 // Creator receives 100% (minus tiny Lightning routing fee). No platform cut.
 ```
 
-Zap amounts are entirely **flexible**, allowing the payment to scale with the user's perceived value or financial capability, ranging from a minimal tip ($100 \text{ sats}$) to significant whale support ($100,000+ \text{ sats}$). This flexibility makes the system highly inclusive.
+Zap amounts are entirely **flexible**, allowing the payment to scale with the user's perceived value or financial capability, ranging from a minimal tip ($100 sats) to significant whale support ($100,000+ sats). This flexibility makes the system highly inclusive.
