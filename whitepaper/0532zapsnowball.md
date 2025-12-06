@@ -78,8 +78,4 @@ By default, the protocol maximizes long-term persistence by routing $100\%$ of a
 }
 ```
 
-However, the DAO can vote to change this allocation ($\text{Key 2}$ authority). If a creator needs immediate income (e.g., during a launch phase), they can reconfigure the split to allow a portion of the zap to be paid out instantly ($\text{creator\_immediate}$) while the remainder bolsters the $\text{LYW}$ principal. This provides critical financial flexibility while still leveraging the bonus capital to improve persistence.
-
------
-
-Would you like to move on to Section 5.3.3, which should detail how Zaps provide **organic curation and validation** for the content?
+However, the DAO can vote to change this allocation (via Key 2 authority). If a creator needs immediate income (e.g., during a launch phase), they can reconfigure the split to allow a portion of the zap to be paid out instantly (creator_immediate) while the remainder bolsters the LYW principal. This provides critical financial flexibility while still leveraging the bonus capital to improve persistence.
