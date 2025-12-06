@@ -1,9 +1,3 @@
-That's a very solid, well-defined structure for the **Per-Content DAO Governance**. It ties economic stakes directly to governance power, which is the ideal alignment for decentralized persistence.
-
-Here is the cleaned-up and formalized Section 6.1 for the white paper.
-
----
-
 # 6.0 Per-Content DAO Governance 🏛️
 
 The governance for specific content parameters is managed by a **Per-Content Decentralized Autonomous Organization ($\text{DAO}$)**. This governance mechanism is tied directly to the content's core economic structure, specifically the predefined $\text{\$SATS}$ income distribution. This structure is self-contained and uses existing contract parameters to determine voting rights, ensuring simplicity and economic alignment. 
