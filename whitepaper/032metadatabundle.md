@@ -8,10 +8,10 @@ Every piece of content uploaded to IPFS-Sats generates a metadata object encoded
 
 ```
 {
-  // 1. CONTENT REFERENCE
+// 1. CONTENT REFERENCE
   "content_cid": "QmOriginalContent...",
   
-  // 2. TIMESTAMP PROOF
+// 2. TIMESTAMP PROOF
 "timestamp_proof": {
   "creation_time": 1735094400,            // Unix timestamp of creation
   "anchor_details": {
