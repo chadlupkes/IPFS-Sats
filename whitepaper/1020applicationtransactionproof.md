@@ -4,7 +4,7 @@ The **Application Transaction Proof Object ($\text{ATP}$)** is an application-la
 
 **Crucial Distinction:** The $\text{ATP}$ is created at the time an application event is *initiated*. It includes the necessary cryptographic **commitments** (like the payment hash/$\text{HTLC}$ lock) that prove the event's sequence and will later be used to anchor the event on the Layer-2 network, thereby securing the timestamp. The $\text{ATP}$ does *not* require the final settlement $\text{preimage}$ or $\text{Layer-1}$ Bitcoin $\text{TXID}$ upon creation.
 
-The immutability of the **Core Content Object ($\text{asset\_cid}$)** is preserved, as the $\text{ATP}$ object is created *after* the Core Content Object is sealed.
+The immutability of the **Core Content Object (asset_cid)** is preserved, as the $\text{ATP}$ object is created *after* the Core Content Object is sealed.
 
 ### $\text{JSON}$ Schema: Application Transaction Proof Object ($\text{ATP}$)
 
