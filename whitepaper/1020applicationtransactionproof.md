@@ -2,7 +2,7 @@
 
 The **Application Transaction Proof Object ($\text{ATP}$)** is a critical application-layer data structure that establishes a chronological, cryptographically linked chain of events. Unique to a specific installation or user instance, this chain acts as a secondary, highly granular **Timestamp Proof** for the Core Content Object, leveraging the time-sequencing and finality provided by Lightning Network Layer-2 transactions.
 
-The immutability of the **Core Content Object ($\text{asset\_cid}$)** is preserved, as the $\text{ATP}$ object is created *after* the Core Content Object is sealed. This structure ensures that application-specific events—such as data backups, private access logs, or state changes—are permanently verifiable and ordered.
+The immutability of the **Core Content Object (asset_cid)** is preserved, as the $\text{ATP}$ object is created *after* the Core Content Object is sealed. This structure ensures that application-specific events—such as data backups, private access logs, or state changes—are permanently verifiable and ordered.
 
 ### $\text{JSON}$ Schema: Application Transaction Proof Object ($\text{ATP}$)
 
