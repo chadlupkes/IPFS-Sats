@@ -11,7 +11,7 @@ The fundamental problem is temporal ambiguity: there is no universal, trustless 
 
 **Platform Monopoly on Historical Record**
 
-Centralized platforms like Google, Facebook, and Twitter have become the de facto custodians of our collective memory. They determine not only what information circulates today but also what will be retrievable tomorrow. Content can be silently edited, algorithmically suppressed, or entirely deleted—often without user knowledge or recourse. Even government records and academic repositories depend on institutional servers that can be compromised, censored, or simply shut down due to funding cuts.
+Centralized platforms like Google, Facebook, and Twitter/X have become the de facto custodians of our collective memory. They determine not only what information circulates today but also what will be retrievable tomorrow. Content can be silently edited, algorithmically suppressed, or entirely deleted—often without user knowledge or recourse. Even government records and academic repositories depend on institutional servers that can be compromised, censored, or simply shut down due to funding cuts.
 
 This creates a dangerous asymmetry: those with access to centralized infrastructure can rewrite history, while individuals and small organizations have no means to establish immutable proof of their contributions, discoveries, or experiences. The result is a world where power determines truth, rather than cryptographic evidence.
 
