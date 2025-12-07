@@ -37,7 +37,7 @@ The protocol provides the cryptographic and economic architecture required to en
 
 When a new Content Bundle (the $\text{Child}$) is created from an existing piece of content (the $\text{Parent}$), the new Metadata Bundle is cryptographically required to include the $\text{Parent}$'s Content $\text{CID}$ and Bundle $\text{ID}$. This creates an immutable, one-way link:
 
-$$\text{Child\_Bundle\_ID} \rightarrow \text{Parent\_CID}$$
+Child_Bundle_ID ---> Parent_CID
 
 This linkage establishes **verifiable provenance** at the deepest layer of the data structure, making it impossible for a derivative work to exist on the protocol without citing its foundation. The integrity of the fork is cryptographically tied to the integrity of the original, leveraging the **Right to Verify** established in Section 7.
 
@@ -45,7 +45,7 @@ This linkage establishes **verifiable provenance** at the deepest layer of the d
 
 The core economic function of the Content $\text{DAO}$ is harnessed to enforce compensation. When a $\text{Child}$ (forked content) generates revenue (via Zaps, access fees, or streaming revenue), the inherited governance code (or a modified fork of it) automatically executes a transparent revenue split:
 
-1.  A percentage of the revenue is routed to the **$\text{Child}$ Content $\text{DAO}$’s wallet**.
+1.  A percentage of the revenue is routed to the **Child Content DAO’s wallet**.
 2.  A predetermined royalty percentage (e.g., $5\%-15\%$) is automatically routed to the **$\text{Parent}$ Content $\text{DAO}$’s wallet**.
 
 This **atomic distribution mechanism** ensures that creators of foundational works receive perpetual, passive income from all successful innovations built upon their labor.
