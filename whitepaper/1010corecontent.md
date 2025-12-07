@@ -6,7 +6,7 @@ The functionality and reliability of the $\text{IPFS-Sats}$ protocol are secured
 
 ## 10.1 Core Content Object (Metadata Bundle)
 
-The **Core Content Object**, often referred to as the **Metadata Bundle**, is the primary, mutable control object for a piece of content. Its $\text{CID}$ is the single value committed to the Bitcoin blockchain via the $\text{OP\_RETURN}$ field, serving as the immutable, timestamped anchor for the content's mutable rules.
+The **Core Content Object**, often referred to as the **Metadata Bundle**, is the primary, mutable control object for a piece of content. Its $\text{CID}$ is the single value committed to the Bitcoin blockchain via the OP_RETURN field, serving as the immutable, timestamped anchor for the content's mutable rules.
 
 **Key Change:** The mutable `anchor_details` are now externalized. The `provenance` section now exclusively tracks the internal $\text{Parent} \rightarrow \text{Child}$ lineage for the **Right to Fork**.
 
