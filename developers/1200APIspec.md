@@ -135,5 +135,5 @@ The $\text{IPFS-Sats API}$ uses standard $\text{HTTP}$ response codes.
 | $\text{400}$ Bad Request | Missing required parameters or invalid JSON format. | Check the request payload against the schema. |
 | $\text{401}$ Unauthorized | Missing or invalid `X-API-KEY` or `X-SIG-AUTH` header. | Verify credentials and re-sign the request payload. |
 | $\text{402}$ Payment Required | $\text{LYW}$ funding is insufficient for the requested service level. | Add more $\text{sats}$ to the content's $\text{LYW}$. |
-| $\text{404}$ Not Found | The requested $\text{CID}$ or $\text{DAO}$ does not exist on this service. | Check the $\text{CID}$ or the $\text{service\_id}$. |
+| $\text{404}$ Not Found | The requested $\text{CID}$ or $\text{DAO}$ does not exist on this service. | Check the $\text{CID}$ or the service_id. |
 | $\text{429}$ Too Many Requests | Rate limit exceeded for the provided $\text{API}$ key. | Slow down requests and honor the `Retry-After` header. |
