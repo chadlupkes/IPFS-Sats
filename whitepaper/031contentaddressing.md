@@ -167,6 +167,7 @@ All verification is cryptographic and trustless—no central authority needed.
 ### 3.1.5 Anti-Plagiarism Through Content Addressing
 
 Content addressing creates a natural defense against theft:
+
 Scenario: Alice uploads original work
  - Content CID: QmSong... (deterministic hash)
  - Metadata CID: QmAliceMetadata... (includes Bitcoin block 875432)
