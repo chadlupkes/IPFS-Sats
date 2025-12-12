@@ -180,7 +180,7 @@ Unified Protocol, Universal Access:
 **The Result: Foundational Rights Infrastructure**
 
 IPFS-Sats is not merely a better storage protocol—it is foundational infrastructure for two essential digital rights:
-- **The Right to Verify**: Every individual can access cryptographic proof of what existed when, at no costt. Truth becomes provable, not negotiable.
+- **The Right to Verify**: Every individual can access cryptographic proof of what existed when, at no cost. Truth becomes provable, not negotiable.
 - **The Right to Fork**: Every creator can build upon existing work while ensuring original authors receive automatic, transparent compensation. Innovation becomes collaborative, not extractive.
 
 By solving the verification, innovation, and persistence crises simultaneously, IPFS-Sats creates the economic and cryptographic substrate for a Living Civilization—one where information integrity is guaranteed, creative contributions are fairly rewarded, and knowledge compounds through open collaboration rather than centralized control.
