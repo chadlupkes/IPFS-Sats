@@ -15,7 +15,7 @@ The LYW transforms the creator's capital into a productive asset. The yield earn
 | **Storage Cost** | $500$ sats/month (1GB) | Monthly Expense |
 | **Net Surplus** | $333$ sats | Compounded back into the principal |
 
-As long as the generated yield exceeds the storage and operating costs, the content persists indefinitely. When depositing sats to open the Lightning channel, the transaction simultaneously anchors the application’s content hash chain onto Bitcoin's blockchain via $\text{OP\_RETURN}$, providing trustless timestamping at zero marginal cost.
+As long as the generated yield exceeds the storage and operating costs, the content persists indefinitely. When depositing sats to open the Lightning channel, the transaction simultaneously anchors the application’s content hash chain onto Bitcoin's blockchain via OP_RETURN, providing trustless timestamping at zero marginal cost.
 
 ---
 
