@@ -45,9 +45,9 @@ Anyone can verify the content's existence time by following a simple, trustless 
 
 | Timestamping Method | Marginal Cost | Finality | Trust Model |
 | :--- | :--- | :--- | :--- |
-| **IPFS-Sats (Channel Anchor)** | $\approx \$0$ | $10-60\text{ min}$ | Trustless |
-| Separate Blockchain TX | $\$1-\$50$ | $10-60\text{ min}$ | Trustless |
-| OpenTimestamps Batch | $\$0.001-\$0.01$ | $10-60\text{ min}$ | Third-party Oracle |
+| **IPFS-Sats (Channel Anchor)** | ~ $0 | 10 - 60 min | Trustless |
+| Separate Blockchain TX | $1 - $50 | 10 - 60 min | Trustless |
+| OpenTimestamps Batch | $0.001 - $0.01 | 10 - 60 min | Third-party Oracle |
 
 -----
 
