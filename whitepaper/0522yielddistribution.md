@@ -2,7 +2,7 @@
 
 The **Yield Distribution** mechanism defines the core economic decision for the Lightning Yield Wallet ($\text{LYW}$). Every unit of yield earned must be strategically allocated between two competing priorities: **Creator compensation** (immediate reward for the artist) and **Compounding** (reinvestment to ensure perpetual availability).
 
-The **split ratio** is encoded in the DAO's smart contract and is fully configurable via governance vote ($\text{Key 2}$ authority).
+The **split ratio** is encoded in the $\text{DAO}$'s smart contract and is fully configurable via governance vote ($\text{Key 2}$ authority).
 
 ### Common Split Strategies
 
@@ -29,6 +29,10 @@ The split configuration is represented in the metadata:
 The automated distribution is executed by **$\text{Key 3}$ (Smart Contract)** periodically (e.g., monthly, quarterly) or immediately upon receiving a liquidity lease premium.
 
 ```javascript
+/**
+ * Executes the yield distribution based on the DAO's defined split ratio.
+ * This function is executed by Key 3 (Automation).
+ */
 async function executeYieldDistribution() {
   // 1. Calculate yield earned for the period
   const yieldEarned = await calculateYieldForPeriod(lyw, period);
@@ -46,7 +50,8 @@ async function executeYieldDistribution() {
   // 3. Distribute to creator(s) via Lightning Network
   if (creatorAmount > 0) {
     for (const member of dao.members) {
-      const memberShare = Math.floor((creatorAmount * member.weight) / 100);
+      // Handles proportional payouts for multi-member DAOs
+      const memberShare = Math.floor((creatorAmount * member.weight) / 100); 
       
       if (memberShare > 0) {
         // Sends payment instantly using Key 3 signature
@@ -58,7 +63,7 @@ async function executeYieldDistribution() {
     }
   }
   
-  // 4. Add to compound pool
+  // 4. Add to compound pool (Increases the LYW principal)
   lyw.compound_pool += finalCompound;
   lyw.balance += finalCompound; // Principal balance increases
   
@@ -73,7 +78,7 @@ async function executeYieldDistribution() {
 
 ### Compounding Effect Over Time
 
-Compounding is the engine of persistence. By reinvesting the compound share, the principal balance grows, leading to higher future yield and greater financial security for the content.
+Compounding is the engine of persistence. By reinvesting the compound share, the principal balance grows, leading to higher future yield and greater financial security for the content—the **Snowball Effect** in action.
 
 | Period | Balance Start (50/50 Split) | Yield Earned (12% APY) | Creator Payout | Compounded |
 | :--- | :--- | :--- | :--- | :--- |
@@ -81,11 +86,13 @@ Compounding is the engine of persistence. By reinvesting the compound share, the
 | **Year 1** | $1,000,000 \text{ sats}$ | $123,356 \text{ sats}$ | $61,678 \text{ sats}$ | $61,678 \text{ sats}$ |
 | **Year 5** | $\sim 1,293,000 \text{ sats}$ | $\sim 157,000 \text{ sats}/\text{year}$ | $\sim 78,500 \text{ sats}/\text{year}$ | $\sim 78,500 \text{ sats}/\text{year}$ |
 
-The annual yield earned in Year 5 is significantly greater than the Year 1 yield, demonstrating how compounding accelerates the content's financial viability.
+The annual yield earned in Year 5 is significantly greater than the Year 1 yield, demonstrating how compounding accelerates the content's financial viability and ensures the content's persistence becomes increasingly robust.
 
 ### Dynamic Split Adjustment
 
-The DAO can use its governance authority ($\text{Key 2}$ signature) to temporarily or permanently adjust the yield split based on real-world needs.
+The $\text{DAO}$ can use its governance authority ($\text{Key 2}$ signature) to temporarily or permanently adjust the yield split based on real-world needs, requiring a co-signature from $\text{Key 3}$ for execution (see Authorization Matrix).
 
-  * **Temporary Adjustments:** A DAO proposal can specify a new split that is only active for a set duration (e.g., 6 months), automatically reverting to the original split afterward. This handles situations like emergency funding or short-term incentive programs without permanently altering the long-term plan.
+  * **Temporary Adjustments:** A $\text{DAO}$ proposal can specify a new split that is only active for a set duration (e.g., 6 months), automatically reverting to the original split afterward. This handles situations like emergency funding or short-term incentive programs without permanently altering the long-term plan.
   * **Weighted Payouts:** If the creator is a $\text{DAO}$ with multiple members, the $\text{Creator Share}$ is further divided based on member weights defined in $\text{Key 2}$'s configuration, ensuring fair proportional compensation.
+
+-----
