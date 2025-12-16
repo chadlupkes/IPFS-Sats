@@ -73,6 +73,8 @@ The metadata bundle's design naturally prevents content theft.
 | **Bitcoin Block** | 875432 | 876890 | **Alice's is Earlier** |
 | **Wallet** | lnbc_alice... | lnbc_bob... | **Payment directed to Alice** |
 
+This is not merely storage—it is foundational infrastructure for digital rights. The metadata bundle enables the **Right to Verify** (cryptographic timestamps) and the **Right to Fork** (automated royalties) while remaining compatible with the open, decentralized ethos of IPFS.
+
 **Detection is Automatic:**
 1. **Query:** "Show metadata for content QmSong..."
 2. **Results:** Two metadata objects found.
@@ -91,20 +93,3 @@ The metadata bundle's design naturally prevents content theft.
 * Legal protection (fair use, transformative work).
 
 ---
-
-## Summary: The Metadata Bundle as Universal Product Passport
-
-The IPFS-Sats metadata bundle transforms raw content into a complete digital asset.
-
-| Component | Function |
-| :--- | :--- |
-| **CID** | Cryptographic proof of **what** the content is. |
-| **Bitcoin Anchor** | Temporal proof of **when** it was created. |
-| **DID Signature** | Legal proof of **who** created it. |
-| **Lightning Wallet** | Economic infrastructure for **monetization**. |
-| **DAO/License** | Governance structure for **collective ownership**. |
-| **Parent CID** | Provenance chain for **derivative works**. |
-| **License Terms** | Usage rights (machine-readable). |
-| **Discovery Metadata** | Search and categorization. |
-
-This is not merely storage—it is foundational infrastructure for digital rights. The metadata bundle enables the **Right to Verify** (cryptographic timestamps) and the **Right to Fork** (automated royalties) while remaining compatible with the open, decentralized ethos of IPFS.
