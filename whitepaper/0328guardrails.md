@@ -60,6 +60,8 @@ It enables the **Right to Verify** (via cryptographic timestamps) and the **Righ
 | **DAO/License** | Governance and Rights | Structure for **Ownership & Usage** |
 | **Parent CID** | Provenance Chain | Record for **Derivative Works** |
 
+This is not merely storage—it is foundational infrastructure for digital rights. The metadata bundle enables the **Right to Verify** (cryptographic timestamps) and the **Right to Fork** (automated royalties) while remaining compatible with the open, decentralized ethos of IPFS.
+
 ## Anti-Plagiarism Through Metadata
 
 The metadata bundle's design naturally prevents content theft.
@@ -72,8 +74,6 @@ The metadata bundle's design naturally prevents content theft.
 | **Metadata CID** | QmAliceMetadata... | QmBobMetadata... | **Mismatch** |
 | **Bitcoin Block** | 875432 | 876890 | **Alice's is Earlier** |
 | **Wallet** | lnbc_alice... | lnbc_bob... | **Payment directed to Alice** |
-
-This is not merely storage—it is foundational infrastructure for digital rights. The metadata bundle enables the **Right to Verify** (cryptographic timestamps) and the **Right to Fork** (automated royalties) while remaining compatible with the open, decentralized ethos of IPFS.
 
 **Detection is Automatic:**
 1. **Query:** "Show metadata for content QmSong..."
