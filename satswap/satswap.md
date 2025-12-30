@@ -521,5 +521,5 @@ func (n *SatSwapNode) ServeBlockForPayment(cid cid.Cid) (*BlockOffer, error) {
 
 For questions, contributions, or implementation assistance:
 - Email: chadlupkes@gmail.com
-- GitHub: github.com/IPFS-Sats/satswap
+- GitHub: github.com/chadlupkes/IPFS-Sats/satswap
 - Community: Pending Interest
