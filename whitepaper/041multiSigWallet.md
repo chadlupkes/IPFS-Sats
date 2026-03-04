@@ -89,230 +89,224 @@ $\text{Key 1}$'s public key and derivation method are permanently stored in the 
 }
 ```
 
-## 4.2.2 Routine Operations (Automated via Key 3)
+## 4.1.2 Key 2: Creator/DAO Control Key (Human Authority) 👤
 
-**Principle:** Pre-approved, recurring operations execute automatically without human intervention, enabling the self-sustaining economic model of $\text{IPFS}$-$\text{Sats}$. The goal is to move the system from requiring constant human oversight to operating as a **digital perpetual machine**.
+$\text{Key 2}$ represents the **human authority** within the IPFS-Sats multi-sig structure. This key, or set of keys, is controlled by the creator(s), DAO members, or the managing organization, and is used to authorize all major policy and financial decisions.
 
-**Authorization:** **$\text{Key 3}$ only** (within pre-defined limits and DAO-approved rules).
+### Purpose and Generation
 
-#### Operations: Automated Financial and Governance Tasks
+$\text{Key 2}$ is generated **independently** of the content CID and is intended to be linked directly to the creator's persistent decentralized identity ($\text{DID}$).
 
-All these tasks are fully auditable and rely on $\text{Key 3}$'s pre-approved logic.
+| Aspect | Detail |
+| :--- | :--- |
+| **Purpose** | To enforce **human governance**, manage policy, and execute emergency overrides. |
+| **Derivation** | Generated using standard cryptographic methods (e.g., $\text{secp256k1}$, $\text{Ed25519}$), often derived from an existing identity system ($\text{Nostr}$, $\text{Bitcoin}$ wallet, $\text{DID}$). |
+| **Security Focus** | **Secure storage** is paramount, as compromise means loss of governance control. |
 
-1.  **Yield Distribution**
-    The core financial mechanism. $\text{Key 3}$ runs on a set schedule (e.g., daily or weekly) to automatically calculate and distribute funds earned by the $\text{Lightning Yield Wallet}$ ($\text{LYW}$).
+#### Key Generation Pseudocode
 
-      * **Mechanism:** $\text{Key 3}$ retrieves the $\text{DAO}$'s current yield_split percentages and applies them to the earned yield. Individual shares are sent instantly via $\text{Lightning}$ to member addresses; the **Compound Share** is reinvested into the $\text{LYW}$ pool for persistence.
-      * **Authorization Check:** $\text{Key 3}$ verifies that the distribution percentages match the current $\text{DAO}$ rules and that the total amount is within its daily spending limits. If checks pass, $\text{Key 3}$ signs the multi-sig transaction automatically.
+The process is flexible, allowing users to leverage existing identity keys or generate a fresh key pair.
 
-2.  **Host Payments (Proof-of-Storage)**
-    This is the maintenance mechanism that financially secures data persistence.
+```javascript
+function generateKey2(identityType, identityData) {
+  // Key 2 is based on the creator's identity, not content
+  switch(identityType) {
+    case "nostr": // Use existing secp256k1 key
+    case "ethereum":
+      return { public: identityData.publicKey, type: "secp256k1" };
+      
+    case "bitcoin": // Derive from Bitcoin wallet HD structure
+      return deriveBitcoinKey(identityData.masterKey, "m/84'/0'/0'/0/0");
+      
+    case "did:key": // Generate fresh Ed25519 key pair
+    default:
+      return generateEd25519KeyPair();
+  }
+}
+```
 
-      * **Mechanism:** $\text{Key 3}$ initiates a cryptographic challenge to hosts storing the content, requesting a **Proof-of-Storage** (e.g., a $\text{Merkle}$ proof). Only hosts that provide a valid proof within the response time limit are approved for payment. Payment is calculated from the Compound Pool and sent instantly via $\text{Lightning}$. Hosts who fail verification are flagged for replacement.
-      * **Authorization Check:** $\text{Key 3}$ verifies that the storage proof is valid and that the payment is within the pre-defined host budget.
+-----
 
-3.  **Content Retrieval Payments**
-    When content is sold or leased on demand (retrieval-as-a-service), $\text{Key 3}$ ensures the host is compensated.
+### Control Structure: Single vs. Multi-Member
 
-      * **Mechanism:** The content buyer pays the host for retrieval. $\text{Key 3}$ may be responsible for routing the payment, ensuring the transaction is atomic and fast.
-      * **Authorization Check:** $\text{Key 3}$ verifies the proof of content delivery and that the payment amount is within the expected per-retrieval limits.
+$\text{Key 2}$ can be structured to support both solo creators and complex decentralized organizations.
 
-4.  **Report Generation**
-    Ensuring transparency and auditability for all stakeholders.
+#### 1\. Single Creator Control (Solo Mode)
 
-      * **Mechanism:** $\text{Key 3}$ gathers all financial, governance, and host performance data over a set period, compiles the information into a comprehensive report, publishes the immutable report to $\text{IPFS}$, and signs a metadata update to link the new report's $\text{CID}$ to the $\text{DAO}$ record.
-      * **Authorization Check:** This is a read-only data aggregation operation followed by a routine, pre-approved metadata update, which $\text{Key 3}$ executes automatically.
-
-5.  **Liquidity Lease Renewals**
-    Maintaining the functionality and profitability of the $\text{LYW}$.
-
-      * **Mechanism:** $\text{Key 3}$ monitors the expiration of Lightning Network liquidity leases. If a lease is profitable and nearing expiration, $\text{Key 3}$ automatically calculates the optimal renewal terms and executes the renewal transaction using funds from the Compound Pool.
-      * **Authorization Check:** $\text{Key 3}$ verifies that the lease renewal is profitable (net positive yield) and that the amount is within the designated liquidity management budget.
-
-### Limits on Automated Operations
-
-To prevent unauthorized or faulty automation, $\text{Key 3}$ operates within three tiers of authorization:
-
-| Category | Authority | Required Key Combination |
-| :--- | :--- | :--- |
-| **Tier 1: Routine Automation** | Execute automatically within budget. | **$\text{Key 3}$ Alone** |
-| **Tier 2: Policy/Major Finance** | Requires $\text{DAO}$ vote and $\text{Key 2}$ approval. | **$\text{Key 2}$ + $\text{Key 3}$** |
-| **Tier 3: Forbidden Actions** | Cannot be executed by $\text{Key 3}$ under any circumstance. | $\text{N/A}$ |
+For a solo creator, $\text{Key 2}$ is simply one private key controlled by that individual.
 
 ```json
-"key3_automation_limits": {
-  "max_payment_per_transaction": 10000,  // sats
-  "max_daily_total": 100000,  // sats
+"key2": {
+  "type": "single_owner",
+  "public_key": "03b4c5d6e7...",
+  "identity": "did:key:alice...",
+  "role": "creator_control"
+}
+```
+
+#### 2\. Multi-Member DAO Control (Collaborative Mode)
+
+For collaborative projects, $\text{Key 2}$ becomes an **internal multi-sig or weighted voting structure** itself, enforcing the DAO's governance rules for major changes.
+
+```json
+"key2": {
+  "type": "multi_member_dao",
+  "threshold": 3, // Requires 3 signatures (or weighted majority)
+  "total_members": 5,
+  "members": [
+    { "public_key": "02a1b2c3...", "identity": "did:key:alice...", "weight": 40 },
+    { "public_key": "03d4e5f6...", "identity": "did:key:bob...", "weight": 30 }
+    // ... more members
+  ],
+  "role": "dao_governance"
+}
+```
+
+-----
+
+### Key 2 Authorization Matrix
+
+$\text{Key 2}$ is the primary key for state-changing operations, usually requiring cooperation with $\text{Key 3}$ (Automation Key) for routine governance, or $\text{Key 1}$ (Content Key) for emergency overrides.
+
+| Key Combination | Authorized Operations | Purpose |
+| :--- | :--- | :--- |
+| **Key 2 + Key 3** | Change $\text{Yield}$ distribution percentages, $\text{Update}$ smart contract rules, $\text{Add/remove}$ DAO members, $\text{Grant}$ licenses, $\text{Withdraw}$ routine funds. | **Standard Governance:** Enforcing DAO policy by combining human intent with the current automated rules. |
+| **Key 2 + Key 1** | $\text{Emergency recovery}$ (if $\text{Key 3}$ compromised), $\text{Override}$ malfunctioning smart contract, $\text{Dissolve}$ DAO and reclaim funds. | **Emergency Override:** Bypassing automation to perform high-risk, trust-critical actions. |
+| **Key 2 Alone** | $\text{Delegate}$ voting authority, $\text{Sign}$ a vote on a proposal (read-only action). | **Non-Custodial Actions:** Actions that don't directly move funds or change core rules. |
+
+### Security and Delegation
+
+The security of $\text{Key 2}$ is managed through best practices common to high-value crypto assets:
+
+  * **Security Model:** Utilizing **hardware wallets**, $\text{M-of-N}$ multi-sig for groups (e.g., 2-of-3 for core team), and optional social recovery methods.
+  * **Time-locks:** For maximum security, all major operations (e.g., withdrawing large sums, transferring ownership) authorized by $\text{Key 2}$ are subject to an enforced **time-lock delay** (e.g., 24-48 hours) to allow for review or veto.
+
+#### Delegation and Proxies
+
+$\text{Key 2}$ holders can delegate limited authority to other members or trusted advisors without transferring ownership of the actual control key. This is managed via an on-chain/IPFS record:
+
+```json
+"delegations": [
+  {
+    "delegate_to": "did:key:trusted_advisor...",
+    "permissions": ["vote_on_proposals"], // Limited scope
+    "excluded": ["withdraw_funds", "change_membership"],
+    "expires": 1750636800,
+    "revocable": true
+  }
+]
+```
+
+## 4.1.3 Key 3: Smart Contract Execution Key (Automated Authority) 🤖
+
+$\text{Key 3}$ is the engine of the IPFS-Sats DAO, enabling **automated operations** like yield distribution and host payments without requiring human intervention for every transaction. It executes the collective will of the DAO as encoded in the smart contract rules.
+
+### Generation and Control
+
+$\text{Key 3}$'s private key is generated and managed by the secure execution environment that hosts the smart contract logic. Its public key is part of the 3-of-3 multi-sig address.
+
+#### Key Generation Pseudocode
+
+$\text{Key 3}$ is deterministically derived from the initial wallet seed and the hash of the immutable smart contract rules. This binding ensures that if the core rules change, the key must be replaced, requiring $\text{Key 2}$'s authorization.
+
+```javascript
+function generateKey3(walletSeed, contractRules) {
+  // Derive Key 3 from wallet seed + contract hash
+  const contractHash = SHA256(JSON.stringify(contractRules));
+  const seed = HKDF(walletSeed, contractHash, "smart-contract-key");
   
-  "allowed_without_approval": [ // Tier 1
+  const privateKey = derivePrivateKey(seed);
+  const publicKey = derivePublicKey(privateKey);
+  
+  return { public: publicKey, role: "automated_operations" };
+}
+```
+
+#### Who Controls the Private Key?
+
+The crucial aspect of $\text{Key 3}$'s security is how its private key is managed to ensure trustless automation:
+
+  * **Decentralized Oracle Network (Recommended):** Multiple independent nodes run the smart contract logic and use a **Threshold Signature Scheme** (e.g., 5-of-9 nodes) to sign transactions. No single party holds the full key.
+  * **Trusted Execution Environment (TEE):** The key is stored inside a secure hardware enclave (HSM, Intel SGX), where the smart contract runs. The code is attested, ensuring the key cannot be extracted, even by the server operator.
+  * **Multi-Party Computation (MPC):** The private key is split into shares and is never whole. Multiple parties must cooperate to generate a signature, achieving maximum trustlessness.
+
+-----
+
+### Key 3 Authorization Matrix
+
+$\text{Key 3}$ operates within strict, DAO-approved boundaries and typically requires $\text{Key 2}$'s signature for non-routine or policy-altering actions.
+
+| Key 3 Action | Authorization Required | Examples of Operations |
+| :--- | :--- | :--- |
+| **Key 3 Alone** | **Self-Authorized** (within contract limits) | $\text{Distribute yield}$ per split, $\text{Pay hosts}$ for verified storage, $\text{Execute approved proposals}$ (after timelock), $\text{Generate routine reports}$. |
+| **Key 3 + Key 2** | **Human Policy Approval** | $\text{Change smart contract rules}$ (e.g., quorum size), $\text{Withdraw funds}$ exceeding the auto-approved threshold, $\text{Grant new licenses}$. |
+| **Key 3 + Key 1** | **Forbidden** | Key 3 cannot interact with Key 1 alone for any operation. |
+
+#### Automated Execution Limits
+
+To mitigate the risk of bugs or exploitation, $\text{Key 3}$'s permissions are limited by pre-defined caps established by $\text{Key 2}$ and the DAO.
+
+```json
+"key3_permissions": {
+  "max_payment_per_tx": 10000, // Max sats per single automated payment
+  "max_daily_payments": 100000, // Total sats Key 3 can spend per day
+  "allowed_operations": [
     "yield_distribution",
     "host_payment",
-    "content_retrieval",
-    "report_generation",
-    "lease_renewal"
+    "content_retrieval_payment"
   ],
-  
-  "absolutely_forbidden": [ // Tier 3
-    "ownership_transfer",
-    "key_replacement",
-    "dao_dissolution"
+  "forbidden_operations": [
+    "membership_change",
+    "ownership_transfer"
   ]
 }
 ```
 
-#### Exceeding Limits: Escalation to Governance
+#### Smart Contract Verification Logic
 
-If $\text{Key 3}$ attempts an operation that exceeds its pre-approved limits, the transaction is rejected, and the action is automatically escalated into a formal $\text{DAO}$ proposal requiring human review and $\text{Key 2}$ authorization.
+Before $\text{Key 3}$ authorizes any transaction, the execution environment runs a series of checks to ensure compliance with DAO rules and safety limits.
 
-> *Example:* An exceptional host payment is needed that exceeds the $10,000$ sats limit. $\text{Key 3}$ rejects the automatic payment and creates a **DAO Proposal** for a **Large Payment**, requiring member vote and $\text{Key 2}$'s signature for final execution.
+```javascript
+async function key3Sign(operation) {
+  // 1. Verify operation type and amount limits
+  if (!isAllowedOperation(operation.type) || operation.amount > getLimits().max_payment_per_tx) {
+    throw new Error("Operation or amount exceeds Key 3 limits");
+  }
+  
+  // 2. Check for daily budget and emergency pause state
+  const dailySpent = await getDailySpending();
+  const dao = await getDAO(operation.dao_cid);
+  if (dailySpent + operation.amount > getLimits().max_daily_payments || dao.smart_contract.paused) {
+    throw new Error("Safety check failed (budget/pause)");
+  }
+  
+  // 3. Verify specific prerequisites (e.g., Proof-of-Storage)
+  if (operation.type === "host_payment" && !await verifyStorageProof(operation.host)) {
+    throw new Error("Storage proof invalid");
+  }
+  
+  // 4. All checks passed, sign and return transaction
+  const signature = await signWithKey3(operation);
+  return signature;
+}
+```
 
 -----
 
-## 4.2.3 Major Operations (Require DAO Approval via Key 2 + Key 3) 🤝🤖
+## Summary: Three-Key Synergy
 
-This section details significant state-changing operations that require collective human authorization (via $\text{Key 2}$ signatures) combined with the automated execution mechanism (via $\text{Key 3}$). These are the core governance functions of the $\text{IPFS}$-$\text{Sats}$ $\text{DAO}$.
+The IPFS-Sats three-key architecture creates a governance system that balances **security, autonomy, and sovereignty**. The three keys are mutually dependent for critical operations, ensuring a single point of failure cannot compromise the content, the funds, or the governance structure.
 
-### Principle and Authorization
-
-* **Principle:** Significant changes affecting governance, economics, or membership require human authorization through a formal consensus process.
-* **Authorization:** $\text{Key 2}$ + $\text{Key 3}$ (Human decision-making combined with automated execution).
-
-### Governance Process Flow: Proposal to Execution
-
-All major operations follow a strict, multi-stage process to ensure deliberate and auditable decisions:
-
-1.  **Proposal Created:** A member submits a formal request to change the $\text{DAO}$'s state.
-2.  **DAO Members Vote ($\text{Key 2}$ Signatures):** Members secure their vote using their individual $\text{Key 2}$ authority.
-3.  **Consensus Check:** The system verifies that the required **Quorum** and **Threshold** (e.g., a $66\%$ majority) are met.
-4.  **Timelock Period:** A mandatory delay (e.g., 24–72 hours) begins, allowing for final review or veto before funds/rules are altered.
-5.  **$\text{Key 3}$ Executes:** Upon successful consensus and expiration of the timelock, $\text{Key 3}$ automatically enacts the change in the smart contract's state.
-
-
-
-### Operations Requiring Consensus
-
-#### 1. Yield Distribution Changes
-
-Modifying how revenue is split among members and the compounding pool.
-
-* **Mechanism:** A proposal defines the new $\text{yield\_split}$ percentages. Members vote using $\text{Key 2}$. If passed, $\text{Key 3}$ updates the contract variable.
-* **Authorization:** $\text{DAO}$ majority via $\text{Key 2}$ signatures, finalized by $\text{Key 3}$'s state-change signature.
-
-#### 2. Membership Changes
-
-Adding new collaborators or removing existing members.
-
-* **Mechanism:** The proposal outlines the new member list and the rebalancing of voting weights. If approved, $\text{Key 3}$ updates the official $\text{Key 2}$ multi-sig structure and the membership record.
-* **Authorization:** $\text{DAO}$ consensus via $\text{Key 2}$ signatures.
-
-#### 3. Smart Contract Updates
-
-Modifying the core operational logic or parameters of the automation system.
-
-* **Mechanism:** $\text{DAO}$ approval is needed to prevent unilateral rule changes. If approved, $\text{Key 3}$ implements the new parameters. For major upgrades, $\text{Key 2}$'s signature is required alongside $\text{Key 3}$ to authorize the deployment of a new contract version.
-* **Authorization:** $\text{Key 2}$ consensus is mandatory for all policy-altering actions.
-
-#### 4. License Grants
-
-Formal authorization for granting exclusive rights, derivative work approvals, or commercial licensing terms.
-
-* **Mechanism:** Upon approval, $\text{Key 3}$ generates a verifiable **License Certificate CID** and records the terms into the $\text{DAO}$'s immutable metadata. If payment is involved, $\text{Key 3}$ may generate a time-sensitive $\text{Lightning}$ invoice for atomic execution.
-
-#### 5. Large Withdrawals
-
-Any withdrawal exceeding $\text{Key 3}$'s pre-approved automated daily limit (Tier 1) must be escalated.
-
-* **Mechanism:** Members vote on the amount, recipient, and reason. If approved by $\text{Key 2}$ consensus, $\text{Key 3}$ is authorized to bypass its normal spending limit and process the transaction.
-
-#### 6. Emergency Actions
-
-Time-sensitive operations to protect the $\text{DAO}$'s assets or function.
-
-* **Emergency Pause:** A proposal to temporarily freeze all automated $\text{Key 3}$ operations. Voting periods are expedited, and thresholds are typically increased (e.g., $80\%$). Execution is handled by $\text{Key 3}$ after the expedited timelock.
-* **Key Replacement:** If $\text{Key 3}$ is compromised, the replacement bypasses the compromised key and requires the cooperation of **$\text{Key 2}$ (human authority) and $\text{Key 1}$ (content binding)**.
-
-#### 7. Ownership Transfer
-
-Transferring complete control of the content $\text{DAO}$ (e.g., selling the content asset to a new entity).
-
-* **Mechanism:** Requires the highest level of consensus (often $100\%$ of $\text{Key 2}$ weight). If approved, $\text{Key 3}$ executes the transfer of the $\text{Key 2}$ control key to the new owner(s) and records the final sale terms (including any retained perpetual royalties) in the immutable $\text{DAO}$ history.
-* **Key Status:** $\text{Key 1}$ and $\text{Key 3}$ remain unchanged (preserving identity and automation), but are now under the control of the new $\text{Key 2}$ holders.
-
-## 4.2.4 Fail-Safe and Recovery Mechanisms 🛡️
-
-This section details the redundancy and recovery protocols built into the three-key architecture, ensuring that the loss or failure of any single key does not result in the permanent loss of the content, funds, or governance. These mechanisms represent the ultimate expression of human sovereignty over automated execution.
-
-### Key Resilience Scenarios
-
-The system's design ensures mutual dependence, allowing remaining keys to be used as proof of authority for recovery.
-
-| Scenario | Required Recovery Keys | Functionality Retained |
+| Key | Core Function | Security Gain |
 | :--- | :--- | :--- |
-| **$\text{Key 3}$ (Automation) Compromised/Stuck** | $\text{Key 2}$ + $\text{Key 1}$ | Human authority ($\text{Key 2}$) and content binding ($\text{Key 1}$) cooperate to override and replace the execution key. |
-| **$\text{Key 2}$ (Human Control) Lost** | $\text{Key 1}$ + $\text{Key 3}$ Logs | The content binding ($\text{Key 1}$) and historical automated behavior ($\text{Key 3}$ logs) prove ownership for social recovery. |
-| **$\text{Key 2}$ and $\text{Key 3}$ Both Lost** | $\text{Key 1}$ + $\text{Bitcoin}$ Timestamp | The deterministic content identifier ($\text{Key 1}$) combined with the immutable transaction timestamp proves the claim of original authorship. |
+| **Key 1 (Content)** | **Identity & Binding** | Proves content authenticity and enables anti-plagiarism. |
+| **Key 2 (Human)** | **Sovereignty & Policy** | Guarantees ultimate human control and the ability to override/pause automation. |
+| **Key 3 (Automation)** | **Efficiency & Execution** | Enables trustless, instantaneous payments and operations without human bottlenecks. |
 
-### 1. Key 3 Malfunction: Emergency Override ($\text{Key 2}$ + $\text{Key 1}$)
+This robust combination delivers:
 
-If the $\text{Smart Contract Execution Key}$ ($\text{Key 3}$) malfunctions, exceeds its programmed limits, or is suspected of being compromised, the human authority must be able to intervene immediately.
+  * **Trustless Automation:** $\text{Key 3}$ efficiently manages day-to-day operations.
+  * **Human Sovereignty:** $\text{Key 2}$ holds the ultimate veto and policy-setting power.
+  * **Content Integrity:** $\text{Key 1}$ cryptographically anchors the wallet to the asset.
 
-* **Mechanism:** The $\text{Key 2}$ holder(s) and the $\text{Key 1}$ derivation must cooperate to sign an **emergency override transaction**. This transaction explicitly revokes the compromised $\text{Key 3}$'s authority in the multi-sig and activates a new, freshly generated $\text{Key 3}$.
-* **Result:** Automation is temporarily disabled. The $\text{DAO}$ is forced to manually approve all financial transactions using $\text{Key 2}$ signatures until the new $\text{Key 3}$ is fully operational and verified.
-
-### 2. Key 2 Loss: Social/Behavioral Recovery ($\text{Key 1}$ + $\text{Key 3}$ Logs)
-
-The loss of the human-controlled private key (e.g., destroyed hardware wallet) is mitigated via a recovery process utilizing cryptographic proofs and social consensus.
-
-* **Proof of Claim:** The user leverages $\text{Key 1}$ (re-derived from their physical content) and the public, immutable $\text{Key 3}$ execution logs, which contain a pattern of authorized actions consistent with their identity.
-* **Mechanism:** The user initiates a recovery process with pre-designated trusted recovery contacts. The contacts verify the user's identity off-chain and then co-sign a transaction with the content $\text{DAO}$ (using $\text{Key 1}$ and $\text{Key 3}$'s verified logs as proof) to issue a new $\text{Key 2}$ for the owner.
-
-### 3. Worst-Case Loss: Ultimate Sovereignty ($\text{Key 1}$ + $\text{Bitcoin}$ Timestamp)
-
-In the extreme scenario where the creator loses both their control key ($\text{Key 2}$) and the automated system key ($\text{Key 3}$).
-
-* **Proof:** The owner can prove that the $\text{CID}$ of the original content (which regenerates $\text{Key 1}$) is their original creation. The unchangeable $\text{Bitcoin}$ transaction timestamp proves they were the first to register that $\text{Key 1}$ to the $\text{DAO}$ wallet.
-* **Final Recourse:** This evidence constitutes an absolute claim of ownership that can be used in arbitration or a legal challenge to force the creation of a new $\text{Key 2}$ by the underlying protocol maintainers. This is the **ultimate fail-safe**, proving that **physical possession of the content and the cryptographic proof of creation outweigh all other factors.**
-
-## 4.2.5 Authorization Matrix: The Key to Trustless Governance 🗝️
-
-The Authorization Matrix defines the security model of $\text{IPFS}$-$\text{Sats}$, demonstrating how the separation of roles between the **Content $\text{Key}$ ($\text{Key 1}$)**, the **Human Control $\text{Key}$ ($\text{Key 2}$)**, and the **Execution $\text{Key}$ ($\text{Key 3}$)** enforces security and sovereignty.
-
-A checkmark ($\checkmark$) indicates the cryptographic signature from that key is required for the transaction to be valid. An em dash (—) indicates the key is not required.
-
-| Operation Category | Operation | Key 1 (Content) | Key 2 (Human Control) | Key 3 (Automation) | Notes / Purpose |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Permissionless Inflow** | Receive Lightning Zap | — | — | — | Standard Bitcoin behavior; permissionless by design. |
-| | Receive On-Chain Deposit | — | — | — | Wallet always accepts funds; no key required to receive. |
-| **Routine Automation** | Yield Distribution | — | — | $\checkmark$ | Executed automatically within $\text{DAO}$ limits and schedule. |
-| | Host Payments | — | — | $\checkmark$ | Executes after verified Proof-of-Storage. |
-| | Report Generation | — | — | $\checkmark$ | Routine metadata update; read-only data publishing. |
-| | Liquidity Lease Renewal | — | — | $\checkmark$ | Automated financial optimization (if profitable). |
-| **Governance & Policy** | Change Yield Split | — | $\checkmark$ | $\checkmark$ | Requires $\text{DAO}$ vote ($\text{Key 2}$ consensus) for execution ($\text{Key 3}$). |
-| | Add/Remove Member | — | $\checkmark$ | $\checkmark$ | Modifies the $\text{Key 2}$ multi-sig structure. |
-| | Update Contract Rules | — | $\checkmark$ | $\checkmark$ | Change to automation logic, requires $\text{Key 2}$ consensus. |
-| | Large Withdrawal | — | $\checkmark$ | $\checkmark$ | Exceeds $\text{Key 3}$'s auto-approve limit; requires $\text{DAO}$ vote. |
-| | Emergency Pause | — | $\checkmark$ | $\checkmark$ | Halts $\text{Key 3}$ execution after a rapid $\text{Key 2}$ vote. |
-| **Ultimate Sovereignty** | **Replace $\text{Key 3}$** | $\checkmark$ | $\checkmark$ | — | **Override:** Bypasses a compromised $\text{Key 3}$ (Fail-Safe 1). |
-| | **Transfer Ownership** | $\checkmark$ | $\checkmark$ | $\checkmark$ | Sale of content asset; requires all three for final transfer of $\text{Key 2}$. |
-| | **DAO Dissolution** | $\checkmark$ | $\checkmark$ | — | Final withdrawal/migration; highest security clearance required. |
-
----
-
-## Summary: Operational Security
-
-The $\text{IPFS}$-$\text{Sats}$ three-key architecture creates **defense in depth** by separating authority into distinct, role-based keys. This separation ensures that no single point of failure can compromise the asset or its governance structure.
-
-| Principle | Key/Combination | Security Gain |
-| :--- | :--- | :--- |
-| **No Single Point of Failure** | $\text{Key 1, Key 2, Key 3}$ | No one key can act alone for critical operations (e.g., spending, rule changes). |
-| **Automation without Risk** | $\text{Key 3}$ | Executes routine tasks efficiently but operates within strict, pre-defined spending limits. |
-| **Human Oversight** | $\text{Key 2}$ + $\text{Key 3}$ (or $\text{Key 1}$ in emergency) | $\text{Key 2}$ can always pause automated processes or initiate a vote to override $\text{Key 3}$. |
-| **Content Integrity** | $\text{Key 1}$ | Cryptographically ensures the wallet and funds are dedicated to the specific, verifiable content ($\text{CID}$). |
-| **Recovery Possible** | $\text{Key 1}$ + $\text{Key 2}$ or $\text{Key 1}$ + $\text{Key 3}$ Logs | Multiple paths to regain control or replace compromised keys, preventing permanent loss. |
-
-This robust combination enables $\text{IPFS}$-$\text{Sats}$ to be simultaneously:
-
-* **Accessible:** Anyone can "zap" funds without permission ($\text{Key 1, 2, 3}$ not required for inflow).
-* **Automated:** Routine operations happen efficiently and instantly without human intervention ($\text{Key 3}$ alone).
-* **Secure:** Major changes require consensus and a timelock ($\text{Key 2}$ + $\text{Key 3}$).
-* **Recoverable:** Multiple fail-safes prevent permanent loss of control ($\text{Key 1}$ + $\text{Key 2}$ for override).
+In the subsequent section, we will detail the specific operations and the key combinations required to authorize each action, from routine host payments to emergency DAO dissolution.
