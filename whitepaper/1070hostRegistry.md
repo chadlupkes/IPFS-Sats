@@ -1,0 +1,180 @@
+# 10.7 Host Registry Record Spec
+
+## Purpose
+
+The Host Registry Record is what a SatSwap node publishes to the Host Discovery Layer to make itself findable as a delivery participant. It declares what blocks the host holds, what it charges, how to reach it for payment, and how it has performed historically.
+
+The discovery layer's query function — given CID X, return hosts willing to serve it — is only as useful as the records hosts publish. The schema defined here is the minimum required for a conforming record. Implementations may extend it only within the bounds defined in Section 10.7.6.
+
+---
+
+## 10.7.1 The Block-Level Advertising Decision
+
+A host publishing a Host Registry Record must advertise its inventory at the **individual block CID level**, not at the Merkle root CID level.
+
+This is a deliberate design decision with a specific rationale.
+
+A host that holds a root CID but not all of its constituent blocks would, under root-level advertising, appear to the discovery layer as a complete source for that content. A requesting node would initiate a SatSwap exchange expecting full delivery, discover mid-transfer that certain blocks are unavailable, and be forced to trigger a new discovery event to locate the missing blocks. That mid-transfer failure imposes latency on the requesting node, complicates the payment flow, and degrades the reliability signal for the host.
+
+Block-level advertising eliminates this failure mode. The discovery layer knows exactly which blocks each host holds before the first WANT message is sent. The requesting node can construct a complete delivery plan — which host serves which block — from the discovery result alone, and execute the full swarm in parallel without interruption.
+
+The tradeoff is registry record size. A host holding many blocks for many files will maintain a large inventory list. This is the correct tradeoff: the data overhead is paid once at registration and update time, by the host. The alternative — mid-transfer re-discovery — is paid at transfer time, repeatedly, by the requesting node, and scales with every failure across every transfer on the network. Efficiency in delivery takes priority over economy in registry records.
+
+---
+
+## 10.7.2 Record Schema
+
+```
+HOST_REGISTRY_RECORD {
+
+  // IDENTITY
+  node_id:              string    // Unique identifier for this node (public key or DID)
+  lightning_endpoint:   string    // BOLT11-compatible Lightning node endpoint for payment
+  protocol_version:     string    // SatSwap protocol version this node implements
+
+  // INVENTORY
+  blocks: [
+    {
+      cid:              string    // Block-level CID of a block this host currently holds
+      root_cid:         string    // OPTIONAL: Merkle root CID of the file this block belongs to
+      msats_per_block:  uint64    // Price this host charges per delivery of this block
+    }
+  ]
+
+  // PERFORMANCE METRICS
+  uptime_score:         float     // Self-reported uptime as a fraction (0.0 - 1.0)
+  avg_response_ms:      uint64    // Self-reported average response time in milliseconds
+  blocks_served:        uint64    // Cumulative count of blocks successfully delivered
+
+  // RECORD METADATA
+  published_at:         uint64    // Unix timestamp when this record was published
+  expires_at:           uint64    // Unix timestamp after which this record should not be used
+  last_anchor:          uint64    // OPTIONAL: Bitcoin block height of most recent state snapshot anchor
+  state_hash:           string    // OPTIONAL: Hash of this record at last anchor time
+  signature:            string    // Cryptographic signature over the record by node_id
+}
+```
+
+---
+
+## 10.7.3 Field Definitions
+
+### Identity Fields
+
+**`node_id`**
+The host's unique network identifier, derived from its public key or Decentralized Identifier. This is the stable identity that reputation signals, payment records, and discovery queries reference. A host must use the same `node_id` consistently across record updates.
+
+**`lightning_endpoint`**
+The Lightning Network endpoint to which requesting nodes direct payment during the SatSwap handshake. This must be a reachable, active Lightning node endpoint at the time the record is published. The SatSwap exchange (Section 10.6) sends the BOLT11 invoice to this endpoint during the QUOTE message.
+
+**`protocol_version`**
+The version of the SatSwap exchange protocol this node implements. Requesting nodes use this to ensure compatibility before initiating an exchange. Nodes running different protocol versions may not be able to complete a handshake.
+
+---
+
+### Inventory Fields
+
+**`blocks`**
+An array of block-level records, one entry per block the host currently holds and is willing to serve. Each entry contains:
+
+- `cid` — the block-level Content Identifier. This is the hash of the raw block data, not the root CID of a multi-block file. For a host holding a complete file, every block CID in that file's Merkle DAG appears as a separate entry.
+- `root_cid` — optional. The Merkle root CID of the file to which this block belongs. When present, this field enables the discovery layer to answer root-CID-based queries directly, without first requiring DAG resolution. A client searching for a file by its root CID receives back a map of which hosts hold which blocks, enabling precise swarm routing before the first WANT is sent. When absent, the block is discoverable by its individual CID only.
+- `msats_per_block` — the price in millisatoshis the host charges to deliver this block via a SatSwap exchange. Hosts may price different blocks differently, allowing market-based pricing for high-demand content.
+
+**Why `root_cid` is optional at publication time.** A host that cached a block during a proxy swarm operation may not know which file that block belongs to. It holds the block, can serve it, and should advertise it — but cannot populate `root_cid` without additional information. The record is valid and useful without it. The mechanism for completing missing `root_cid` values over time is described in Section 10.7.4.
+
+---
+
+### Performance Metrics
+
+These fields are self-reported by the host. They are not verified by the discovery layer at publication time. Their accuracy is enforced indirectly by reputation: a host that consistently misreports its performance will accumulate negative signals from requesting nodes that experience poor delivery, degrading its ranking in discovery results over time.
+
+**`uptime_score`**
+A value between 0.0 and 1.0 representing the fraction of time this node has been reachable and responsive over a recent measurement window.
+
+**`avg_response_ms`**
+The host's self-reported average time in milliseconds between receiving a WANT message and sending the corresponding BLOCK message.
+
+**`blocks_served`**
+The cumulative count of blocks this host has successfully delivered since the node was initialized. Provides a long-term signal of host experience and network contribution.
+
+---
+
+### Record Metadata
+
+**`published_at`**
+The Unix timestamp at which this record was signed and published to the discovery layer. Serves operational freshness management only — it is self-reported and not independently verifiable against an external reference. It should not be treated as a provenance claim. Requesting nodes use it to assess whether a record is current enough to act on.
+
+**`expires_at`**
+The Unix timestamp after which the discovery layer should not return this record in query results and requesting nodes should not initiate exchanges based on it. Hosts must publish a renewed record before expiry to remain visible. This prevents stale records from accumulating indefinitely in the discovery database.
+
+**`last_anchor`** *(optional)*
+The Bitcoin block height at which this host most recently committed a state snapshot hash via OP_RETURN on a Lightning channel operation. Provides a periodically verifiable anchor for the host's operational state — provable by block height to anyone with a Bitcoin node. This is distinct from the continuous Unix timestamp updates: `published_at` and `expires_at` manage operational freshness; `last_anchor` provides occasional cryptographic verifiability. Hosts are not required to anchor on any fixed schedule, though once per day is a reasonable minimum for hosts that want to maintain a verifiable identity record.
+
+**`state_hash`** *(optional, required if `last_anchor` is present)*
+The hash of this Host Registry Record at the time of the most recent anchor. The corresponding OP_RETURN on the Bitcoin blockchain contains this hash, allowing any node to verify that the anchored state matches the current record or to detect drift since the last anchor.
+
+**`signature`**
+A cryptographic signature over the complete record, produced using the private key corresponding to `node_id`. Verifies that the record was produced by the claimed host and has not been tampered with in transit or storage. A record with an invalid signature must be rejected.
+
+---
+
+## 10.7.4 Record Lifecycle
+
+**Publication.** A host constructs a record, signs it, and publishes it to the discovery layer. The discovery layer replicates the record across its peer network according to its own replication protocol (Section 3.4).
+
+**Updates.** When a host's inventory changes — blocks added through caching, blocks evicted due to storage pressure, price changes in response to demand signals — the host publishes a new record with an updated `published_at` timestamp and a fresh signature. The discovery layer replaces the prior record for that `node_id`. Updates are continuous and operational; they do not require blockchain anchoring.
+
+**Expiry.** Records that pass their `expires_at` timestamp are removed from active discovery results. Hosts that go offline gracefully should publish a final record with an immediate `expires_at`. Hosts that go offline unexpectedly will have their records age out naturally.
+
+**Discovery layer write-back for `root_cid` completion.** When a host publishes block entries without a `root_cid`, the discovery layer may complete those entries over time. As other nodes resolve Merkle DAGs and publish records that associate block CIDs with their root CIDs, the discovery layer correlates that information and writes the `root_cid` back to the host's record. This turns the discovery layer into a self-completing index: gaps in block provenance fill in organically as the network's collective DAG resolution activity accumulates.
+
+Write-back is bounded by the schema discipline defined in Section 10.7.6. The discovery layer may only write back `root_cid` because it directly serves the discovery query function. No other fields may be added or modified by the discovery layer.
+
+**State snapshot anchoring.** Separately from continuous operational updates, a host may periodically commit a `state_hash` to Bitcoin via OP_RETURN on a Lightning channel operation — a channel open, close, or other transaction that the host is executing anyway. This piggybacks the anchoring at near-zero marginal cost, consistent with how the metadata bundle timestamps content (Section 3.2.2). The anchor does not capture the full record on-chain — only the hash. The current record in the discovery layer is the authoritative source; the anchor provides a periodic verifiability checkpoint.
+
+There is no protocol requirement to maintain a chain of historical state hashes or to keep prior versions of the record available. The anchor establishes "the host was in this state at this block height." What came before is not a protocol concern.
+
+**Historical retention.** Old Host Registry Records are not preserved by the protocol. Once a record is superseded by an update or aged out by expiry, it is not recoverable through the discovery layer. This is by design — the discovery layer's function is to reflect current network state, not to maintain historical archives. Organizations with jurisdictional, compliance, or legal obligations to retain historical host records manage that retention at the application layer, according to their own requirements and using whatever archival infrastructure suits their context. The protocol imposes no requirement and provides no mechanism for it.
+
+**Inventory accuracy.** A host that publishes a block CID it does not actually hold will fail the SatSwap exchange when a requesting node issues a WANT for that block. Repeated failures degrade the host's discovery ranking. The economic incentive to maintain accurate inventory is direct: inaccurate records produce failed exchanges, which produce negative reputation signals, which reduce the host's visibility in future discovery results.
+
+---
+
+## 10.7.5 Relationship to the SatSwap Exchange
+
+The Host Registry Record and the SatSwap Exchange Message Spec (Section 10.6) are adjacent but independent. The record is the pre-exchange declaration; the handshake is the exchange itself.
+
+A requesting node uses the record to decide whether to initiate an exchange: does this host hold the block I need, at a price I am willing to pay, with sufficient reliability metrics to be worth trying? If yes, it sends a WANT. From that point forward, the exchange protocol governs the interaction and the record plays no further role.
+
+This clean separation means that changes to the discovery layer or the record schema do not require changes to the exchange protocol, and vice versa. The two specifications can evolve independently as long as the interface between them — the `lightning_endpoint` and `cid` fields that the exchange protocol uses from the record — remains stable.
+
+---
+
+## 10.7.6 Schema Discipline and the Application Layer Boundary
+
+The Host Registry Record schema is bounded by a single governing principle: **every field must directly serve the discovery function.**
+
+The discovery function is narrow and well-defined: given a CID, return hosts willing to serve it, ranked by price and reliability. Every field in this schema serves that function. `node_id` identifies the host. `lightning_endpoint` enables payment. `blocks` maps inventory to price. Performance metrics enable ranking. Record metadata manages freshness. `root_cid` enables root-level queries that accelerate swarm routing. `last_anchor` and `state_hash` provide periodic identity verifiability without burdening continuous updates.
+
+Any proposed extension to the schema must pass the same test: does it make the discovery layer better at answering who holds what? If the answer is no, the extension does not belong in the Host Registry Record.
+
+This boundary matters because registry records are replicated and updated across the entire discovery network. Every field added to the schema increases the size of every record update propagated to every node. Extensions that serve application-layer concerns — content moderation flags, extended licensing metadata, platform-specific annotations — would impose that network overhead on every participant, for the benefit of only those participants running the application that uses those fields. That is the wrong tradeoff.
+
+**Application-layer extensibility belongs in the metadata bundle.** The IPFS-Sats metadata bundle (Section 3.2) is the correct location for content-level data that goes beyond the transport and discovery layers. The protocol already establishes this pattern: Section 6.4 defines Core Concern Flags — signals for content categories such as malware, illegal content, and spam — as application-layer metadata rather than protocol-layer data. Applications that need to track, filter, or annotate content at a higher level of abstraction than block delivery extend the metadata bundle, not the Host Registry Record.
+
+**Historical retention is an application-layer decision.** The same principle applies across time as well as across fields. The protocol does not preserve historical host state. Organizations that need it — for legal discovery, regulatory compliance, or any other reason — implement retention at the application layer. The protocol stays minimal; the application layer handles the rest.
+
+This separation preserves the protocol's layered architecture:
+
+- **Host Registry Record** — discovery function only. Who holds what, at what price, reachable how.
+- **SatSwap Exchange** — transport function only. The atomic block-for-sats primitive.
+- **Metadata Bundle and its extensions** — content identity, rights, governance, and application-layer annotations.
+
+Each layer stays minimal, stable, and independent. Applications that need more build on top. The protocol does not grow to accommodate them.
+
+---
+
+## Summary
+
+The Host Registry Record is the declaration a SatSwap node publishes to make itself available as a delivery participant. It advertises inventory at the individual block CID level to enable precise pre-transfer routing and eliminate mid-swarm re-discovery failures. An optional `root_cid` field on each block entry enables root-CID-based discovery queries; when absent at publication time, the discovery layer may complete this field through write-back as DAG resolution information accumulates across the network. Unix timestamps manage operational freshness and are self-reported; they serve the discovery layer's currency needs and are not provenance claims. Optional `last_anchor` and `state_hash` fields provide periodic cryptographic verifiability by committing a state hash to Bitcoin via OP_RETURN on naturally occurring Lightning channel operations — piggybacking the anchoring at near-zero cost. Historical record retention is not a protocol requirement; organizations with compliance or legal obligations manage it at the application layer. Schema extensions are bounded by discovery utility, and application-layer extensibility — including content flags and extended annotations — belongs in metadata bundle extensions following the pattern established in Section 6.4.
