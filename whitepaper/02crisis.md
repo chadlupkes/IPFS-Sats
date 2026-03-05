@@ -92,96 +92,106 @@ The persistence crisis imposes real costs on society:
 
 The persistence crisis reveals a deeper truth: infrastructure without economics is infrastructure without sustainability. Good intentions and volunteer efforts cannot replace the simple, universal mechanism of payment for service rendered.
 
-## 2.4 The Need for a Native Solution
+# 2.4 The Need for a Native Solution
 
-The three crises—verification, innovation, and persistence—are not separate problems but interconnected symptoms of a deeper structural flaw: the absence of native economic and cryptographic infrastructure that aligns individual incentives with collective truth, fair compensation, and permanent availability. Solving any one crisis in isolation is insufficient. What is required is a foundational protocol that simultaneously enables trustless verification, automated value distribution for derivative works, and self-sustaining data persistence—all without introducing new barriers, tokens, or centralized intermediaries.
+The three crises — verification, innovation, and persistence — are not separate problems but interconnected symptoms of a deeper structural flaw: the absence of native economic and cryptographic infrastructure that aligns individual incentives with collective truth, fair compensation, and permanent availability. Solving any one crisis in isolation is insufficient. What is required is a foundational protocol that simultaneously enables trustless verification, automated value distribution for derivative works, and self-sustaining data persistence — all without introducing new barriers, tokens, or centralized intermediaries.
 
-**Core Requirements for a Comprehensive Solution**
+---
+
+## Core Requirements for a Comprehensive Solution
+
 An effective solution must satisfy six fundamental requirements:
 
-1. Cryptographic Proof of Existence
+**1. Cryptographic Proof of Existence**
 - Every piece of content must receive an immutable, timestamped record on a neutral, censorship-resistant ledger
-- Timestamp is achieved via Lightning channel operations (zero marginal cost)
 - Proof must be verifiable by anyone, instantly, without requiring permission from platforms or institutions
-- The cost of verification must be trivial (fractions of a cent) to enable universal access
-2. Atomic Payments for Retrieval
-- To combat free-riding and ensure equitable resource distribution, payments must be "atomic"—either data is delivered and payment settles, or both fail with no partial outcomes
-- Micropayments must support sub-cent granularity (e.g., 1 satoshi or less) to price individual data blocks
+- The cost of verification must be trivial to enable universal access
+- The cost of falsification must be prohibitive — making forgery economically irrational rather than merely legally prohibited
+
+**2. Atomic Payments for Retrieval**
+- To combat free-riding and ensure equitable resource distribution, payments must be atomic — either data is delivered and payment settles, or both fail with no partial outcomes
+- Payments must support sub-cent granularity to enable pricing at the individual data block level
 - Settlement must be instant and trustless, requiring no intermediaries or account relationships between parties
-3. Yield-Backed Persistence Funding
+
+**3. Yield-Backed Persistence Funding**
 - Long-term data availability cannot depend on continuous manual payments or altruism
-- Initial deposits must generate passive income (yield) that automatically funds ongoing storage costs
-- Yield is generated through Lightning liquidity leasing, with future diversification into other sources like Layer 3 DAO profit distributions as Bitcoin's scaling ecosystem matures
-- Yield distribution must be tied to verifiable performance (proof-of-storage, uptime) to prevent fraud
-4. Automated Compensation for Derivative Works
-- When content is forked, remixed, or built upon, original creators must receive automatic royalties without requiring legal contracts or intermediaries
-- The system must track parent-child relationships cryptographically, creating transparent provenance trees
-- Payment splits must be enforceable by code, not goodwill, ensuring creators cannot be bypassed
-5. Flexible Governance Without Centralization
+- Initial deposits must generate passive income that automatically funds ongoing storage costs without requiring active management by the content owner
+- Income must scale with network participation, creating stronger persistence guarantees as the network grows
+- Payment to storage providers must be tied to verifiable performance to prevent fraud
+
+**4. Automated Compensation for Derivative Works**
+- When content is forked, remixed, or built upon, original creators must receive automatic compensation without requiring legal contracts or intermediaries
+- The system must track parent-child relationships cryptographically, creating transparent and auditable provenance trees
+- Payment splits must be enforceable by code, not goodwill, ensuring creators cannot be bypassed regardless of the commercial success of derivative works
+
+**5. Flexible Governance Without Centralization**
 - Each piece of content must have its own governance structure, scaling from a single creator to complex multi-stakeholder organizations
 - Decisions about licensing, revenue distribution, and derivative work approval must be transparent and auditable
-- No global authority should control the protocol—governance must be per-content and opt-in
-6. Low Barriers to Participation
+- No global authority should control the protocol — governance must be per-content and opt-in
+- Governance rules must be enforced by code, producing objective and predictable outcomes independent of any administrator
+
+**6. Low Barriers to Participation**
 - Solutions must avoid proprietary tokens, specialized hardware, or high capital requirements that exclude casual users
-- Integration with existing infrastructure (wallets, nodes, applications) must be straightforward
-- The user experience must abstract complexity—scanning a QR code or paying 10 sats should "just work"
+- Integration with existing infrastructure must be straightforward for developers building applications on the protocol
+- The user experience must abstract complexity — the end user should be able to verify, pay for, and receive authenticated content without understanding the underlying cryptographic mechanisms
 
-**Why Existing Solutions Fall Short**
+---
 
-Filecoin addresses persistence through cryptographic proofs but imposes industrial-scale barriers (collateral requirements, specialized hardware, complex deal-making) and remains adjacent to IPFS rather than integrated into its retrieval layer. It solves permanence at the cost of accessibility.
+## Why Existing Solutions Fall Short
+
+Filecoin addresses persistence through cryptographic proofs but imposes industrial-scale barriers (collateral requirements, specialized hardware, complex deal-making) and remains adjacent to content-addressed storage rather than integrated into its retrieval layer. It solves permanence at the cost of accessibility.
 
 Arweave provides one-time permanent storage but offers no flexibility for temporary data, no native support for retrieval incentives, and high upfront costs that prohibit casual use. It optimizes for "set-it-and-forget-it" archival, not dynamic, living data.
 
 Traditional IP systems require expensive legal processes, offer no automated enforcement for derivative works, and concentrate power in the hands of those who can afford lawyers. They solve nothing for the average creator.
 
-Commercial pinning services (Pinata, Infura) restore centralization, reintroduce subscription models, and can censor or deplatform users. They are IPFS in name only—centralized infrastructure with content-addressed URLs.
+Commercial pinning services (Pinata, Infura) restore centralization, reintroduce subscription models, and can censor or deplatform users. They are content-addressed storage in name only — centralized infrastructure with content-addressed URLs.
 
 None of these solutions address all three crises simultaneously. None provide cryptographic timestamping, automated royalty distribution, and self-sustaining economics in a single, accessible protocol.
 
-**How IPFS-Sats Meets This Need**
+---
 
-IPFS-Sats directly addresses each requirement by integrating three mature, proven technologies into a unified protocol:
+## How IPFS-Sats Meets This Need
 
-**Bitcoin Blockchain for Timestamping:**
-- Every CID (Content Identifier) is timestamped based on the Bitcoin blockchain, creating immutable proof of existence
-- Bitcoin's security (the largest proof-of-work network) ensures timestamps cannot be forged or altered
-- Timestamps are globally recognized and increasingly accepted as legal evidence in multiple jurisdictions
+IPFS-Sats addresses each requirement by combining two cryptographic foundations with a payment layer and a governance structure:
 
-**Lightning Network for Atomic Micropayments:**
-- Lightning provides instant, trustless payments as small as 1 millisatoshi (1/1000th of a satoshi)
-- Hashed Timelock Contracts (HTLCs) ensure atomic exchanges: data is delivered only if payment succeeds, and payment succeeds only if data is verified
-- As of November 2025, Lightning supports 4,200-5,358 BTC in public capacity (~$400-500M), with 20,000+ nodes and enterprise adoption cutting fees by 50%
-- No proprietary tokens, no account creation, no intermediaries—just direct peer-to-peer value transfer
+**Content Hashing for Verification and Addressability:**
+- The foundational primitive of IPFS-Sats is cryptographic content hashing — data is identified by what it is, not where it is stored. A Content Identifier (CID) is derived directly from the hash of the content it identifies; any change to the content produces a different CID, making tampering self-evident
+- This primitive satisfies the verification requirement: anyone holding a CID can verify the authenticity and integrity of any data claimed to match it, without trusting any intermediary
+- IPFS is the reference implementation of a working technology stack built on this primitive — a proven, widely deployed system for content-addressed storage and retrieval. Other content-addressing systems that produce CID-compatible identifiers are conforming participants in the protocol
 
-**Lightning Yield Wallet for Self-Sustaining Storage:**
-- Users deposit Bitcoin into a Lightning Yield Wallet (LYW) that generates passive income through:
-  - Routing fees: Earned by forwarding payments through Lightning channels (0.1-1% per hop)
-  - Liquidity provision: Staking BTC on platforms like Babylon or Rootstock (5-15% APY)
-  - DeFi strategies: Tokenized treasuries, call overwriting, lending protocols
-- Yield automatically pays IPFS hosts to store and serve content, with payments triggered by proof-of-availability
-- The longer content is valuable (popular, frequently accessed), the more zaps (tips) it receives, boosting the wallet balance and extending persistence indefinitely
-- This creates a natural curation mechanism where important content persists while ephemeral data fades—driven by market signals rather than centralized gatekeepers
-- Unpopular content naturally fades as yield runs out—creating an organic, market-driven curation mechanism
+**Bitcoin for Immutable Timestamping:**
+- Bitcoin's proof-of-work consensus provides the timestamping layer. Every CID can be anchored to the Bitcoin blockchain, creating an immutable, globally verifiable record of existence at a specific point in time
+- The cost of falsifying a Bitcoin timestamp — rewriting the chain — is prohibitive at any scale, satisfying the requirement that forgery be economically irrational rather than merely legally prohibited
+- Bitcoin is the reference implementation for the timestamping requirement. The requirement is the property: immutability, censorship resistance, and prohibitive cost of falsification
 
-**Per-Content DAO for Fork Management:**
-- Each CID has its own DAO structure with configurable membership, voting weights, and governance rules
-- When a derivative work (fork) is created, the smart contract automatically:
-  - Records the parent-child relationship on-chain
-  - Calculates royalty splits based on the original creator's licensing terms
-  - Distributes payments via Lightning to all ancestors in the provenance tree
-- Creators receive compensation without negotiation, legal contracts, or platform intervention—enforced by cryptographic code
+**Lightning Network for Atomic Micropayments and Yield:**
+- The Lightning Network is a payment layer built on Bitcoin that provides instant, trustless, sub-cent micropayments via Hashed Timelock Contracts (HTLCs). The HTLC mechanism enforces atomicity at the protocol level: data is released only when payment is confirmed, and payment is returned if data is not delivered. Neither party can be cheated through normal protocol operation
+- Beyond individual exchanges, the Lightning Network enables the Lightning Yield Wallet (LYW) — a mechanism by which deposited capital generates passive income through liquidity provision, automatically funding ongoing storage costs without requiring active management by the content owner
+- Lightning is the reference implementation for both the atomic payment requirement and the yield-backed persistence requirement. Any payment layer providing equivalent atomicity, granularity, and trustless settlement satisfies the protocol's requirements
 
-Unified Protocol, Universal Access:
-- Standard IPFS clients can integrate IPFS-Sats with minimal modifications to BitSwap and DHT protocols
-- Users scan a QR code, pay 10 sats via any Lightning wallet, and receive instant verification of authenticity, provenance, and licensing terms
-- Developers access simple APIs for uploading, timestamping, and querying content—no blockchain expertise required
-- The system builds on Bitcoin's established liquidity and security rather than fragmenting the ecosystem with new tokens
+**Per-Content DAO Governance for Attribution and Compensation:**
+- The per-content DAO is not a technology but an organizational structure enforced by smart contracts. Each piece of content has its own governance instance with configurable membership, voting weights, and licensing rules
+- When a derivative work is created, the governing smart contract automatically records the parent-child relationship, calculates royalty splits according to the original creator's terms, and distributes payments to all ancestors in the provenance tree — without negotiation, legal contracts, or platform intervention
+- This structure satisfies the requirements for automated compensation and flexible governance: rules are set by the creator, enforced by code, and produce objective outcomes independent of any administrator
 
-**The Result: Foundational Rights Infrastructure**
+---
 
-IPFS-Sats is not merely a better storage protocol—it is foundational infrastructure for two essential digital rights:
+## Unified Protocol, Universal Access
+
+The IPFS-Sats protocol is designed to be implemented across a wide range of application contexts. Content addressing using cryptographic hash identifiers (CIDs) is the foundational primitive — the specific storage and retrieval system that produces and resolves those identifiers is an implementation decision. IPFS is the reference implementation and the natural starting point, but the protocol does not restrict participation to a single content-addressing system. Any implementation that produces CID-compatible identifiers and participates in the SatSwap exchange and discovery layers is a conforming participant.
+
+This implementation flexibility means application developers can build on IPFS-Sats for a wide range of use cases — decentralized media platforms, archival systems, scientific data repositories, software distribution networks, and others — using the infrastructure most appropriate to their context. The protocol provides the economic and cryptographic guarantees. The application layer determines how those guarantees are surfaced to users.
+
+The result for the end user remains consistent regardless of the underlying implementation: pay a trivial amount via any compatible payment channel, receive verified, authenticated content with cryptographic proof of its provenance and integrity.
+
+---
+
+## The Result: Foundational Rights Infrastructure
+
+IPFS-Sats is not merely a better storage protocol — it is foundational infrastructure for two essential digital rights:
+
 - **The Right to Verify**: Every individual can access cryptographic proof of what existed when, at no cost. Truth becomes provable, not negotiable.
 - **The Right to Fork**: Every creator can build upon existing work while ensuring original authors receive automatic, transparent compensation. Innovation becomes collaborative, not extractive.
 
-By solving the verification, innovation, and persistence crises simultaneously, IPFS-Sats creates the economic and cryptographic substrate for a Living Civilization—one where information integrity is guaranteed, creative contributions are fairly rewarded, and knowledge compounds through open collaboration rather than centralized control.
-
+By solving the verification, innovation, and persistence crises simultaneously, IPFS-Sats creates the economic and cryptographic substrate for a Living Civilization — one where information integrity is guaranteed, creative contributions are fairly rewarded, and knowledge compounds through open collaboration rather than centralized control.
