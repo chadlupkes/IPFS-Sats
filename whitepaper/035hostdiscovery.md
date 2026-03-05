@@ -35,7 +35,7 @@ At minimum, a conforming discovery layer must answer one query reliably:
 
 Everything else — reputation scoring, geographic filtering, uptime history, price comparison — is optimization built on top of that primitive query.
 
-A host participates in the discovery layer by publishing a **Host Registry Record** (defined in Section 10.6) that declares:
+A host participates in the discovery layer by publishing a **Host Registry Record** (defined in Section 10.7) that declares:
 
 - Which CIDs the host currently holds
 - The host's Lightning Network endpoint for receiving payment
