@@ -8,7 +8,7 @@ $$\text{Bundle Hash} = \text{Hash}(\text{Content CID} + \text{Metadata Wrapper})
 
 **The Complete Metadata Wrapper Structure**
 
-Every piece of content uploaded to IPFS-Sats generates a Metadata Wrapper encoded in dag-cbor (Concise Binary Object Representation), a schema-less format that efficiently stores structured data with native support for CID links. The Metadata Wrapper includes seven core components:
+Every piece of content in IPFS-Sats has a Metadata Wrapper encoded in dag-cbor (Concise Binary Object Representation), a schema-less format that efficiently stores structured data with native support for CID links. The Metadata Wrapper includes seven core components:
 
 ```json
 {
@@ -18,16 +18,12 @@ Every piece of content uploaded to IPFS-Sats generates a Metadata Wrapper encode
   // 2. TIMESTAMP PROOF
   "timestamp_proof": {
     "creation_time": 1735094400,
-    "anchor_details": {
-      "bitcoin_block": 875432,
-      "tx_id": "a1b2c3d4e5f6...",
-      "op_return_data": "0xHASH..."
-    },
     "provenance_chain": {
       "bundle_hash": "0xABCDEF...",
       "parent_bundle_hash": "0x012345...",
       "is_fork": false
-    }
+    },
+    "anchor_record_cid": "QmAnchorRecord..."  // OPTIONAL: added via IPNS after confirmation
   },
 
   // 3. IPFS-SATS PROTOCOL DATA
@@ -85,7 +81,7 @@ This is the **Content CID** — a direct, immutable link to the raw data file. B
 Separating the immutable Content CID from the Metadata Wrapper allows for dynamic governance without sacrificing content integrity:
 
 - **Content remains immutable.** The CID never changes, ensuring verifiable authenticity even if ownership or licenses are updated.
-- **Metadata is flexible.** Ownership, licensing terms, and revenue splits can be updated by the DAO (Key 2 authority) without re-uploading the content.
+- **Metadata is flexible.** Ownership, licensing terms, and revenue splits can be updated by the DAO (Key 2 authority) without re-publishing the content.
 - **Derivative works must generate new CIDs.** While new Metadata Bundles can be generated for derivative works (e.g., translations, remixes, or alternative licenses), each must reference a unique, derivative Content CID that includes the new work and links to the original CID. This preserves the original creator's economic claim (Key 1).
 - **Content can be verified independently** of the IPFS-Sats application layer.
 - **Existing content can be wrapped retroactively** with IPFS-Sats governance and economic logic by creating a new Metadata Bundle referencing an existing content CID.
@@ -94,9 +90,9 @@ Separating the immutable Content CID from the Metadata Wrapper allows for dynami
 
 Users can initiate content retrieval via path resolution: `/ipfs/QmMetadata.../content_cid`.
 
-However, the host node's protocol logic enforces economic rules on retrieval:
+The host node's protocol logic enforces economic rules on retrieval:
 
-- **The Content CID is not directly accessible:** While the CID path exists, the underlying file on the host node is protected by the IPFS-Sats protocol.
+- **The Content CID is not directly accessible:** The underlying file on the host node is protected by the IPFS-Sats protocol.
 - **Authorization Token Required:** The host node demands a specific authorization token — generated during the initial Metadata Bundle traversal — to ensure the transaction is recorded and the micropayment payout from the Lightning Yield Wallet (LYW) is correctly triggered by Key 3.
 - **Conclusion:** Without performing the authorized traversal to obtain the token, the file remains inaccessible, ensuring the host is always compensated for their service.
 
@@ -106,25 +102,32 @@ However, the host node's protocol logic enforces economic rules on retrieval:
 
 **Economically Incentivized Temporal Proof**
 
-IPFS-Sats achieves **trustless content timestamping** without incurring marginal cost for each file. This is accomplished by leveraging the economic necessity of the Lightning Network operation required to fund the user's Lightning Yield Wallet (LYW).
-
-The timestamping operation is piggybacked onto a standard on-chain Bitcoin transaction, such as a channel funding or closing transaction. This provides **cryptographic proof of existence** at a specific Bitcoin block height at zero marginal cost, as the transaction fee is already being paid for the LYW funding process.
+IPFS-Sats achieves trustless content timestamping through a two-stage process that separates the act of proving existence from the act of making that proof conveniently queryable. Understanding this separation is essential to understanding the protocol's trust model.
 
 ---
 
-### The Anchoring Mechanism: OP_RETURN Embedding
+### Stage 1: The Bundle Hash — The Root of Trust
 
-When a creator initializes or tops up their LYW, the channel funding transaction is constructed to include an **OP_RETURN** output containing the Bundle Hash, anchoring it permanently to the Bitcoin blockchain.
-
-**Data Hashing**
-
-The Bundle Hash embedded in the chain is the hash of the Content CID and the Metadata Wrapper:
+The Bundle Hash is the authoritative proof of a content's existence at a point in time. It is computed before any network activity occurs:
 
 $$\text{Bundle Hash} = \text{Hash}(\text{Content CID} + \text{Metadata Wrapper})$$
 
-This ensures that any subsequent alteration to either the content or the Metadata Wrapper renders the original on-chain timestamp invalid.
+All fields of the Metadata Wrapper that are knowable at creation time are included in this computation:
+- Creator identity and signature
+- LYW wallet address
+- DAO config CID
+- License terms
+- Descriptive metadata
+- Parent Bundle Hash (if derivative)
+- Protocol version
 
-**Channel Funding Transaction Structure**
+Critically, no Bitcoin transaction details are included — they do not exist yet at the time the Bundle Hash is computed. The Bundle Hash is stable and final before a single byte has touched the network.
+
+**The Anchoring Mechanism: OP_RETURN Embedding**
+
+The timestamping operation piggybacks onto a standard on-chain Bitcoin transaction associated with the creator's Lightning Yield Wallet — a channel opening, closing, or other channel operation the LYW is performing for its own economic reasons. The marginal cost is zero because the transaction fee is already being paid.
+
+The channel transaction is constructed to include an **OP_RETURN** output containing the 32-byte Bundle Hash:
 
 | Output | Purpose | Data |
 |---|---|---|
@@ -132,18 +135,59 @@ This ensures that any subsequent alteration to either the content or the Metadat
 | **Output 2** | Change | Remaining funds back to creator |
 | **Output 3** | OP_RETURN (Timestamp) | 32-byte Bundle Hash |
 
-The OP_RETURN opcode provides a globally verifiable, immutable record and ensures the output is provably unspendable, preventing UTXO set bloat.
+The LYW `wallet_address` field in the Metadata Wrapper is what ties the content to the channel operation — the wallet that committed the Bundle Hash to Bitcoin is the same wallet managing the content's economics. This link is verifiable without any additional data structure.
+
+Once the block is confirmed, the content's existence is proven to be no later than that block's timestamp. This proof is permanent and requires no further action to remain valid. Everything that follows is a convenience layer built on top of this root of trust.
+
+**The Two-Stage Timing**
+
+There is no requirement to rush the channel operation. The Bundle Hash can wait for the next naturally occurring LYW transaction. What matters is that when a channel operation does occur, the Bundle Hash travels with it at zero marginal cost. Creators who require immediate, undisputed finality for high-value content (e.g., patents, legal contracts) retain the option to pay for a **dedicated anchor** transaction on demand.
+
+---
+
+### Stage 2: The Anchor Record — The Convenience Layer
+
+After the channel transaction is confirmed, the application knows three things it did not know before:
+
+- The transaction ID (`tx_id`) containing the Bundle Hash
+- The block height where it was confirmed
+- The exact OP_RETURN data embedded
+
+These three fields, combined with the Bundle Hash itself and the Metadata Bundle CID, form the **Anchor Record** — a separate, content-addressed document published to the network after confirmation:
+
+```json
+{
+  "bundle_hash":         "0xABCDEF...",
+  "metadata_bundle_cid": "QmBundle...",
+  "tx_id":               "a1b2c3d4e5f6...",
+  "block_height":        875432,
+  "op_return_data":      "0xABCDEF...",
+  "anchor_type":         "channel_funding",
+  "published_by":        "node_id...",
+  "signature":           "..."
+}
+```
+
+The Anchor Record is hashed and published like any other content — it receives its own CID and becomes available to any node on the network. Once published, the `anchor_record_cid` field in the Metadata Wrapper is updated via IPNS to point to it. This update does not change the Bundle Hash or the Metadata Bundle CID — the core record remains permanently stable.
+
+**The trust hierarchy is clear:**
+- The Bundle Hash on-chain is the authoritative proof — immutable, globally verifiable, requiring no intermediary
+- The Anchor Record is the lookup mechanism — makes the proof conveniently queryable without requiring every verifier to scan the blockchain
+
+The Anchor Record is eventually consistent. It settles at its own pace, driven by economic conditions rather than protocol urgency. The proof exists the moment the block is confirmed. The Anchor Record simply makes that proof accessible.
 
 **Verification Process**
 
-Anyone can verify the content's existence time by following this trustless process:
+Anyone can verify a content's existence time:
 
-1. **Retrieve the Metadata Bundle:** Obtain the Metadata Wrapper via its CID.
-2. **Extract Data:** Extract the Content CID and the Bitcoin transaction ID (`tx_id`) from the Metadata Wrapper.
-3. **Reconstruct Hash:** Recompute the Bundle Hash locally using Hash(Content CID + Metadata Wrapper).
-4. **Query Blockchain:** Use the `tx_id` to retrieve the original transaction from any Bitcoin full node.
-5. **Compare Proof:** Extract the 32-byte hash from the OP_RETURN output and compare it against the locally recomputed Bundle Hash.
-6. **Confirm Time:** If the hashes match, the content's existence is verified to be no later than the timestamp of the Bitcoin block containing the confirmed transaction.
+1. Retrieve the Metadata Wrapper using the Metadata Bundle CID
+2. Compute the Bundle Hash locally: `Hash(Content CID + Metadata Wrapper)`
+3. Retrieve the Anchor Record via the `anchor_record_cid` in the Metadata Wrapper
+4. Use the `tx_id` from the Anchor Record to retrieve the transaction from any Bitcoin full node
+5. Extract the 32-byte hash from the OP_RETURN output and compare against the locally computed Bundle Hash
+6. If hashes match, content existed no later than the timestamp of the confirmed block
+
+If the `anchor_record_cid` is not yet present in the Metadata Wrapper — the channel operation has not yet occurred — the verifier knows the Bundle Hash exists but has not yet been committed to Bitcoin. This is a valid intermediate state; it simply means the content has not yet been timestamped on-chain.
 
 | Timestamping Method | Marginal Cost | Finality | Trust Model |
 |---|---|---|---|
@@ -155,53 +199,21 @@ Anyone can verify the content's existence time by following this trustless proce
 
 ### Application-Level Hash Chain for Continuous Provenance
 
-Bitcoin anchoring only occurs periodically (when the LYW needs a top-up). To provide a continuous, verifiable history for intermediate works, updates, and derivative content, IPFS-Sats introduces an **Application-Level Hash Chain**.
-
-**Hash-Chain Linking**
+Bitcoin anchoring only occurs when a LYW channel operation naturally occurs. To provide a continuous, verifiable history for intermediate works, updates, and derivative content between anchoring events, IPFS-Sats uses an **Application-Level Hash Chain**.
 
 Each new Metadata Bundle contains the Bundle Hash of its predecessor in the `parent_bundle_hash` field:
 
-- Original Content (M₁): `parent_bundle_hash = null`. Anchored on-chain.
+- Original Content (M₁): `parent_bundle_hash = null`. Anchored on-chain when next channel operation occurs.
 - Derivative Work (M₂): `parent_bundle_hash = Hash(Content CID₁ + Metadata Wrapper₁)`
 - Subsequent Work (M₃): `parent_bundle_hash = Hash(Content CID₂ + Metadata Wrapper₂)`
 
-When M₃ is eventually anchored in a new Bitcoin transaction, the entire chain (M₁ → M₂ → M₃) is timestamped simultaneously.
+When M₃ is eventually anchored, the entire chain (M₁ → M₂ → M₃) is timestamped simultaneously.
 
-**Provenance and Temporal Ordering**
+**Benefits of the hash chain:**
 
-1. **Temporal Ordering:** Since the Bundle Hash of the parent cannot be predicted, the child bundle must have been created *after* the parent. This establishes a strict, verifiable sequence of creation.
+1. **Temporal Ordering:** The Bundle Hash of the parent cannot be predicted, so the child bundle must have been created after the parent — establishing a strict, verifiable sequence of creation.
 2. **Tamper-Evidence:** Changing any detail in an upstream bundle changes its Bundle Hash, immediately breaking all downstream links and exposing the alteration.
-3. **Efficiency and Scalability:** Thousands of derivative works can be created between on-chain anchoring events, keeping the protocol efficient and scalable.
-
-**Flexibility for High-Value Content**
-
-For content requiring immediate, undisputed blockchain finality (e.g., patents, high-stakes legal contracts), creators can pay for a **dedicated anchor** Bitcoin transaction, bypassing the standard periodic channel-funding schedule.
-
----
-
-### Updated Metadata Wrapper Structure
-
-The complete Metadata Wrapper integrates the hybrid timestamping approach:
-
-```json
-{
-  "content_cid": "QmOriginalContent...",
-
-  "parent_bundle_hash": "a1b2c3d4e5f6..." ,
-
-  "bitcoin_anchor": {
-    "tx_id": "abc123def456...",
-    "block_height": 875432,
-    "op_return_hash": "d4e5f6...",
-    "anchor_type": "channel_funding"
-  },
-
-  "ipfs_sats_metadata": { },
-  "creator": { },
-  "license": { },
-  "title": "..."
-}
-```
+3. **Efficiency:** Thousands of derivative works can be created between on-chain anchoring events without any on-chain cost.
 
 ---
 
@@ -227,16 +239,16 @@ The Metadata Wrapper for every piece of content includes the essential, protocol
 Specifies the protocol version for client compatibility, ensuring clients can handle changes in the protocol's structure or required transaction formats as the system evolves.
 
 **`wallet_address`**
-The Lightning Network payment destination tied to the creator's Lightning Yield Wallet (LYW). This is the content's economic interface — the point where value flows to creators from Zaps, retrieval payments, and automated royalties.
+The Lightning Network payment destination tied to the creator's Lightning Yield Wallet (LYW). This is the content's economic interface — the point where value flows to creators from Zaps, retrieval payments, and automated royalties. This is also the wallet that will perform the channel operation embedding the Bundle Hash in Bitcoin, establishing the link between the content and its on-chain timestamp.
 
 **`channel_id`**
-The identifier of the specific Lightning Network channel used to anchor the content's Bundle Hash and fund the LYW. This field links the Metadata Bundle to its on-chain temporal proof.
+The identifier of the specific Lightning Network channel associated with this LYW. Links the Metadata Bundle to its economic infrastructure.
 
 **`dao_cid`**
-A link to a separate DAG node that defines the content's DAO governance structure (Section 6). Storing governance as a separate CID allows the DAO configuration to be updated and shared across multiple related content pieces (e.g., all tracks on an album).
+A link to a separate DAG node defining the content's DAO governance structure (Section 6). Storing governance as a separate CID allows the DAO configuration to be updated and shared across multiple related content pieces.
 
 **`smart_contract_hash`**
-The SHA-256 hash of the core smart contract code managing the content's economics — yield and royalty distribution, host payment verification, and licensing enforcement. This hash allows users and auditors to verify that the executed contract logic has not been tampered with.
+The SHA-256 hash of the core smart contract code managing the content's economics — yield and royalty distribution, host payment verification, and licensing enforcement. Allows users and auditors to verify the executed contract logic has not been tampered with.
 
 ---
 
@@ -260,7 +272,7 @@ The **Creator Identity & Signature** object establishes provable authorship and 
 
 Regardless of identity scheme, all entries must provide:
 
-- **Public Identifier:** A unique, publicly-shareable string
+- **Public Identifier:** A unique, publicly shareable string
 - **Signature:** Cryptographic proof that the holder of the private key signed the current state of the Metadata Wrapper (minus the signature field itself)
 - **Verification Algorithm:** Explicitly specified method required to perform the signature check
 - **Public Key:** The key material needed to verify the signature against the Bundle Hash
@@ -333,7 +345,7 @@ This enables **cascading royalties** automatically enforced by smart contract lo
 
 | Generation | Relationship | Royalty Action (Example: 1000 sats received) |
 |---|---|---|
-| **G3 (Mashup, Carol)** | Parent: Bob | Receives 900 sats. Triggers distribution to parent. |
+| **G3 (Mashup, Carol)** | Parent: Bob | Receives 900 sats. Triggers distribution upstream. |
 | **G2 (Remix, Bob)** | Parent: Alice | Receives 10% of 1000 sats (100 sats). Triggers distribution upstream. |
 | **G1 (Original, Alice)** | Parent: Null | Receives 10% of Bob's 100 sats (10 sats). |
 
@@ -396,7 +408,7 @@ The **Licensing & Terms** object defines the permissions and restrictions govern
 **Geographic and Time Restrictions:**
 
 - `geographic_restrictions` specifies jurisdictions where the license applies or is prohibited. Nodes in restricted regions can still retrieve the content (maintaining censorship resistance), but the Metadata Wrapper explicitly indicates the legal constraints on its use.
-- `expiry_date` allows licenses to automatically transition (e.g., from paid commercial use to public domain) at a specific date, validated by the smart contract before processing payments.
+- `expiry_date` allows licenses to automatically transition at a specific date, validated by the smart contract before processing payments.
 
 ---
 
@@ -428,40 +440,82 @@ The **Descriptive Metadata** section provides human-readable and machine-indexab
 ### Fields for Discoverability
 
 - **Standard Fields:** `title`, `description`, `tags`, `media_type`, and `language` allow decentralized search engines to index and categorize content without centralized services.
-- **Extended Fields (`additional`):** An arbitrary object for domain-specific data (e.g., composer for music, resolution for video, dependencies for software), ensuring the protocol handles rich metadata for any asset type.
-- **Thumbnail/Preview:** `thumbnail_cid` links to a small preview file enabling rich display in content catalogs and search results without requiring full file download.
+- **Extended Fields (`additional`):** An arbitrary object for domain-specific data, ensuring the protocol handles rich metadata for any asset type.
+- **Thumbnail/Preview:** `thumbnail_cid` links to a small preview file enabling rich display in content catalogs without requiring full file download.
 
 ---
 
 ## 3.2.8 Metadata Bundle Lifecycle
 
-The complete Metadata Bundle is composed of the Content CID and the seven-component Metadata Wrapper. Its creation follows a precise sequence:
+The Metadata Bundle comes into existence through a precise sequence that separates local computation from network publication, and separates the stable core record from the eventually consistent anchor proof. Understanding this sequence is essential to understanding why the Bundle Hash is trustworthy and why the Metadata Bundle CID is permanently stable.
 
-### Metadata Bundle Creation Flow
+### Creation and Publication Sequence
 
-1. **Raw Content Upload:** The file is uploaded to the storage layer, generating the `content_cid`.
-2. **External Data Fetch:** Current Bitcoin block height is queried, and the creator generates a digital signature using their cryptographic key.
-3. **Wrapper Construction:** The complete Metadata Wrapper (protocol data, identity, descriptive fields) is assembled.
-4. **Serialization:** The Wrapper is serialized using dag-cbor for efficient binary encoding and deterministic hashing.
-5. **Wrapper Upload:** The serialized Wrapper is uploaded, generating the **Metadata Bundle CID** — the primary identifier for all interactions.
-6. **Usage:** The Metadata Bundle CID is used for sharing, indexing, legal referencing, and triggering Lightning payments.
+**Step 1: Content hashing (local)**
+The content is hashed locally by the application. No network activity occurs. The Content CID is generated deterministically from the content itself. The content is then made available to the network — pinned locally and served to peers who request it by CID.
+
+**Step 2: Metadata Wrapper assembly (local)**
+All knowable fields are assembled into the Metadata Wrapper:
+- Content CID reference
+- Creator identity and signature
+- LYW wallet address and DAO config CID
+- License terms
+- Descriptive metadata
+- Parent Bundle Hash (if this is a derivative work)
+- Protocol version and smart contract hash
+
+No Bitcoin transaction details are included at this stage — they do not yet exist and cannot be included without creating a circular dependency.
+
+**Step 3: Bundle Hash computation (local)**
+The Bundle Hash is computed: `Hash(Content CID + Metadata Wrapper)`. This hash is final and stable. The Metadata Wrapper is serialized using dag-cbor, generating the **Metadata Bundle CID** — the primary identifier for all future interactions. The Metadata Bundle is published to the network. The CID will never change.
+
+**Step 4: Bitcoin anchoring (asynchronous)**
+The Bundle Hash waits for the next natural Lightning channel operation on the creator's LYW — a channel open, close, or other on-chain transaction the wallet is performing for its own economic reasons. When that operation occurs, the Bundle Hash is embedded in the OP_RETURN output at zero marginal cost. There is no urgency — the Bundle Hash can wait indefinitely for the right moment. Creators requiring immediate finality may initiate a dedicated anchor transaction at their own cost.
+
+**Step 5: Anchor Record publication (after confirmation)**
+Once the channel transaction is confirmed, the application publishes the **Anchor Record** as a separate content-addressed document:
+
+```json
+{
+  "bundle_hash":         "0xABCDEF...",
+  "metadata_bundle_cid": "QmBundle...",
+  "tx_id":               "a1b2c3d4e5f6...",
+  "block_height":        875432,
+  "op_return_data":      "0xABCDEF...",
+  "anchor_type":         "channel_funding",
+  "published_by":        "node_id...",
+  "signature":           "..."
+}
+```
+
+The Anchor Record is hashed and published like any other content, receiving its own CID. It is the lookup mechanism that makes the on-chain proof conveniently queryable — not the proof itself. The proof is the Bundle Hash in the Bitcoin block.
+
+**Step 6: IPNS update (after Anchor Record publication)**
+The `anchor_record_cid` field in the Metadata Wrapper is updated via IPNS to point to the newly published Anchor Record. This update does not alter the Metadata Wrapper, the Bundle Hash, or the Metadata Bundle CID. The core record remains permanently stable. IPNS resolves to the latest version, which now includes the anchor reference.
+
+### The Two Cost Profiles
+
+This sequence introduces two distinct cost events with different urgency profiles:
+
+| Event | Cost | Timing | Urgency |
+|---|---|---|---|
+| **Bundle Hash anchoring** | ~$0 marginal (piggybacks on LYW channel operation) | Next natural channel operation | None — wait for economically justified transaction |
+| **Anchor Record publication** | Normal network publication cost | After channel confirmation | None — eventually consistent, proof already exists on-chain |
+
+The protocol imposes no deadline on either event. Both are driven by economic conditions, not protocol requirements.
 
 ### Metadata Immutability vs. Updates (IPNS)
 
-Changing any field in the Metadata Wrapper creates an entirely new Metadata Bundle CID, potentially breaking existing links.
+Publishing a new Metadata Wrapper creates a new Metadata Bundle CID, potentially breaking existing references. IPFS-Sats uses **IPNS** to provide a mutable pointer to the latest version:
 
-**Solution: InterPlanetary Name System (IPNS)**
-
-IPFS-Sats uses IPNS to provide a mutable pointer to the latest version of the Metadata Bundle:
-
-1. The creator generates an IPNS name (often derived from their Decentralized Identifier).
-2. This IPNS name initially points to the first Metadata Bundle CID (e.g., `/ipns/k51qzi...` → `QmBundle_v1`).
-3. When a protocol-level update occurs (e.g., a DAO vote changes a royalty split), a new Metadata Bundle CID is generated (`QmBundle_v2`).
-4. The creator signs an update pointing the same IPNS name to `QmBundle_v2`.
+1. The creator generates an IPNS name (often derived from their Decentralized Identifier)
+2. The IPNS name initially points to the first Metadata Bundle CID
+3. When a protocol-level update occurs (e.g., a DAO vote changes a royalty split, or the `anchor_record_cid` becomes available), a new Metadata Bundle CID is generated
+4. The creator signs an update pointing the same IPNS name to the new CID
 
 **Best Practice:**
-- **Immutable References** (legal documents, long-term archives) should use the raw Metadata Bundle CID.
-- **Dynamic References** (client applications, websites) should use the IPNS name to always resolve to the latest version.
+- **Immutable References** (legal documents, long-term archives) should use the raw Metadata Bundle CID
+- **Dynamic References** (client applications, websites) should use the IPNS name to always resolve to the latest version
 
 ---
 
@@ -474,7 +528,7 @@ The IPFS-Sats Metadata Bundle is designed to eliminate the need for centralized 
 | Layer | Proof Element | Verification Check |
 |---|---|---|
 | **1. Content Integrity** | Content CID | Hash(Content) = Content CID — proves the file is unaltered |
-| **2. Temporal Proof** | Bitcoin OP_RETURN | Block height exists and contains Bundle Hash — proves when the content existed |
+| **2. Temporal Proof** | Bitcoin OP_RETURN via Anchor Record | Block height contains Bundle Hash — proves when the content existed |
 | **3. Creator Identity** | DID Signature | Signature verifies against Creator's Public Key — proves who created it |
 | **4. Provenance Chain** | Parent Bundle Hash | Links to a prior Metadata Bundle — proves history and derivative relationship |
 | **5. Economic Validity** | Wallet Address | Lightning Wallet responds and DAO governance is auditable — proves economic functionality |
