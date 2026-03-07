@@ -6,7 +6,7 @@ SatSwap defines how a client pays a host for a block of data. It does not define
 
 That gap is not a detail — it is a foundational requirement. Without a reliable answer to the question *"which hosts currently hold the blocks for CID X?"*, the exchange protocol has no starting point. A client cannot issue a WANT message to a host it cannot locate.
 
-The Host Discovery Layer is the system that answers that question.
+The Host Discovery Layer is the system that answers that question. It also serves a second function introduced in Section 3.2: providing the distributed infrastructure for the Anchor Records table, which links Metadata Bundle CIDs to their Bitcoin timestamp proofs. Both functions are served by the same underlying database — the **Records Database** — described in Section 3.5.3.
 
 ---
 
@@ -29,7 +29,11 @@ The relationship between layers is strictly one-directional: the discovery layer
 
 ## 3.5.2 What the Discovery Layer Must Do
 
-At minimum, a conforming discovery layer must answer one query reliably:
+The Host Discovery Layer serves two distinct functions, each corresponding to a table in the Records Database.
+
+**Function 1: Host Routing**
+
+Answer the primary query reliably:
 
 > *"Given CID X, return a list of hosts currently serving that content, their Lightning endpoints, and their stated price per block."*
 
@@ -42,23 +46,41 @@ A host participates in the discovery layer by publishing a **Host Registry Recor
 - The host's price per block in millisatoshis
 - Uptime and performance metrics (self-reported, reputation-weighted)
 
-These records are written to the discovery database when a host begins serving content and updated or removed as the host's inventory changes.
+These records are written to the Records Database when a host begins serving content and updated or removed as the host's inventory changes.
+
+**Function 2: Anchor Record Lookup**
+
+Answer the verification query:
+
+> *"Given a Metadata Bundle CID, return the Bitcoin transaction that proves the Bundle Hash existed at a specific block height."*
+
+A LYW node participates in this function by writing an **Anchor Record** (defined in Section 10.8) after a Lightning channel operation confirms on-chain. The Anchor Record links the Metadata Bundle CID and Bundle Hash to the `tx_id` and `block_height` of the confirming transaction, enabling any verifier to check the timestamp proof against the Bitcoin blockchain without scanning the full chain.
+
+Both functions are served by the same distributed database infrastructure. The economic incentive for nodes to maintain both tables comes from the same source: participation in the discovery layer earns revenue through SatSwap exchanges, and that incentive covers all tables in the database.
 
 ---
 
-## 3.5.3 Decentralized Database as the Implementation Class
+## 3.5.3 The Records Database
 
-The discovery layer requires a database with specific properties that centralized systems cannot provide without reintroducing trust dependencies:
+The distributed database underlying the Host Discovery Layer is the **Records Database** — a permissionless, application-layer database maintained collectively by participating nodes. It holds two tables:
 
-**No single point of failure.** A discovery database controlled by one operator creates a chokepoint. That operator can censor hosts, manipulate rankings, or disappear entirely. The discovery layer must survive the failure of any individual participant.
+**Table 1: Host Registry Records**
+Maps CIDs to hosts willing to serve them, their Lightning endpoints, and their pricing. Populated by SatSwap nodes advertising their inventory. Full schema in Section 10.7.
 
-**No permission to write.** Any host meeting the protocol's schema requirements must be able to publish a Host Registry Record without approval from a gatekeeper. Permissioned writes recreate the platform problem the protocol is designed to escape.
+**Table 2: Anchor Records**
+Links Metadata Bundle CIDs to Bitcoin transactions containing their Bundle Hash in OP_RETURN. Populated by LYW nodes after channel confirmation. Full schema in Section 10.8.
 
-**Content-addressed storage.** Records in the discovery database should themselves be addressable by hash, making tampering detectable. A record that claims a host holds CID X should be verifiable against the record's own hash.
+The Records Database requires specific properties that centralized systems cannot provide without reintroducing trust dependencies:
 
-**Eventual consistency is acceptable.** Discovery does not require global consensus in the way financial settlement does. A slightly stale record that resolves to a host who no longer holds a block results in a failed WANT message and a retry — not a lost payment. The exchange layer is atomic; discovery merely needs to be *good enough, fast enough*.
+**No single point of failure.** A database controlled by one operator creates a chokepoint. That operator can censor hosts, manipulate rankings, or disappear entirely. The Records Database must survive the failure of any individual participant.
 
-These properties describe a class of technology — decentralized, append-optimized, peer-replicated databases — that has been under active development since Protocol Labs first explored the IPDB concept alongside IPFS. Current implementations in this class include OrbitDB, Ceramic, and similar systems. The IPFS-Sats protocol does not mandate any specific implementation. What it mandates is conformance to the Host Registry Record schema (Section 10.6) and participation in the query interface. Which database engine underlies that conformance is a decision left to the implementer.
+**No permission to write.** Any host meeting the protocol's schema requirements must be able to publish a Host Registry Record without approval from a gatekeeper. Any LYW node must be able to write an Anchor Record after channel confirmation. Permissioned writes recreate the platform problem the protocol is designed to escape.
+
+**Content-addressed storage.** Records in the database should themselves be addressable by hash, making tampering detectable. A record that claims a host holds CID X should be verifiable against the record's own hash.
+
+**Eventual consistency is acceptable.** Neither table requires global consensus in the way financial settlement does. A slightly stale Host Registry Record that resolves to a host no longer holding a block results in a failed WANT message and a retry — not a lost payment. An Anchor Record that arrives after the channel confirms rather than simultaneously is still correct when it arrives. The exchange layer is atomic; the Records Database merely needs to be good enough, fast enough.
+
+These properties describe a class of technology — decentralized, append-optimized, peer-replicated databases — that has been under active development since Protocol Labs first explored the IPDB concept alongside IPFS. Current implementations in this class include OrbitDB, Ceramic, and similar systems. The IPFS-Sats protocol does not mandate any specific implementation. What it mandates is conformance to the Host Registry Record schema (Section 10.7), the Anchor Record schema (Section 10.8), and participation in the query interface. Which database engine underlies that conformance is a decision left to the implementer.
 
 ---
 
@@ -87,30 +109,35 @@ This is not a requirement for a minimal implementation. A discovery layer that s
 
 The protocol's design philosophy applies here as directly as anywhere: define the interface, not the implementation.
 
-The interface the discovery layer must expose is simple:
+The interface the discovery layer must expose is:
 
 ```
 query(cid)                        → [{ node_id, lightning_endpoint, price_per_block, uptime_score }]
 publish(host_registry_record)     → confirmation
 remove(node_id, cid)              → confirmation
+query_anchor(metadata_bundle_cid) → { bundle_hash, wallet_address, tx_id, block_height }
+write_anchor(anchor_record)       → confirmation
 ```
 
-Any system that correctly implements these three operations, stores records in the Host Registry Record schema, and participates in a peer-replication network qualifies as a conforming discovery layer. A small network might run a single implementation. A mature network might have several competing discovery databases, each optimized for different trade-offs — one prioritizing low query latency, another prioritizing maximum host diversity, another specializing in archival or rarely-accessed content.
+Any system that correctly implements these operations, stores records in the defined schemas, and participates in a peer-replication network qualifies as a conforming discovery layer. A small network might run a single implementation. A mature network might have several competing discovery databases, each optimized for different trade-offs — one prioritizing low query latency, another prioritizing maximum host diversity, another specializing in archival or rarely-accessed content.
 
 Clients can be configured to query multiple discovery databases and merge results. The SatSwap exchange layer does not care which discovery layer surfaced a host candidate — it only cares whether the host delivers the block and receives payment.
 
 ---
 
-## 3.5.6 Relationship to Content Addressing
+## 3.5.6 Division of Responsibility
 
-The discovery layer does not validate content. It does not verify that a host actually holds a block — it only records that the host *claims* to hold it. Validation happens at the exchange layer, through the atomic SatSwap handshake: the client pays only upon receiving a valid block, and an invalid or missing block results in a failed payment.
+The Records Database does not validate the claims stored within it. It does not verify that a host actually holds a block — it only records that the host claims to hold it. It does not verify that a Bitcoin transaction contains a given Bundle Hash — it only records that a LYW node claims it does.
 
-This division of responsibility keeps the discovery layer lightweight. It is a claims database, not an audit system. The exchange protocol provides the audit.
+Validation happens elsewhere by design:
 
-What the discovery layer does provide is the index that makes the exchange protocol reachable. Without it, the SatSwap network has no way for demand to find supply. With it, any client holding a CID can find, in milliseconds, a ranked list of hosts willing to serve that content for sats.
+- **Host inventory claims** are validated at the exchange layer through the atomic SatSwap handshake. The client pays only upon receiving a valid block; an invalid or missing block results in a failed payment.
+- **Anchor Record claims** are validated by any verifier who chooses to check: retrieve the Metadata Wrapper, compute the Bundle Hash locally, retrieve the referenced Bitcoin transaction, and compare the OP_RETURN data directly against the computed hash.
+
+This division of responsibility keeps the Records Database lightweight. It is a claims database and a lookup index — not an audit system. The exchange protocol and the Bitcoin blockchain provide the audits respectively. What the Records Database provides is the connective tissue that makes both audits reachable: demand finds supply through Host Registry Records, and timestamp proofs become queryable through Anchor Records.
 
 ---
 
 ## Summary
 
-The Host Discovery Layer is the market-making infrastructure of the SatSwap network. It is a decentralized, permissionless database that maps CIDs to willing hosts, providing the starting point for every exchange. It sits above the exchange protocol and below the application layer, separate from both, pluggable by design. Query patterns logged by the discovery layer feed directly into the cache optimization economics described in the following section. The protocol specifies the schema and the interface. The implementation is left to the developer community.
+The Host Discovery Layer is the market-making and verification infrastructure of the IPFS-Sats network. Its core construct is the **Records Database** — a distributed, permissionless, application-layer database with two tables: Host Registry Records mapping CIDs to willing hosts, and Anchor Records linking Metadata Bundle CIDs to their Bitcoin timestamp proofs. The layer sits above the exchange protocol and below the application layer, separate from both, pluggable by design. Query patterns logged by the discovery layer feed directly into the cache optimization economics described in Section 3.6. The protocol specifies the schemas and the interface. The implementation is left to the developer community.
