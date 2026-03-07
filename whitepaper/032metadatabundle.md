@@ -22,8 +22,7 @@ Every piece of content in IPFS-Sats has a Metadata Wrapper encoded in dag-cbor (
       "bundle_hash": "0xABCDEF...",
       "parent_bundle_hash": "0x012345...",
       "is_fork": false
-    },
-    "anchor_record_cid": "QmAnchorRecord..."  // OPTIONAL: added via IPNS after confirmation
+    }
   },
 
   // 3. IPFS-SATS PROTOCOL DATA
@@ -151,24 +150,27 @@ After the channel transaction is confirmed, the application knows three things i
 
 - The transaction ID (`tx_id`) containing the Bundle Hash
 - The block height where it was confirmed
-- The exact OP_RETURN data embedded
+- The wallet address of the LYW that performed the operation
 
-These three fields, combined with the Bundle Hash itself and the Metadata Bundle CID, form the **Anchor Record** — a separate, content-addressed document published to the network after confirmation:
+These fields, combined with the Metadata Bundle CID and Bundle Hash, form the **Anchor Record** — a record written into the **Records Database**, the distributed application-layer database maintained within the Host Discovery Layer. The Records Database holds two tables: Host Registry Records (Section 10.7) and Anchor Records. The Anchor Record table's function is: given a Metadata Bundle CID, return the Bitcoin transaction that proves its existence.
+
+**Anchor Record schema (required fields):**
 
 ```json
 {
-  "bundle_hash":         "0xABCDEF...",
   "metadata_bundle_cid": "QmBundle...",
+  "bundle_hash":         "0xABCDEF...",
+  "wallet_address":      "lnbc...",
   "tx_id":               "a1b2c3d4e5f6...",
   "block_height":        875432,
-  "op_return_data":      "0xABCDEF...",
-  "anchor_type":         "channel_funding",
   "published_by":        "node_id...",
   "signature":           "..."
 }
 ```
 
-The Anchor Record is hashed and published like any other content — it receives its own CID and becomes available to any node on the network. Once published, the `anchor_record_cid` field in the Metadata Wrapper is updated via IPNS to point to it. This update does not change the Bundle Hash or the Metadata Bundle CID — the core record remains permanently stable.
+The `wallet_address` is the critical linking field — it matches the `wallet_address` in the Metadata Wrapper's `ipfs_sats_metadata`, proving that the node publishing the Anchor Record is the same LYW managing the content's economics. The signature is verifiable against that wallet's public key. Additional fields such as `op_return_data` and `anchor_type` are optional extensions that applications may include.
+
+The Records Database provides the economic incentive for Anchor Record persistence. Nodes participate in the discovery layer because doing so earns them revenue through SatSwap exchanges — that incentive covers all tables in the database without requiring a separate economic wrapper per record.
 
 **The trust hierarchy is clear:**
 - The Bundle Hash on-chain is the authoritative proof — immutable, globally verifiable, requiring no intermediary
@@ -182,12 +184,12 @@ Anyone can verify a content's existence time:
 
 1. Retrieve the Metadata Wrapper using the Metadata Bundle CID
 2. Compute the Bundle Hash locally: `Hash(Content CID + Metadata Wrapper)`
-3. Retrieve the Anchor Record via the `anchor_record_cid` in the Metadata Wrapper
+3. Query the Records Database by Metadata Bundle CID to retrieve the Anchor Record
 4. Use the `tx_id` from the Anchor Record to retrieve the transaction from any Bitcoin full node
 5. Extract the 32-byte hash from the OP_RETURN output and compare against the locally computed Bundle Hash
 6. If hashes match, content existed no later than the timestamp of the confirmed block
 
-If the `anchor_record_cid` is not yet present in the Metadata Wrapper — the channel operation has not yet occurred — the verifier knows the Bundle Hash exists but has not yet been committed to Bitcoin. This is a valid intermediate state; it simply means the content has not yet been timestamped on-chain.
+If no Anchor Record exists in the Records Database for a given Metadata Bundle CID, the channel operation has not yet occurred. This is a valid intermediate state — the Metadata Bundle exists and is queryable, but has not yet been committed to Bitcoin.
 
 | Timestamping Method | Marginal Cost | Finality | Trust Model |
 |---|---|---|---|
@@ -472,26 +474,22 @@ The Bundle Hash is computed: `Hash(Content CID + Metadata Wrapper)`. This hash i
 **Step 4: Bitcoin anchoring (asynchronous)**
 The Bundle Hash waits for the next natural Lightning channel operation on the creator's LYW — a channel open, close, or other on-chain transaction the wallet is performing for its own economic reasons. When that operation occurs, the Bundle Hash is embedded in the OP_RETURN output at zero marginal cost. There is no urgency — the Bundle Hash can wait indefinitely for the right moment. Creators requiring immediate finality may initiate a dedicated anchor transaction at their own cost.
 
-**Step 5: Anchor Record publication (after confirmation)**
-Once the channel transaction is confirmed, the application publishes the **Anchor Record** as a separate content-addressed document:
+**Step 5: Anchor Record written to Records Database (after confirmation)**
+Once the channel transaction is confirmed, the application writes the **Anchor Record** to the Records Database — the distributed application-layer database maintained within the Host Discovery Layer:
 
 ```json
 {
-  "bundle_hash":         "0xABCDEF...",
   "metadata_bundle_cid": "QmBundle...",
+  "bundle_hash":         "0xABCDEF...",
+  "wallet_address":      "lnbc...",
   "tx_id":               "a1b2c3d4e5f6...",
   "block_height":        875432,
-  "op_return_data":      "0xABCDEF...",
-  "anchor_type":         "channel_funding",
   "published_by":        "node_id...",
   "signature":           "..."
 }
 ```
 
-The Anchor Record is hashed and published like any other content, receiving its own CID. It is the lookup mechanism that makes the on-chain proof conveniently queryable — not the proof itself. The proof is the Bundle Hash in the Bitcoin block.
-
-**Step 6: IPNS update (after Anchor Record publication)**
-The `anchor_record_cid` field in the Metadata Wrapper is updated via IPNS to point to the newly published Anchor Record. This update does not alter the Metadata Wrapper, the Bundle Hash, or the Metadata Bundle CID. The core record remains permanently stable. IPNS resolves to the latest version, which now includes the anchor reference.
+The Anchor Record is the lookup mechanism that makes the on-chain proof conveniently queryable — not the proof itself. The proof is the Bundle Hash in the Bitcoin block. The Records Database provides the economic incentive for persistence through the same participation incentive that sustains the Host Registry Record table.
 
 ### The Two Cost Profiles
 
@@ -500,7 +498,7 @@ This sequence introduces two distinct cost events with different urgency profile
 | Event | Cost | Timing | Urgency |
 |---|---|---|---|
 | **Bundle Hash anchoring** | ~$0 marginal (piggybacks on LYW channel operation) | Next natural channel operation | None — wait for economically justified transaction |
-| **Anchor Record publication** | Normal network publication cost | After channel confirmation | None — eventually consistent, proof already exists on-chain |
+| **Anchor Record write** | Records Database participation cost | After channel confirmation | None — eventually consistent, proof already exists on-chain |
 
 The protocol imposes no deadline on either event. Both are driven by economic conditions, not protocol requirements.
 
@@ -510,7 +508,7 @@ Publishing a new Metadata Wrapper creates a new Metadata Bundle CID, potentially
 
 1. The creator generates an IPNS name (often derived from their Decentralized Identifier)
 2. The IPNS name initially points to the first Metadata Bundle CID
-3. When a protocol-level update occurs (e.g., a DAO vote changes a royalty split, or the `anchor_record_cid` becomes available), a new Metadata Bundle CID is generated
+3. When a protocol-level update occurs (e.g., a DAO vote changes a royalty split), a new Metadata Bundle CID is generated
 4. The creator signs an update pointing the same IPNS name to the new CID
 
 **Best Practice:**
