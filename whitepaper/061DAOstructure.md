@@ -1,68 +1,87 @@
-# 6.0 Per-Content DAO Governance 🏛️
+# 6. Per-Content DAO Governance 🏛️
 
-The governance for specific content parameters is managed by a **Per-Content Decentralized Autonomous Organization ($\text{DAO}$)**. This governance mechanism is tied directly to the content's core economic structure, specifically the predefined $\text{\$SATS}$ income distribution. This structure is self-contained and uses existing contract parameters to determine voting rights, ensuring simplicity and economic alignment. 
+The governance for specific content parameters is managed by a **Per-Content Decentralized Autonomous Organization (DAO)**. This governance mechanism is tied directly to the content's core economic structure — specifically the income distribution ratio defined in the Metadata Bundle. The structure is self-contained and uses existing contract parameters to determine voting rights, ensuring simplicity and economic alignment.
 
 ---
 
 ## 6.1 DAO Structure: Economic Alignment and Voting Power
 
-The Per-Content $\text{DAO}$ operates under a fixed structure where influence is directly proportional to the economic stake held by the participants.
+The Per-Content DAO operates under a structure where influence is directly proportional to the economic stake held by the participants.
 
 ### Membership, Weights, and Roles
 
 #### 1. Membership
 
-Membership in a specific Per-Content $\text{DAO}$ is automatically granted to any user or entity listed as a recipient in the content's initial, fixed $\text{\$SATS}$ income distribution ratio.
+Membership in a Per-Content DAO is automatically granted to any entity listed as a recipient in the content's income distribution ratio at the time the Metadata Bundle is published.
 
-* **Stakeholder Types:** This includes the **Content Creator**, original **Stakers** (initial depositors), and contracted **Storage Providers** who are entitled to a share of the content's persistent revenue stream.
+- **Stakeholder Types:** This includes the Content Creator, initial depositors who funded the LYW at launch, and hosts contracted to receive a share of the content's persistent revenue stream.
 
-#### 2. Voting Weights (Power)
+#### 2. Voting Weights
 
-Voting weight within the Per-Content $\text{DAO}$ is defined by the member's fixed percentage share of the content's projected $\text{\$SATS}$ income stream.
+Voting weight within the Per-Content DAO is defined by the member's percentage share of the content's sats income stream, as specified in the Metadata Bundle.
 
-* **Fixed by Contract:** The distribution ratio is permanently set upon the $\text{DAO}$ contract initialization and cannot be changed by a $\text{DAO}$ vote.
-* **Rationale:** This links governance influence directly to the economic return a participant receives from the content, ensuring that decision-makers are those with the greatest economic stake in the content’s long-term health and profitability.
+- **Fixed by Metadata Bundle:** The income distribution ratio is a constant of the published Metadata Bundle. It is not a governable parameter — it cannot be changed by a DAO vote. This is a deliberate architectural constraint: allowing in-place mutation of the distribution ratio would decouple governance weight from economic stake and create a vector for hostile takeovers.
+- **Changing distributions requires a fork:** If participants want a different income distribution, the mechanism is to publish a new CID with a new Metadata Bundle and a new DAO initialized with the desired ratios. The parent CID's DAO remains exactly as originally configured, permanently, and continues operating under its original terms.
+- **Rationale:** Linking governance influence directly to the immutable economic stake each participant holds ensures that decision-makers are those with the greatest long-term interest in the content's health — and that no subsequent vote can retroactively alter the foundational terms under which participants joined.
 
-| Stakeholder Type | Example Income Ratio | Voting Power |
-| :--- | :--- | :--- |
-| **Content Creator** | $50\%$ | $50\%$ of the $\text{DAO}$'s total vote |
-| **Initial Staker Group A** | $30\%$ | $30\%$ of the $\text{DAO}$'s total vote |
-| **Storage Provider Pool** | $20\%$ | $20\%$ of the $\text{DAO}$'s total vote |
-| **Total** | $\mathbf{100\%}$ | $\mathbf{100\%}$ **Total Distributable Voting Power** |
+| Stakeholder Type | Example Income Ratio | Voting Weight |
+|---|---|---|
+| **Content Creator** | 50% | 50% of total DAO vote |
+| **Initial Depositor Group** | 30% | 30% of total DAO vote |
+| **Host Pool** | 20% | 20% of total DAO vote |
+| **Total** | **100%** | **100% Total Distributable Voting Power** |
 
-#### 3. Roles
+#### 3. Key 1 Authority and Creator Governance Configuration
 
-* **Proposer:** Any member whose fixed income share exceeds a minimum, content-specific threshold (e.g., $0.1\%$ of the Total Distributable Voting Power) can submit a formal proposal. A small security bond of $\text{\$SATS}$ is required to filter low-effort or frivolous proposals, which is returned upon reaching the minimum participation quorum or forfeited otherwise.
-* **Voter:** All members defined in the distribution ratio can cast their votes (**For**, **Against**, or **Abstain**). The weight of their vote is their fixed income share percentage.
-* **Content Guardian (Optional/Limited):** The original content creator may be assigned a temporary, limited-scope Guardian role. This role may have an expedited veto power over proposals that are deemed malicious or violate core protocol mandates. This veto is always subject to a supermajority override by the general $\text{DAO}$ membership.
+The Content Creator's authority within the DAO is expressed through Key 1 (the Content Binding Key, defined in Section 4.1). Key 1 is not necessarily a single key held by a single person — its governance structure is fully configurable at the time of Metadata Bundle creation and reflects the creator's chosen model for collective decision-making.
+
+Key 1 authority can be configured as any of the following:
+
+- **Solo:** A single creator controls Key 1 unilaterally. All Key 1 actions execute immediately without additional approval.
+- **Multi-sig Majority:** Key 1 actions require approval from more than half of the designated Key 1 signers. Appropriate for small collaborative teams.
+- **Multi-sig Supermajority:** Key 1 actions require approval from two-thirds or more of the designated Key 1 signers. Appropriate for projects where significant decisions warrant broader consensus.
+- **Universal Consensus:** Key 1 actions require unanimous agreement from all designated signers. Appropriate for foundational codebases, public goods, or any project where no unilateral authority is acceptable.
+
+The creator can also configure Key 1 to be effectively locked — setting conditions under which no Key 1 action can be taken at all, creating a fully autonomous DAO governed only by Key 2 (member governance) and Key 3 (automation). In this configuration, any change to the DAO's operational parameters requires either a fork or a DAO vote within the bounds of what Key 2 governs.
+
+This design means governance flexibility lives entirely in how Key 1 is constructed at publication time, not in runtime mutation of the distribution ratio.
+
+#### 4. Roles
+
+- **Proposer:** Any member whose income share meets a minimum content-specific threshold (e.g., 0.1% of Total Distributable Voting Power) can submit a formal proposal. A small sats bond is required to filter low-effort or frivolous proposals; this bond is returned when the proposal reaches minimum participation quorum, or forfeited otherwise.
+- **Voter:** All members defined in the distribution ratio can cast votes (For, Against, or Abstain). The weight of each vote equals the member's income share percentage.
+
+---
 
 ### Quorum and Threshold Requirements
 
-All Quorum and Threshold requirements are based on the **Total Distributable Voting Power** (the full $100\%$ of the income distribution ratio).
+All quorum and threshold requirements are calculated against the **Total Distributable Voting Power** — the full 100% of the income distribution ratio.
 
 #### Quorum (Participation)
 
-A minimum percentage of the Total Distributable Voting Power must participate in a vote for the result to be considered valid and executed.
+A minimum percentage of Total Distributable Voting Power must participate in a vote for the result to be valid and executable.
 
-* **Standard Quorum:** $\mathbf{35\%}$ of Total Distributable Voting Power for all standard proposals.
-* **Emergency Quorum:** A lower quorum (e.g., $20\%$) may be accepted for time-sensitive, emergency bug-fix proposals.
+- **Standard Quorum:** 35% of Total Distributable Voting Power for all standard proposals.
+- **Emergency Quorum:** A reduced quorum (e.g., 20%) may be accepted for time-sensitive emergency proposals, such as security patches requiring immediate action.
 
 #### Threshold (Passage)
 
-The Threshold is the minimum percentage of *participating* votes required for a proposal to pass and be enacted.
+The threshold is the minimum percentage of *participating* votes required for a proposal to pass.
 
 | Proposal Type | Description | Required Threshold |
-| :--- | :--- | :--- |
-| **Standard Parameters** | Adjusting content fees, incentive multipliers, or minor moderation rules. | $\mathbf{51\%}$ of participating voting power (Simple Majority) |
-| **Critical/Constitutional** | Smart contract upgrades, modification of the Content Guardian role, or reallocation of high-value Content Treasury funds. | $\mathbf{66.7\%}$ of participating voting power (Supermajority) |
+|---|---|---|
+| **Standard Parameters** | Adjusting content access fees, host incentive multipliers, or minor operational rules | 51% of participating voting power (Simple Majority) |
+| **Critical / Constitutional** | Smart contract upgrades, Key 1 configuration changes, or reallocation of Content Treasury funds | 66.7% of participating voting power (Supermajority) |
+
+---
 
 ### Governance Process and Voting Periods
 
 The governance process is structured into distinct, time-bound phases to ensure adequate review and participation.
 
-| Phase | Duration (Standard) | Description |
-| :--- | :--- | :--- |
-| **Proposal Submission** | 48 Hours | Proposal parameters are finalized, the required $\text{\$SATS}$ bond is locked, and the proposal is submitted to the queue. |
-| **Discussion Period** | 72 Hours | An off-chain period for community review, discussion, and feedback on the proposal's merits before on-chain voting commences. |
-| **Voting Phase** | 7 Days (168 Hours) | The official on-chain period for members to cast their votes according to their fixed income share weight. |
-| **Execution Delay** | 24 Hours | A grace period following a successful vote before the change is automatically enacted by the governing smart contract, allowing all stakeholders to adjust. |
+| Phase | Duration | Description |
+|---|---|---|
+| **Proposal Submission** | 48 hours | Proposal parameters are finalized, the required sats bond is locked, and the proposal enters the queue |
+| **Discussion Period** | 72 hours | Off-chain period for community review and feedback before on-chain voting begins |
+| **Voting Phase** | 7 days | The on-chain period during which members cast votes weighted by their income share |
+| **Execution Delay** | 24 hours | A grace period after a successful vote before the change is enacted by Key 3, allowing all stakeholders time to review and respond |
