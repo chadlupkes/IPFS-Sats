@@ -1,12 +1,12 @@
-## 5. Lightning Yield Wallet Economics ⚡💰
+# 5. Lightning Yield Wallet Economics ⚡💰
 
 The core challenge for any decentralized storage system is funding perpetual data persistence without relying on subscription fees or continuous external funding. The Lightning Yield Wallet (LYW) is the economic solution. It is the engine that transforms the creator's initial Bitcoin deposit into a self-sustaining, yield-bearing asset whose generated income covers the ongoing, fluctuating costs of content hosting and retrieval.
 
-The LYW is a Bitcoin multi-sig address secured by the three-key architecture (Section 4), strategically designed to interact with the Bitcoin Lightning Network economy. Its function is to secure multiple streams of wealth-based income to compensate hosts for providing the essential data persistence services—the atomic $\text{sats-for-data}$ exchange.
+The LYW is a Bitcoin multi-sig address secured by the three-key architecture (Section 4), strategically designed to interact with the Bitcoin Lightning Network economy. Its function is to secure multiple streams of wealth-based income to compensate hosts for providing the essential data persistence services — the atomic sats-for-data exchange.
 
-***
+---
 
-### 5.1 The Lightning Yield Wallet: Multi-Source Yield Strategy
+## 5.1 The Lightning Yield Wallet: Multi-Source Yield Strategy
 
 The LYW is a **Bitcoin multi-sig address** secured by the three-key architecture (Section 4), designed specifically to interact with Bitcoin's Lightning Network economy. It represents the treasury for a piece of content's persistent existence.
 
@@ -14,52 +14,51 @@ Its strategic goal is to maximize yield while strictly adhering to **non-custodi
 
 ---
 
-### 5.1.1 Primary Income Stream: Liquidity Leasing
+## 5.1.1 Primary Income Stream: Liquidity Leasing
 
-The most reliable and immediately feasible income stream for the LYW is **Liquidity Leasing**. This stream monetizes the LYW's principal by providing a necessary service to the Lightning Network itself—**channel capacity**—in exchange for an upfront fee. This mechanism provides predictable income without incurring debt or leverage risk.
+The most reliable and immediately feasible income stream for the LYW is **Liquidity Leasing**. This stream monetizes the LYW's principal by providing a necessary service to the Lightning Network itself — channel capacity — in exchange for an upfront fee. This mechanism provides predictable income without incurring debt or leverage risk.
 
-#### Mechanism: Non-Custodial Leasing
+### Mechanism: Non-Custodial Leasing
 
-The LYW uses specialized, non-custodial marketplaces to rent out its inbound channel capacity to professional, high-volume routing nodes. These nodes require reliable inbound liquidity to successfully route payments across the Lightning Network (LN). The LYW provides this critical network infrastructure and receives compensation as a fixed, upfront premium.
-
-
+The LYW uses specialized, non-custodial marketplaces to rent out its inbound channel capacity to professional, high-volume routing nodes. These nodes require reliable inbound liquidity to successfully route payments across the Lightning Network. The LYW provides this critical network infrastructure and receives compensation as a fixed, upfront premium.
 
 **Operational Steps:**
 
-1.  **Deposit & Channel Open:** The LYW deposits Bitcoin into a Lightning channel, opening the channel to a liquidity marketplace.
-2.  **Listing:** The LYW lists its available inbound capacity (e.g., 1,000,000 sats) on the platform.
-3.  **Leasing Contract:** A professional routing node leases the capacity for a fixed duration (e.g., 30 days) to service their merchant and user payments.
-4.  **Upfront Premium:** The LYW receives an immediate premium in sats (e.g., 5,000 to 15,000 sats) at the initiation of the contract.
-5.  **Reversion:** At the end of the period, the channel capacity is available. The LYW can $\text{renew the lease}$, or $\text{close the channel}$ to withdraw the funds.
+1. **Deposit and Channel Open:** The LYW deposits Bitcoin into a Lightning channel, opening the channel to a liquidity marketplace
+2. **Listing:** The LYW lists its available inbound capacity (e.g., 1,000,000 sats) on the platform
+3. **Leasing Contract:** A professional routing node leases the capacity for a fixed duration (e.g., 30 days) to service their merchant and user payments
+4. **Upfront Premium:** The LYW receives an immediate premium in sats (e.g., 5,000 to 15,000 sats) at the initiation of the contract
+5. **Reversion:** At the end of the period, the channel capacity is available. The LYW can renew the lease or close the channel to withdraw the funds.
 
-#### Key Characteristics & Alignment
+### Key Characteristics and Alignment
 
-This yield stream is a low-risk, service-for-fee arrangement that perfectly aligns with the LYW's security and trustlessness requirements:
+This yield stream is a low-risk, service-for-fee arrangement that aligns with the LYW's security and trustlessness requirements:
 
 | Characteristic | Implication for LYW |
-| :--- | :--- |
-| $\checkmark$ **Non-custodial** | The LYW **retains full control** of the principal ($\text{Key 2}$ and $\text{Key 3}$ security). |
-| $\checkmark$ **Trustless** | The leasing platform uses $\text{Lightning}$ smart contracts to enforce the terms automatically. |
-| $\checkmark$ **Predictable** | A fixed premium is agreed upon and paid **upfront**, simplifying cost forecasting. |
-| $\checkmark$ **Low Risk** | No exposure to price volatility during the lease, as income is in $\text{sats}$. |
-| $\checkmark$ **Scalable** | Larger initial deposits generate proportionally larger premiums, enabling growth. |
+|---|---|
+| ✓ **Non-custodial** | The LYW retains full control of the principal (Key 2 and Key 3 security) |
+| ✓ **Trustless** | The leasing platform uses Lightning smart contracts to enforce terms automatically |
+| ✓ **Predictable** | A fixed premium is agreed upon and paid upfront, simplifying cost forecasting |
+| ✓ **Low Risk** | No exposure to price volatility during the lease, as income is in sats |
+| ✓ **Scalable** | Larger initial deposits generate proportionally larger premiums, enabling growth |
 
-#### Economic Model Example
+### Economic Model Example
 
-The income generated by leasing creates a **Net Monthly Surplus** that ensures the content's persistence grows stronger over time—the **Snowball Effect**.
+The income generated by leasing creates a **Net Monthly Surplus** that ensures the content's persistence grows stronger over time — the Snowball Effect.
 
 | Component | Amount (sats) | Description |
-| :--- | :--- | :--- |
-| **Initial LYW Balance** | 1,000,000 | The content's initial treasury. |
-| **Monthly Lease Premium** | 10,000 | Yield (1% per month / 12% APY). |
-| **--- Monthly Expenses ---** | | |
-| Host Payments | 5,000 | Compensation for storage verification and data provision. |
-| Network Fees | 200 | Cost of routing $\text{Lightning}$ payments. |
-| **Net Monthly Surplus** | **+4,800** | Yield minus expenses. |
-| **Annual Net Surplus** | 57,600 | $\text{4,800 sats} \times \text{12 months}$. |
-| **LYW Balance After 1 Year** | **1,057,600** | Surplus is automatically compounded back into the principal. |
+|---|---|---|
+| **Initial LYW Balance** | 1,000,000 | The content's initial treasury |
+| **Monthly Lease Premium** | 10,000 | Yield (1% per month / 12% APY) |
+| **Host Payments** | 5,000 | Compensation for storage verification and data provision |
+| **Network Fees** | 200 | Cost of routing Lightning payments |
+| **Net Monthly Surplus** | **+4,800** | Yield minus expenses |
+| **Annual Net Surplus** | 57,600 | 4,800 sats × 12 months |
+| **LYW Balance After 1 Year** | **1,057,600** | Surplus automatically compounded back into principal |
 
-This compounding means the next year's yield will be calculated on a larger base, increasing the runway and robustness of the persistent data storage.
+This compounding means the next year's yield will be calculated on a larger base, increasing the runway and robustness of persistent data storage.
+
+---
 
 ## 5.1.2 Secondary Income Stream: L3 DAO Profit Distribution 📊
 
@@ -69,64 +68,62 @@ The secondary income stream represents the strategic expansion of the LYW's port
 
 The LYW allocates a conservative portion of its collateral to acquire yield-bearing assets (tokens) issued by profitable L3 Decentralized Autonomous Organizations (DAOs). These tokens represent a claim on the net revenue generated by the DAO's productive economic activity.
 
-#### Bitcoin Layer 3 Platforms (Enabling Infrastructure)
+### Bitcoin Layer 3 Platforms (Enabling Infrastructure)
 
 These platforms provide the technological foundation for the L3 DAOs that the LYW will invest in:
 
 | Layer | Technology | Function |
-| :--- | :--- | :--- |
-| **Taproot Assets** | Asset issuance on Lightning | Enables native Bitcoin asset and token protocols. |
-| **RGB Protocol** | Client-Side Validation | Supports complex smart contracts and confidential assets. |
-| **Stacks (STX)** | Proof-of-Transfer | Smart contract layer anchored securely to Bitcoin. |
-| **Liquid Network** | Federated Sidechain | Provides fast, confidential settlement for Bitcoin assets. |
+|---|---|---|
+| **Taproot Assets** | Asset issuance on Lightning | Enables native Bitcoin asset and token protocols |
+| **RGB Protocol** | Client-Side Validation | Supports complex smart contracts and confidential assets |
+| **Stacks (STX)** | Proof-of-Transfer | Smart contract layer anchored securely to Bitcoin |
+| **Liquid Network** | Federated Sidechain | Provides fast, confidential settlement for Bitcoin assets |
 
-#### What are L3 DAOs?
+### What are L3 DAOs?
 
 L3 DAOs are decentralized organizations operating on Bitcoin scaling layers that generate real, sustainable economic profit by providing valuable services.
 
 | Category | Example Services | Revenue Source |
-| :--- | :--- | :--- |
-| **Decentralized Infrastructure** | Oracle networks, Data indexing, IPFS pinning services. | Service fees paid by customers. |
-| **Lightning Service Providers** | Payment routing optimization, Channel management tools. | Transaction fees and platform subscriptions. |
-| **Bitcoin DeFi Protocols** | Collateralized lending, Fully-backed stablecoin issuance. | Interest spreads and protocol fees. |
+|---|---|---|
+| **Decentralized Infrastructure** | Oracle networks, data indexing, content-addressed storage services | Service fees paid by customers |
+| **Lightning Service Providers** | Payment routing optimization, channel management tools | Transaction fees and platform subscriptions |
+| **Bitcoin DeFi Protocols** | Collateralized lending, fully-backed stablecoin issuance | Interest spreads and protocol fees |
 
 ### Wealth Paradigm Alignment: Sustainable Yield
 
-The L3 DAO yield is fundamentally a **true dividend**—a periodic distribution of net realized profit from a wealth-creating enterprise. This commitment ensures the LYW avoids the risks associated with speculative or extractive yield models:
+The L3 DAO yield is fundamentally a **true dividend** — a periodic distribution of net realized profit from a wealth-creating enterprise. This commitment ensures the LYW avoids the risks associated with speculative or extractive yield models:
 
-| What L3 DAO Yield **IS NOT** | What L3 DAO Yield **IS** |
-| :--- | :--- |
-| ❌ Debt-based, leveraged, or fractional reserve systems. | ✅ A share of actual business profits (Revenue - Costs). |
-| ❌ Inflationary token emissions (diluting value). | ✅ Value created through productive, paid services. |
-| ❌ Ponzi structures (paying old investors with new deposits). | ✅ Sustainable, transparent, and auditable economic activity. |
+| What L3 DAO Yield Is NOT | What L3 DAO Yield IS |
+|---|---|
+| Debt-based, leveraged, or fractional reserve systems | A share of actual business profits (Revenue minus Costs) |
+| Inflationary token emissions (diluting value) | Value created through productive, paid services |
+| Ponzi structures (paying old investors with new deposits) | Sustainable, transparent, and auditable economic activity |
 
 ### Strategic Goals and Benefits
 
 The integration of L3 DAO investments aims to future-proof the LYW's financial runway:
 
-1.  **Higher Yield Potential:** Growth-phase L3 DAOs offer the potential for $\text{15-30%+ APY}$, balancing the stable, lower yield from liquidity leasing.
-2.  **Portfolio Diversification:** Reduces the LYW's reliance on a single economic factor (Lightning liquidity demand), spreading risk across multiple business models.
-3.  **Ecosystem Participation:** The LYW becomes a productive stakeholder in the Bitcoin Layer 3 economy, gaining voting rights and benefiting from network effects.
-4.  **Inflation Hedge:** Profit distributions scale with real economic activity, providing a better defense against the dilution of fixed-rate returns.
+1. **Higher Yield Potential:** Growth-phase L3 DAOs offer the potential for 15–30%+ APY, balancing the stable, lower yield from liquidity leasing
+2. **Portfolio Diversification:** Reduces the LYW's reliance on a single economic factor (Lightning liquidity demand), spreading risk across multiple business models
+3. **Ecosystem Participation:** The LYW becomes a productive stakeholder in the Bitcoin Layer 3 economy, gaining voting rights and benefiting from network effects
+4. **Inflation Hedge:** Profit distributions scale with real economic activity, providing a better defense against the dilution of fixed-rate returns
 
 ### Risk Management and Policy
 
-Due to the inherent risks of emerging technologies and complex governance structures, the LYW implements a strict, transparent investment policy managed by the $\text{Key 2}$ (Creator/DAO Control Key).
+Due to the inherent risks of emerging technologies and complex governance structures, the LYW implements a strict, transparent investment policy managed by Key 2 (Creator/DAO Control Key).
 
 ```json
 "l3_dao_investment_policy": {
   "diversification": {
     "minimum_daos": 5,
-    "max_single_dao_allocation": "5%" // Of total LYW balance
+    "max_single_dao_allocation": "5%"
   },
-  
   "selection_criteria": {
     "proven_revenue": "6+ months operating history",
     "financial_transparency": "All financials on-chain",
     "profit_margin": ">20% net margin minimum",
     "token_liquidity": "Active L3 DEX trading"
   },
-  
   "exit_conditions": {
     "declining_profit": "Exit if 2 consecutive quarters of declining net profit",
     "governance_issues": "Exit if DAO votes against core transparency rules",
@@ -135,191 +132,164 @@ Due to the inherent risks of emerging technologies and complex governance struct
 }
 ```
 
-#### Implementation Timeline
+### Implementation Timeline
 
 This income stream is considered a **Future Expansion** strategy, minimizing initial risk:
 
 | Phase | Timeline | Rationale |
-| :--- | :--- | :--- |
-| **Research** | 2025-2026 | Monitor L3 DAO maturity and stability. |
-| **Pilot** | 2027 | Begin conservative allocations ($\text{1-5\%}$ of LYW balances). |
-| **Expansion** | 2028+ | Full integration as infrastructure matures and risk profiles stabilize. |
+|---|---|---|
+| **Research** | 2026–2027 | Monitor L3 DAO maturity and stability |
+| **Pilot** | 2028 | Begin conservative allocations (1–5% of LYW balances) |
+| **Expansion** | 2029+ | Full integration as infrastructure matures and risk profiles stabilize |
+
+---
 
 ## 5.1.3 Economic Resiliency Through Dual-Source Strategy 🛡️
 
 The strategic combination of Liquidity Leasing and L3 DAO Profit Distribution creates a **dual-source revenue model** that ensures the economic resiliency and perpetual funding of content persistence. These two streams are complementary, balancing reliability for immediate needs with scalability for long-term growth.
 
-| Feature | Primary Stream: Liquidity Leasing (Near-Term) | Secondary Stream: L3 DAO Distribution (Long-Term) |
-| :--- | :--- | :--- |
-| **Focus** | **Reliability & Stability** | **Scalability & Growth** |
-| **Market** | Mature Lightning Network infrastructure ($\text{2018-2025}$) | Emerging Bitcoin Layer 3 ecosystem ($\text{2025-2028}$) |
-| **Returns** | Predictable ($\text{6-18\% APY}$) | Higher Potential ($\text{15-30\%+ APY}$) |
+| Feature | Primary Stream: Liquidity Leasing | Secondary Stream: L3 DAO Distribution |
+|---|---|---|
+| **Focus** | Reliability and Stability | Scalability and Growth |
+| **Market** | Mature Lightning Network infrastructure | Emerging Bitcoin Layer 3 ecosystem |
+| **Returns** | Predictable (6–18% APY) | Higher Potential (15–30%+ APY) |
 | **Risk Profile** | Low (non-custodial, no leverage) | Moderate (business model/governance risk) |
-| **Role** | Covers **basic, fixed costs** (initial hosting). | Generates **net surplus** for compounding growth. |
-
----
+| **Role** | Covers basic, fixed costs (initial hosting) | Generates net surplus for compounding growth |
 
 ### Combined Effect Scenarios: The Power of Compounding
 
-The choice of allocation between the two sources allows the DAO Smart Contract ($\text{Key 3}$) to manage the **Risk-Return Tradeoff** based on its governance policy and the content's value.
+The choice of allocation between the two sources allows the DAO Smart Contract (Key 3) to manage the risk-return tradeoff based on its governance policy and the content's value.
 
-| Scenario | Strategy | Blended APY | Use Case & Risk Level |
-| :--- | :--- | :--- | :--- |
-| **Conservative** (2025-2027) | $100\%$ Liquidity Leasing | $12.0\%$ | Initial launch, high-reliability content. **Low Risk.** |
-| **Optimized** (2028+) | $80\%$ Liquidity / $20\%$ L3 DAOs | $14.4\%$ | Risk-averse creators seeking stability + growth. **Moderate Risk.** |
-| **Bull** (2030+) | $60\%$ Liquidity / $40\%$ L3 DAOs | $19.2\%$ | High-value, growth-oriented content. **Moderate-High Risk.** |
+| Scenario | Strategy | Blended APY | Use Case and Risk Level |
+|---|---|---|---|
+| **Conservative** | 100% Liquidity Leasing | 12.0% | Initial launch, high-reliability content — Low Risk |
+| **Optimized** | 80% Liquidity / 20% L3 DAOs | ~14% | Risk-averse creators seeking stability and growth — Moderate Risk |
+| **Bull** | 60% Liquidity / 40% L3 DAOs | ~19% | High-value, growth-oriented content — Moderate-High Risk |
 
-> **Note on Blended APY:** For the Optimized Scenario (20% L3 at 20% APY, 80% Liquidity at 12% APY), the Blended APY is: $(0.20 \times 20\%) + (0.80 \times 12\%) = 4.0\% + 9.6\% = 13.6\%$ APY. The scenario table uses a rounded figure.
+> **Note on Blended APY:** For the Optimized Scenario (20% L3 at 20% APY, 80% Liquidity at 12% APY), the blended APY is: (0.20 × 20%) + (0.80 × 12%) = 4.0% + 9.6% = 13.6% APY. Scenario table uses rounded figures.
 
-#### Compounding Growth Analysis (Bull Scenario Example)
+### Compounding Growth Analysis (Bull Scenario Example)
 
-This scenario demonstrates the exponential growth that transforms the wallet into a powerful investment vehicle capable of sustaining content forever.
+This scenario demonstrates the exponential growth that transforms the wallet into a powerful investment vehicle capable of sustaining content indefinitely.
 
-* **Initial Balance:** $1,000,000$ sats
-* **Annual Yield:** $192,000$ sats ($\text{19.2\% APY}$)
-* **Annual Host Costs:** $60,000$ sats (fixed for $10 \text{GB}$ persistence)
-* **Net Surplus (Year 1):** $132,000$ sats (reinvested)
+- **Initial Balance:** 1,000,000 sats
+- **Annual Yield:** 192,000 sats (19.2% APY)
+- **Annual Host Costs:** 60,000 sats (fixed for 10GB persistence)
+- **Net Surplus (Year 1):** 132,000 sats (reinvested)
 
 | Metric | Year 1 Start | Year 2 Start (Compounded) | Year 5 Projection |
-| :--- | :--- | :--- | :--- |
-| **LYW Balance** | $1,000,000$ sats | $1,132,000$ sats | $\sim 1,850,000$ sats |
-| **Annual Yield** | $192,000$ sats | $217,344$ sats | $\sim 355,000$ sats |
-| **Net Surplus** | $132,000$ sats | $157,344$ sats | $\sim 295,000$ sats |
+|---|---|---|---|
+| **LYW Balance** | 1,000,000 sats | 1,132,000 sats | ~1,850,000 sats |
+| **Annual Yield** | 192,000 sats | 217,344 sats | ~355,000 sats |
+| **Net Surplus** | 132,000 sats | 157,344 sats | ~295,000 sats |
 
 The key takeaway is that the growth in yield far outpaces the growth in maintenance costs (which are generally tied to storage space), leading to an exponential increase in the content's financial longevity.
-
----
 
 ### Commitment to Perpetual Availability
 
 The dual-source strategy elevates content persistence from a **cost center** (traditional subscription) to an **investment vehicle**.
 
-#### The Investment Vehicle Paradigm Shift
-
 | Traditional Model | IPFS-Sats Model (LYW) |
-| :--- | :--- |
-| **Cost Center:** Pay monthly fee $\rightarrow$ Content persists. | **Profit Center:** Deposit sats $\rightarrow$ Generate yield. |
-| **Failure:** Stop paying $\rightarrow$ Content deleted. | **Failure:** Yield > Costs $\rightarrow$ Surplus compounds indefinitely. |
-| **Economic Basis:** Subscription revenue. | **Economic Basis:** Productive capital and network services. |
+|---|---|
+| **Cost Center:** Pay monthly fee → Content persists | **Profit Center:** Deposit sats → Generate yield |
+| **Failure Mode:** Stop paying → Content deleted | **Resilience:** Yield > Costs → Surplus compounds indefinitely |
+| **Economic Basis:** Subscription revenue | **Economic Basis:** Productive capital and network services |
 
-This foundation makes perpetual data availability a matter of **economic engineering**, not altruism. By ensuring that it is **profitable to host** the content, IPFS-Sats aligns the financial self-interest of hosts and creators with the public good of information permanence.
+This foundation makes perpetual data availability a matter of **economic engineering**, not altruism. By ensuring that it is profitable to host content, IPFS-Sats aligns the financial self-interest of hosts and creators with the public good of information permanence.
 
-The economic model is designed to support the core philosophical rights of the system: the **Rights to Verify and Fork** are not just technically possible, but are **economically sustainable at global scale**.
+The economic model is designed to support the core philosophical rights of the system: the Rights to Verify and Fork are not just technically possible, but are **economically sustainable at global scale**.
 
-## 5.1.4 Micropayment Protocol: Atomic Host Compensation
-
-The primary function of the Lightning Yield Wallet ($\text{LYW}$) is to facilitate the **atomic, instantaneous payment** of hosts for two services: **Content Persistence** (storage verification) and **Content Retrieval** (data bandwidth).
-
-This process is handled by a trustless micropayment protocol, leveraging the speed and low cost of the Lightning Network ($\text{LN}$).
-
-### Real-Time Payment Mechanism (Lightning Network)
-
-The Lightning Network is the only existing infrastructure capable of supporting the volume and low cost required for the $\text{sats-for-data}$ exchange.
-
-| Feature | Requirement | Lightning Network Solution |
-| :--- | :--- | :--- |
-| **Atomic Swap** | Payment must be conditional on data/proof delivery. | **Hashed Time-Lock Contracts (HTLCs)** enforce the atomic exchange without escrow risk. |
-| **Cost** | Fees must be minimal for payments under $1. | Fees are typically a **fraction of a cent**, making micropayments feasible. |
-| **Speed** | Verification and retrieval must be near-instant. | Transactions are **near-instantaneous** ($\text{milliseconds}$), avoiding user lag. |
-
-#### Mechanism: Proof-of-Storage Payment
-
-Payments for persistent storage are routine, automated, and triggered by cryptographic proof.
-
-1.  **Proof Generation:** The storage host provides a **Proof-of-Storage** (e.g., $\text{PoRep}$ or a challenge/response signature) for the content specified by $\text{Key 1}$'s $\text{CID}$.
-2.  **Verification:** **$\text{Key 3}$ (Smart Contract)** verifies the $\text{Proof-of-Storage}$ against the DAO's rules (duration, redundancy, integrity).
-3.  **Invoice Request:** Upon successful verification, the host sends a $\text{Lightning}$ Invoice to the $\text{LYW}$ for the pre-agreed fee.
-4.  **Payment Authorization:** **$\text{Key 3}$** signs the $\text{Lightning}$ payment for the specific invoice, drawing from the yield generated by the $\text{LYW}$'s capital.
-5.  **Settlement:** The payment is executed **instantly** over the Lightning Network.
-
-This process ensures that hosts are only compensated for verifiable, active service, not for a mere promise of storage.
+---
 
 ## 5.1.4 Micropayment Protocol: Atomic Host Compensation ⚡
 
-The primary function of the Lightning Yield Wallet ($\text{LYW}$) is to facilitate the **atomic, instantaneous payment** of hosts for two services: **Content Persistence** (storage verification) and **Content Retrieval** (data bandwidth).
+The primary function of the LYW is to facilitate the **atomic, instantaneous payment** of hosts for two services: **Content Persistence** (storage verification) and **Content Retrieval** (data bandwidth).
 
-This process is handled by a trustless micropayment protocol, leveraging the speed and low cost of the Lightning Network ($\text{LN}$).
+This process is handled by a trustless micropayment protocol, leveraging the speed and low cost of the Lightning Network.
 
-### Real-Time Payment Mechanism (Lightning Network)
+### Real-Time Payment Mechanism
 
-The Lightning Network is the only existing infrastructure capable of supporting the volume and low cost required for the $\text{sats-for-data}$ exchange. It achieves trustless atomic exchange through **Hashed Time-Lock Contracts ($\text{HTLCs}$)**, which are foundational to the $\text{LN}$.
+The Lightning Network is the only existing infrastructure capable of supporting the volume and low cost required for the sats-for-data exchange. It achieves trustless atomic exchange through **Hashed Time-Lock Contracts (HTLCs)**.
 
 | Feature | Requirement | Lightning Network Solution |
-| :--- | :--- | :--- |
-| **Atomic Swap** | Payment must be conditional on data/proof delivery. | **$\text{HTLCs}$** enforce the atomic exchange without escrow risk. |
-| **Cost** | Fees must be minimal for payments under $1. | Fees are typically a **fraction of a cent**, making micropayments feasible. |
-| **Speed** | Verification and retrieval must be near-instant. | Transactions are **near-instantaneous** ($\text{milliseconds}$), avoiding user lag. |
+|---|---|---|
+| **Atomic Swap** | Payment must be conditional on data/proof delivery | HTLCs enforce the atomic exchange without escrow risk |
+| **Cost** | Fees must be minimal for payments under $1 | Fees are typically a fraction of a cent, making micropayments feasible |
+| **Speed** | Verification and retrieval must be near-instant | Transactions settle in milliseconds, avoiding user lag |
 
-#### Mechanism: Proof-of-Storage Payment Flow
+### Mechanism: Proof-of-Storage Payment Flow
 
-Payments for persistent storage are routine, automated, and triggered by cryptographic proof.
+Payments for persistent storage are routine, automated, and triggered by cryptographic proof:
 
-1.  **Proof Generation:** The storage host provides a verifiable **Proof-of-Storage** (e.g., $\text{PoRep}$ or a challenge/response signature) for the content specified by $\text{Key 1}$'s $\text{CID}$.
-2.  **Verification:** **$\text{Key 3}$ (Smart Contract Executor)** verifies the $\text{Proof-of-Storage}$ against the $\text{DAO}$'s policy (duration, redundancy, integrity).
-3.  **Invoice Request:** Upon successful verification, the host sends a $\text{Lightning}$ Invoice to the $\text{LYW}$ for the pre-agreed fee.
-4.  **Payment Authorization:** **$\text{Key 3}$** signs the $\text{Lightning}$ payment for the specific invoice, drawing from the yield generated by the $\text{LYW}$'s capital.
-5.  **Settlement:** The payment is executed **instantly** over the Lightning Network.
+1. **Proof Generation:** The storage host provides a cryptographic **Proof-of-Storage** (e.g., a challenge/response signature) for the content specified by the content CID
+2. **Verification:** Key 3 (Smart Contract Executor) verifies the Proof-of-Storage against the DAO's policy (duration, redundancy, integrity)
+3. **Invoice Request:** Upon successful verification, the host sends a Lightning invoice to the LYW for the pre-agreed fee
+4. **Payment Authorization:** Key 3 signs the Lightning payment for the specific invoice, drawing from the yield generated by the LYW's capital
+5. **Settlement:** The payment is executed instantly over the Lightning Network
 
-This process ensures that hosts are only compensated for verifiable, active service, not for a mere promise of storage, maintaining the integrity of the persistence contract.
+This process ensures that hosts are only compensated for verifiable, active service — not for a mere promise of storage — maintaining the integrity of the persistence contract.
 
 ### Pricing and Cost Modeling: Phased Standard Transition
 
-The $\text{DAO}$ uses a dynamic pricing model to ensure the yield remains competitive with storage market rates while preparing for a long-term transition to the Bitcoin Standard. This process involves two distinct phases:
+The DAO uses a dynamic pricing model to ensure the yield remains competitive with storage market rates while preparing for a long-term transition to the Bitcoin Standard. This involves two distinct phases:
 
-#### Phase 1: $\text{USD}$ Anchored Pricing (Early Adoption)
+**Phase 1: USD-Anchored Pricing (Early Adoption)**
 
-During early adoption, $\text{IPFS}$-$\text{Sats}$ operates under a $\text{USD}$ anchor to mitigate the volatility risk for hosts who still rely on fiat currency for operational costs. The $\text{Key 3}$ executor dynamically adjusts the $\text{sats}$ payout based on a rate oracle feed.
+During early adoption, IPFS-Sats operates under a USD anchor to mitigate volatility risk for hosts who still rely on fiat currency for operational costs. Key 3 dynamically adjusts the sats payout based on a rate oracle feed.
 
-$$\text{Host Payment (sats)} = \left(\frac{\text{Target Price per GB}}{\text{BTC/USD Rate}}\right) \times \text{Storage Provided (GB)}$$
+```
+Host Payment (sats) = (Target Price per GB / BTC-USD Rate) × Storage Provided (GB)
+```
 
-| Metric | Rule | Purpose (Current) |
-| :--- | :--- | :--- |
-| **Payout Floor** | $\text{Key 3}$ must pay hosts no less than the current market rate in $\text{USD}$ equivalent. | Ensures host incentives and quality of service are maintained through fiat stability. |
-| **Adjustment** | $\text{Daily}$ or $\text{Weekly}$ adjustment of $\text{sats}$ amount based on $\text{Key 3}$'s rate oracle feed. | Protects the $\text{LYW}$ from overpaying during sudden $\text{BTC}$ price spikes. |
+| Metric | Rule | Purpose |
+|---|---|---|
+| **Payout Floor** | Key 3 must pay hosts no less than the current market rate in USD equivalent | Ensures host incentives and quality of service through fiat stability |
+| **Adjustment** | Daily or weekly adjustment of sats amount based on Key 3's rate oracle feed | Protects the LYW from overpaying during sudden BTC price spikes |
 
-#### Phase 2: Pure Bitcoin Standard Transition (Maturity)
+**Phase 2: Pure Bitcoin Standard Transition (Maturity)**
 
-As global adoption increases and hosting costs become increasingly denominated in $\text{sats}$, the $\text{USD}$ anchor will be phased out. The system is designed for this eventual transition to a purely **Bitcoin-native pricing** model.
+As global adoption increases and hosting costs become increasingly denominated in sats, the USD anchor will be phased out. The system is designed for this eventual transition to a purely Bitcoin-native pricing model.
 
-* **Policy Threshold:** The $\text{DAO}$ (via $\text{Key 2}$ vote) will vote to sunset the $\text{USD}$ anchor when the majority of hosting costs are verifiably denominated in $\text{sats}$, or when market volatility stabilizes to an agreed-upon threshold.
-* **Final Formula:** The payment formula simplifies to a fixed $\text{sats}$ rate, reflecting the true cost of persistence within the Bitcoin economy:
+- **Policy Threshold:** The DAO (via Key 2 vote) will vote to sunset the USD anchor when the majority of hosting costs are verifiably denominated in sats, or when market volatility stabilizes to an agreed-upon threshold
+- **Final Formula:** The payment formula simplifies to a fixed sats rate, reflecting the true cost of persistence within the Bitcoin economy:
 
-$$\text{Host Payment (sats)} = \text{Target Price per GB (sats)} \times \text{Storage Provided (GB)}$$
+```
+Host Payment (sats) = Target Price per GB (sats) × Storage Provided (GB)
+```
 
 This phased approach ensures the system's stability in the near term while securing its long-term financial integrity on the Bitcoin Standard.
 
-## 5.1.5 Economic Degradation & Host Selection Logic 📉
+---
 
-To ensure content persists for the maximum possible duration even as funds dwindle, IPFS-Sats utilizes an **Economic Degradation Protocol**. This mechanism allows the `DAO` (via Key 3) to signal reducing demand to the network, triggering a graceful reduction in redundancy rather than a catastrophic, sudden loss of availability.
+## 5.1.5 Economic Degradation and Host Selection Logic 📉
+
+To ensure content persists for the maximum possible duration even as funds dwindle, IPFS-Sats utilizes an **Economic Degradation Protocol**. This mechanism allows the DAO (via Key 3) to signal reducing demand to the network, triggering a graceful reduction in redundancy rather than a catastrophic, sudden loss of availability.
 
 ### The Dynamic Payout Gradient
 
-The Lightning Yield Wallet ($\text{LYW}$) does not pay a static rate forever. Instead, Key 3 adjusts the **Storage Bid (sats/GB)** based on the wallet's **Runway Health** (Remaining Balance / Monthly Burn).
+The LYW does not pay a static rate indefinitely. Instead, Key 3 adjusts the **Storage Bid (sats/GB)** based on the wallet's **Runway Health** (Remaining Balance / Monthly Burn).
 
 | Wallet Health | Runway | Bid Strategy | Network Effect |
-| :--- | :--- | :--- | :--- |
-| **Abundant** | $>24 \text{ mo}$ | **Premium Bid** ($\text{Market Rate} + 10\%$) | Attracts **all hosts**, including expensive, high-speed edge nodes (home computers, mobile). Max redundancy/speed. |
-| **Standard** | $6\text{-}24 \text{ mo}$ | **Market Bid** ($\text{Average Market Rate}$) | Retains standard hosts and data centers. Expensive edge nodes likely drop the content. |
-| **Critical** | $<6 \text{ mo}$ | **Survival Bid** ($\text{Market Floor}$) | Offers only the bare minimum. Retains only the most efficient, low-cost storage providers (hyperscale/archival). |
-| **Depleted** | $0 \text{ mo}$ | **Zero Bid** | All compensated hosts drop content. **Fades to Creator Node only.** |
+|---|---|---|---|
+| **Abundant** | >24 months | Premium Bid (Market Rate +10%) | Attracts all hosts including expensive high-speed edge nodes — maximum redundancy and speed |
+| **Standard** | 6–24 months | Market Bid (Average Market Rate) | Retains standard hosts and data centers — expensive edge nodes likely drop the content |
+| **Critical** | <6 months | Survival Bid (Market Floor) | Offers only the bare minimum — retains only the most efficient, low-cost storage providers |
+| **Depleted** | 0 months | Zero Bid | All compensated hosts drop content — fades to Creator Node only |
 
 ### Host Logic: Decentralized Cost/Benefit Analysis
 
 Hosts in IPFS-Sats do not blindly store data. Each node runs a local **Economic Logic Daemon** that compares the DAO's offered bid against the node's internal cost floor.
 
-1.  **High-Cost Nodes (e.g., Home Desktop/App):** These nodes have limited storage and high opportunity cost. When the LYW drops from "Premium" to "Standard" pricing, their daemon detects that `Offer < Cost`. They **automatically unpin** the content to free up space for higher-paying data.
-2.  **Low-Cost Nodes (e.g., Data Center/Archival):** These nodes operate with massive economies of scale. They remain profitable even at "Survival" bid rates, continuing to store the content long after others have dropped it.
-
-
+- **High-Cost Nodes (e.g., Home Desktop/App):** These nodes have limited storage and high opportunity cost. When the LYW drops from Premium to Standard pricing, their daemon detects that Offer < Cost. They automatically unpin the content to free up space for higher-paying data.
+- **Low-Cost Nodes (e.g., Data Center/Archival):** These nodes operate with massive economies of scale. They remain profitable even at Survival bid rates, continuing to store the content long after others have dropped it.
 
 ### The Result: Graceful Degradation
 
 This interaction creates a natural lifecycle for content that matches its economic reality:
 
-1.  **Peak Popularity:** High yield/zaps allow the wallet to pay **Premium Bids**. Content is replicated on hundreds of fast devices globally.
-2.  **Normalization:** As hype fades, the wallet stabilizes at **Market Bids**. Content remains safe on reliable servers, but expensive edge caching drops off.
-3.  **Long Tail:** If funding dries up, the wallet switches to **Survival Mode**. The content retreats to a few efficient, low-cost archival nodes.
-4.  **Creator Fallback:** Finally, if all funds are exhausted, the content persists solely on the **Creator's personal node** (or any altruistic fans), ensuring it is never lost unless truly abandoned by its owner.
+1. **Peak Popularity:** High yield and zaps allow the wallet to pay Premium Bids. Content is replicated on hundreds of fast devices globally.
+2. **Normalization:** As demand stabilizes, the wallet settles at Market Bids. Content remains safe on reliable servers, but expensive edge caching drops off.
+3. **Long Tail:** If funding dries up, the wallet switches to Survival Mode. The content retreats to a few efficient, low-cost archival nodes.
+4. **Creator Fallback:** Finally, if all funds are exhausted, the content persists solely on the creator's personal node (or any altruistic hosts), ensuring it is never lost unless truly abandoned by its owner.
 
-This mechanism maximizes the **temporal length** of persistence by sacrificing **redundancy** when funds are low, ensuring the system prioritizes *survival* over *speed* during lean times.
-
+This mechanism maximizes the **temporal length** of persistence by sacrificing **redundancy** when funds are low, ensuring the system prioritizes survival over speed during lean times.
