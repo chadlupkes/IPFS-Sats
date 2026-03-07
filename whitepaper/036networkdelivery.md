@@ -6,7 +6,7 @@ SatSwap does not prescribe how many hosts serve a given piece of content. It pre
 
 This means the network topology for content delivery is not a design choice. It is an outcome.
 
-When the discovery layer returns one host holding all blocks for a CID, the delivery is direct and the payment is singular. When the discovery layer returns multiple hosts each holding a subset of blocks, the delivery becomes a coordinated swarm and the payment fans out accordingly. The exchange protocol handles both cases with the same four-message handshake (Section 10.5). What changes is how many times that handshake executes in parallel.
+When the discovery layer returns one host holding all blocks for a CID, the delivery is direct and the payment is singular. When the discovery layer returns multiple hosts each holding a subset of blocks, the delivery becomes a coordinated swarm and the payment fans out accordingly. The exchange protocol handles both cases with the same four-message handshake (Section 10.6). What changes is how many times that handshake executes in parallel.
 
 ---
 
@@ -39,7 +39,7 @@ The more complex topology arises when no single host holds all blocks for a CID.
 
 In this case, the discovery layer returns a map: which hosts hold which blocks. The client — or a coordinating SatSwap node acting on the client's behalf — uses this map to route block requests to the appropriate hosts simultaneously.
 
-The delivery becomes a swarm: multiple hosts serving their respective portions of the block set in parallel, with the client assembling the complete file from the incoming streams. The Merkle structure of the CID provides the assembly map and the integrity check — each block's hash is known in advance, so the client can verify each piece as it arrives and detect any missing or corrupted blocks immediately.
+The delivery becomes a swarm: multiple hosts serving their respective portions of the block set in parallel, with the client assembling the complete file from the incoming streams. The Merkle tree structure of the CID provides the assembly map and the integrity check — each block's hash is known in advance, so the client can verify each piece as it arrives and detect any missing or corrupted blocks immediately.
 
 Payment is issued independently to each contributing host, proportional to the blocks each delivered. A host that provides 30% of the blocks for a retrieval receives 30% of the total payment. No host receives payment for blocks it did not deliver.
 
@@ -75,7 +75,7 @@ This is the same principle that drives content delivery network behavior in cent
 
 Regardless of how many hosts contribute to a delivery, the client assembles the complete file and verifies it against the root CID.
 
-The Merkle DAG structure of content-addressed data makes this verification straightforward:
+The Merkle tree structure of content-addressed data makes this verification straightforward:
 
 - Each block has a known hash, derived from its content
 - The root CID is derived from the hashes of all constituent blocks
@@ -84,7 +84,7 @@ The Merkle DAG structure of content-addressed data makes this verification strai
 
 A block that fails verification triggers a failed payment for that block and a retry from an alternate host if one is available in the discovery results. The atomic nature of the SatSwap exchange ensures that a host cannot receive payment for a block the client cannot verify.
 
-This means the integrity guarantee of the delivery does not depend on trusting any individual host. It depends on the mathematics of the Merkle structure and the atomicity of the payment protocol — both of which hold regardless of how many hosts participate in the swarm.
+This means the integrity guarantee of the delivery does not depend on trusting any individual host. It depends on the mathematics of the Merkle tree structure and the atomicity of the payment protocol — both of which hold regardless of how many hosts participate in the swarm.
 
 ---
 
@@ -100,4 +100,4 @@ This is the design property the protocol is built to preserve: define the exchan
 
 ## Summary
 
-SatSwap delivery topology is determined by the Host Discovery Layer, not prescribed by the protocol. A single host holding a complete block set delivers directly and receives full payment. When no single host holds all blocks, multiple hosts serve their respective portions simultaneously, with payment distributed proportionally. Intermediate nodes can proxy blocks they do not hold locally, earning the spread between upstream and downstream prices. Caching popular blocks converts spread income into full delivery income, driving organic replication of high-demand content toward the network edge without central coordination. In all cases, the Merkle structure of content-addressed data provides assembly guidance and integrity verification, and the atomic SatSwap handshake ensures no host receives payment for a block the client cannot verify.
+SatSwap delivery topology is determined by the Host Discovery Layer, not prescribed by the protocol. A single host holding a complete block set delivers directly and receives full payment. When no single host holds all blocks, multiple hosts serve their respective portions simultaneously, with payment distributed proportionally. Intermediate nodes can proxy blocks they do not hold locally, earning the spread between upstream and downstream prices. Caching popular blocks converts spread income into full delivery income, driving organic replication of high-demand content toward the network edge without central coordination. In all cases, the Merkle tree structure of content-addressed data provides assembly guidance and integrity verification, and the atomic SatSwap handshake ensures no host receives payment for a block the client cannot verify.
