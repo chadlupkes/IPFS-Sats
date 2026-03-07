@@ -20,9 +20,9 @@ Membership in a Per-Content DAO is automatically granted to any entity listed as
 
 Voting weight within the Per-Content DAO is defined by the member's percentage share of the content's sats income stream, as specified in the Metadata Bundle.
 
-- **Fixed by Metadata Bundle:** The income distribution ratio is a constant of the published Metadata Bundle. It is not a governable parameter — it cannot be changed by a DAO vote. This is a deliberate architectural constraint: allowing in-place mutation of the distribution ratio would decouple governance weight from economic stake and create a vector for hostile takeovers.
-- **Changing distributions requires a fork:** If participants want a different income distribution, the mechanism is to publish a new CID with a new Metadata Bundle and a new DAO initialized with the desired ratios. The parent CID's DAO remains exactly as originally configured, permanently, and continues operating under its original terms.
-- **Rationale:** Linking governance influence directly to the immutable economic stake each participant holds ensures that decision-makers are those with the greatest long-term interest in the content's health — and that no subsequent vote can retroactively alter the foundational terms under which participants joined.
+- **Defined by Metadata Bundle at publication:** The income distribution ratio published in the Metadata Bundle establishes initial voting weights and serves as the baseline for all governance activity. By default, this ratio is a governable parameter — a supermajority DAO vote can adjust allocations as the project evolves, with any change simultaneously updating the voting weights of all subsequent proposals.
+- **Optional lock via Key 1 configuration:** The creator can configure Key 1 to explicitly prohibit distribution changes, making the ratio a permanent constant for that CID. When locked, the distribution ratio cannot be altered by any DAO vote. If participants want different distributions under a locked DAO, the mechanism is to publish a new CID with a new Metadata Bundle and a new DAO initialized with the desired ratios. The parent CID's DAO remains exactly as originally configured and continues operating under its original terms indefinitely.
+- **Hostile takeover protection:** Whether locked or unlocked, distribution reallocation requires a supermajority (66.7%) to pass — precisely because changing the distribution ratio simultaneously changes voting weights for all future proposals. This threshold is the structural defense against a majority voting to strip the minority of their economic stake.
 
 | Stakeholder Type | Example Income Ratio | Voting Weight |
 |---|---|---|
@@ -44,7 +44,7 @@ Key 1 authority can be configured as any of the following:
 
 The creator can also configure Key 1 to be effectively locked — setting conditions under which no Key 1 action can be taken at all, creating a fully autonomous DAO governed only by Key 2 (member governance) and Key 3 (automation). In this configuration, any change to the DAO's operational parameters requires either a fork or a DAO vote within the bounds of what Key 2 governs.
 
-This design means governance flexibility lives entirely in how Key 1 is constructed at publication time, not in runtime mutation of the distribution ratio.
+This design means the creator's governance flexibility operates at two levels: how Key 1 is constructed at publication time, and — in the default unlocked configuration — through supermajority DAO votes at runtime. The locked configuration trades runtime flexibility for a permanent guarantee to participants that the foundational terms under which they joined cannot change.
 
 #### 4. Roles
 
