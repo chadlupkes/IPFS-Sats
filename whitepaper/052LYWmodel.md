@@ -8,7 +8,33 @@ This section details the operational mechanics: how the system starts, how it ru
 
 ## 5.2.1 Initial Deposit: Bootstrapping the Economic Engine
 
-The initial deposit must be large enough to generate sufficient yield to cover hosting costs while building a compounding surplus. The minimum viable deposit depends on three factors:
+A deposit is not required to launch content into the IPFS-Sats network. It is required to attract and compensate **external hosts**. This distinction matters for every creator — especially those starting with limited resources.
+
+### Base Layer Bootstrapping: Launching Without External Hosts
+
+When a creator publishes content, their application node immediately registers a Host Registry Record in the Host Discovery Layer. The content is live and discoverable by CID from the moment of publication. Anyone who receives the CID directly — through a message, a post, a link — can retrieve the content from the creator's node and send zaps directly to the LYW address embedded in the Metadata Bundle.
+
+No external hosts are required for this to work. No minimum deposit is required for this to work. The creator's node **is** the first host.
+
+This is true bootstrapping: the content exists on the network, it is findable, it can receive support, and it can grow — all before a single external host has agreed to serve it. The deposit size guidelines below describe the thresholds at which the wallet balance becomes sufficient to attract and compensate external hosts at market rates. They are growth targets, not launch requirements.
+
+As zaps arrive and the wallet balance grows, the LYW begins advertising bids to the host market. When the bid reaches the prevailing market rate for the content's size and redundancy requirements, external hosts begin caching and serving it. Redundancy grows organically as the wallet grows — driven entirely by the same economic signals that drive the rest of the network.
+
+**The lifecycle is symmetric:**
+
+> **Creator Node Only → Wallet grows via zaps → External hosts join → Full redundancy**
+>
+> **Full redundancy → Wallet depletes → External hosts drop → Creator Node Only**
+
+Entry and exit mirror each other exactly. A creator bootstrapping a new piece of content and a creator whose wallet has run low are in structurally identical states — the content lives on their node, it is discoverable, and it can receive support. The wallet balance determines redundancy level, not existence. The Economic Degradation Protocol (Section 5.1.5) describes the exit direction of this same spectrum in detail.
+
+No creator is without options. The minimum viable launch is a node, a CID, and a willingness to share it.
+
+---
+
+### Deposit Size and External Host Attraction
+
+When a creator is ready to fund external hosting, the deposit must be large enough to generate sufficient yield to cover hosting costs while building a compounding surplus. The minimum viable deposit for external hosts depends on three factors:
 
 1. **Content size** (storage requirements)
 2. **Expected yield rate** (market conditions)
