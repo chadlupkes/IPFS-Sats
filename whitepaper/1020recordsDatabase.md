@@ -16,6 +16,8 @@ This specification defines what a conforming Records Database node must do. It d
 
 **No trust required.** The database does not validate the truth of the claims stored within it. It validates schema conformance only. Truth is validated elsewhere: host inventory claims at the SatSwap exchange layer, Anchor Record claims against the Bitcoin blockchain, Content Flag claims through the confirmation process. The Records Database is a claims index, not an audit system.
 
+**Fully transparent and publicly queryable.** All three tables are open to any participant without permission or authentication. This transparency is the foundation for an ecosystem of application-layer query engines built on top of the protocol — content discovery tools, rights management dashboards, provenance explorers, royalty auditing tools, host reputation services, and network analytics. The protocol stores and serves; applications observe, query, and act. No special access is required and no gatekeeper controls what can be built.
+
 **Economic incentive for participation.** Nodes that participate in the Records Database earn SatSwap revenue by being discoverable to requesting clients. The incentive to maintain accurate, current records is the same incentive that drives all host behavior: correct participation earns sats, incorrect or stale participation earns less.
 
 ---
