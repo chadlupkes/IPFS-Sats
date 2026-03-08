@@ -1,8 +1,8 @@
 # 8. The Right to Fork 🚀
 
-The **Right to Fork** is the absolute entitlement of any collective, individual, or business to copy, modify, and redeploy the governance code and protocols of any existing content or organization operating on the $\text{IPFS-Sats}$ protocol. It is the core mechanism that **institutionalizes competition in the marketplace for governance and knowledge**, guaranteeing that **Innovation (Generation)** will never be captured or monopolized.
+The **Right to Fork** is the inalienable right of any individual, collective, or organization to copy, modify, and redeploy the governance code and protocols of any existing content or organization operating on the IPFS-Sats protocol. It is the core mechanism that institutionalizes competition in the marketplace for governance and knowledge, guaranteeing that innovation will never be captured or monopolized.
 
-This section details the architectural implementation of this inalienable right, ensuring that innovation is permissionless, attributable, and automatically compensated.
+This section details the architectural implementation of this right, ensuring that innovation is permissionless, attributable, and automatically compensated.
 
 ---
 
@@ -12,20 +12,20 @@ The Right to Fork transforms content creation from a proprietary, restrictive pr
 
 ### Definition
 
-Applied within the context of $\text{IPFS-Sats}$ and Content $\text{DAOs}$, the Right to Fork is the absolute guarantee that:
+Applied within the context of IPFS-Sats and Per-Content DAOs, the Right to Fork is the foundational guarantee that:
 
-1.  Any verified piece of content ($\text{Parent CID}$) can serve as the **foundation** for a new, derivative work ($\text{Child CID}$).
-2.  The governance rules (the smart contracts) that manage the $\text{Parent}$ content can be copied, modified, and **re-deployed** by the $\text{Child}$.
+1. Any verified piece of content (Parent CID) can serve as the foundation for a new derivative work (Child CID).
+2. The governance rules — the DAO configuration and smart contract logic — that manage the Parent content can be copied, modified, and redeployed by the Child.
 
-### Why it Drives Innovation
+### Why It Drives Innovation
 
-$\text{IPFS-Sats}$ replaces the traditional model of **exclusion** (prohibiting use via copyright/patents) with a model of **attribution and automatic compensation**.
+IPFS-Sats replaces the traditional model of **exclusion** — prohibiting use through copyright and patents — with a model of **attribution and automatic compensation**.
 
-* **Eliminates Friction:** By removing the legal costs and complexities associated with licensing, the Right to Fork allows innovation to compound exponentially.
-* **Encourages Building:** Creators are incentivized to build upon the most robust foundational works, confident that the system will handle all necessary attribution and compensation automatically.
-* **Perpetual Compensation:** Creators are compensated not by preventing use, but by being the inviolable, economic foundation upon which all future value is built. Value is embedded into the data layer, replacing the slow, centralized legal system with a fast, decentralized cryptographic protocol.
+- **Eliminates friction:** By removing the legal costs and complexities associated with licensing, the Right to Fork allows innovation to compound without the overhead of negotiated agreements at every step.
+- **Encourages building:** Creators are incentivized to build upon the most robust foundational works, confident that attribution and compensation are handled automatically by the protocol rather than by lawyers.
+- **Perpetual compensation:** Creators are compensated not by preventing use, but by being the inviolable economic foundation upon which all future value is built. Value is embedded into the data layer, replacing the slow, centralized legal system with a fast, decentralized cryptographic protocol.
 
-This mechanism forces all content stewards ($\text{Content DAOs}$) to constantly improve their transparency, service, and value proposition to remain the preferred "Parent" foundation.
+This mechanism creates a natural incentive for all content stewards to continuously improve the quality, transparency, and value of their foundational work — because the best foundations attract the most derivative value, and derivative value flows back upstream automatically.
 
 ---
 
@@ -33,41 +33,55 @@ This mechanism forces all content stewards ($\text{Content DAOs}$) to constantly
 
 The protocol provides the cryptographic and economic architecture required to enforce the Right to Fork without relying on legal intermediaries.
 
-### Parent-Child $\text{CID}$ Linking
+### Parent-Child CID Linking
 
-When a new Content Bundle (the $\text{Child}$) is created from an existing piece of content (the $\text{Parent}$), the new Metadata Bundle is cryptographically required to include the $\text{Parent}$'s Content $\text{CID}$ and Bundle $\text{ID}$. This creates an immutable, one-way link:
+When a new derivative work (the Child) is created from an existing piece of content (the Parent), the Child's Metadata Bundle is required to include the Parent's Content CID and Bundle Hash in its fork provenance fields. This creates an immutable, one-way link:
 
-Child_Bundle_ID ---> Parent_CID
+```
+Child Bundle Hash --→ Parent Content CID
+```
 
-This linkage establishes **verifiable provenance** at the deepest layer of the data structure, making it impossible for a derivative work to exist on the protocol without citing its foundation. The integrity of the fork is cryptographically tied to the integrity of the original, leveraging the **Right to Verify** established in Section 7.
+This provenance requirement is enforced at the application layer through the `fork_provenance` fields in the Metadata Wrapper — not at the SatSwap transport layer, which remains content-agnostic. The transport layer moves blocks; the Metadata Bundle records lineage. This separation keeps the exchange protocol minimal while ensuring provenance is structurally encoded in the content layer where it belongs.
 
-### Automatic Royalty Distribution (Economic Enforcement)
+The linkage establishes verifiable provenance at the deepest layer of the data structure, making it impossible for a derivative work to exist on the protocol without citing its foundation. The integrity of the fork is cryptographically tied to the integrity of the original, grounded in the Right to Verify established in Section 7.
 
-The core economic function of the Content $\text{DAO}$ is harnessed to enforce compensation. When a $\text{Child}$ (forked content) generates revenue (via Zaps, access fees, or streaming revenue), the inherited governance code (or a modified fork of it) automatically executes a transparent revenue split:
+### Automatic Royalty Distribution
 
-1.  A percentage of the revenue is routed to the **Child Content DAO’s wallet**.
-2.  A predetermined royalty percentage (e.g., $5\%-15\%$) is automatically routed to the **$\text{Parent}$ Content $\text{DAO}$’s wallet**.
+The economic function of the Per-Content DAO is harnessed to enforce compensation automatically. When a Child generates revenue — through zaps, access fees, or streaming payments — the governance code automatically executes a transparent revenue split:
 
-This **atomic distribution mechanism** ensures that creators of foundational works receive perpetual, passive income from all successful innovations built upon their labor.
+1. A percentage of the revenue is routed to the Child Content DAO's LYW.
+2. A predetermined royalty percentage is automatically routed to the Parent Content DAO's LYW.
+
+This atomic distribution mechanism ensures that creators of foundational works receive perpetual, passive income from all successful innovations built upon their contribution — without any action required from the original creator after publication.
+
+The royalty percentage is set in the Child's `fork_provenance` fields at the time of publication and is governed by the Child's DAO thereafter. The Parent DAO does not need to actively collect — the protocol routes the payment automatically.
 
 ### Fork Tracking and Attribution
 
-The chain of $\text{CIDs}$ and Bundle $\text{IDs}$ creates a **Transparent Provenance Tree**. Every piece of content carries its entire history within its metadata, allowing a user viewing the latest fork to instantly query the protocol to see the full lineage:
+The chain of Content CIDs and Bundle Hashes creates a transparent provenance tree. Every piece of content carries its full history within its Metadata Bundle, allowing any participant to query the Records Database and trace the complete lineage:
 
-* **Original Source:** The genesis content and its creator.
-* **Modification Path:** The sequence of every fork that contributed to the current version.
-* **Economic Flow:** The exact royalty distribution rules across the entire lineage.
+- **Original source:** The genesis content and its creator
+- **Modification path:** The sequence of every fork that contributed to the current version
+- **Economic flow:** The exact royalty distribution rules across the entire lineage
+
+This provenance tree is permanent, publicly queryable, and cannot be altered after the fact. It is the cryptographic implementation of attribution — a record of intellectual lineage that no centralized registry or legal system has previously been able to provide at this scale and cost.
 
 ---
 
 ## 8.3 Applications of the Right to Fork
 
-The Right to Fork applies across all digital domains where knowledge, creativity, and governance are involved, opening up massive new markets built on compounding innovation.
+The Right to Fork applies across all digital domains where knowledge, creativity, and governance compound over time. The following examples illustrate the scope — from individual creative works to foundational infrastructure.
 
-| Application Sector | Example of Forking | Impact of $\text{IPFS-Sats}$ Mechanism |
-| :--- | :--- | :--- |
-| **Open Source Software** | A developer forks a foundational codebase ($\text{Parent}$) to create a new commercial feature ($\text{Child}$). | The original codebase maintainers' Content $\text{DAO}$ receives an **automatic royalty** on all revenue generated by the commercial fork, solving the open-source sustainability crisis. |
-| **Music and Media Sampling** | A producer samples a melody or vocal track from an existing, verified song to create a new track. | The new track's revenue is **automatically split** and instantly compensates the original artist via the $\text{Parent}$ $\text{DAO}$ upon every payment, replacing complex licensing deals. |
-| **Scientific Research** | A research team modifies an existing dataset, model, or paper ($\text{Parent}$) to test a new hypothesis ($\text{Child}$). | The $\text{Parent}$ research $\text{DAO}$ receives passive compensation when the new derivative paper is accessed, creating a powerful **incentive for accurate, high-quality foundational research**. |
-| **Decentralized Governance** | A community operating under a specific voting protocol forks the protocol's code to create a new jurisdiction with different parameters. | The $\text{Parent}$ protocol developers are compensated for the use of their foundational governance design, while the new community is free to **innovate and compete on service quality**. |
-| **Educational Content** | A professor takes an open-source textbook and remasters it for a specific regional dialect or age group. | The original author's Content $\text{DAO}$ receives royalties every time the remixed educational content is utilized, creating a decentralized and **economically viable model for continuous curriculum improvement**. |
+| Application Sector | Example of Forking | Impact of IPFS-Sats Mechanism |
+|---|---|---|
+| **Open Source Software** | A developer forks a foundational codebase (Parent) to create a new commercial product (Child) | The original maintainers' DAO receives automatic royalties on commercial fork revenue, solving the open-source sustainability crisis. The full treatment of OSS applications, including cascading dependency chain compensation and the BIP process, is in Section 5.5. |
+| **Music and Media Sampling** | A producer samples a melody or vocal track from an existing verified recording to create a new track | The new track's revenue is automatically split and instantly routes compensation to the original artist's DAO upon every payment — replacing complex licensing negotiations with a cryptographic agreement encoded at publication |
+| **Scientific Research** | A research team modifies an existing dataset, model, or paper (Parent) to test a new hypothesis (Child) | The Parent research DAO receives passive compensation when the derivative paper is accessed, creating a direct economic incentive for accurate, high-quality foundational research and preserving the full timeline of intellectual contribution |
+| **Decentralized Governance** | A community forks an existing governance protocol to create a new jurisdiction with different parameters | The Parent protocol developers are compensated for the use of their foundational governance design, while the new community is free to innovate and compete on service quality — governance evolves through market selection rather than political capture |
+| **Educational Content** | A professor remasters an open-source textbook for a specific regional context or age group | The original author's DAO receives royalties every time the adapted content is accessed, creating an economically viable model for continuous, decentralized curriculum improvement that benefits both original authors and adapters |
+
+---
+
+The Right to Fork does not weaken the incentive to create foundational work. It strengthens it. Under the traditional exclusion model, a creator who shares their work risks losing control and receiving nothing when others build on it. Under the attribution and compensation model, a creator who shares their work becomes the economic foundation of everything built on top of it — permanently, automatically, and in proportion to how much value that foundation generates.
+
+The best foundations attract the most builders. The most builders generate the most value. And the most value flows back to the foundation that made it possible.
