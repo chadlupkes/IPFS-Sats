@@ -1,109 +1,111 @@
-# IPFS Sats: Trustless Economic Layer for Permanent IPFS Data
+# IPFS-Sats
+## Foundational Infrastructure for the Right to Verify and the Right to Fork
 
-## Executive Summary
+IPFS-Sats is a protocol that combines CID-based content addressing, Bitcoin blockchain timestamping, Lightning Network micropayments, and per-content DAO governance to create trustless, self-sustaining infrastructure for permanent content availability and fair creator compensation. It is released as a public good — no company, no token, no central authority.
 
-IPFS Sats integrates the Bitcoin Lightning Network with IPFS BitSwap to create a trustless, micro-transaction-based economic incentive layer, guaranteeing permanent data persistence and high-speed retrieval of content-addressed data without centralized pinning.
+---
 
-## I. The State of the Decentralized Web Landscape
+## The Problem
 
-The InterPlanetary File System (IPFS), pioneered by Protocol Labs, promised a fundamental shift from the location-based web (HTTP) to the content-addressed web. This vision synthesized key concepts like Distributed Hash Tables (DHT), cryptographic Content Addressing (CIDs), and the BitSwap data exchange protocol to deliver:
+The decentralized web faces three interconnected crises that no existing protocol has solved simultaneously.
 
-1. Censorship Resistance: Eliminating single points of failure by distributing files across redundant nodes globally.
-    
-2. Data Integrity: Guaranteeing content authenticity because the file's address is derived from its cryptographic hash.
-    
-3. Performance: Enabling peers to retrieve data from the nearest available node, reducing latency.
-    
+**The Verification Crisis.** There is no universal, trustless mechanism to prove what existed when. Truth has become a matter of institutional authority — who controls the servers, the timestamps, the archives. Deepfakes, AI-generated content, and platform-controlled historical records have made provable truth effectively unavailable to individuals and small organizations.
 
-### The Problem: The Fragile Promise
+**The Persistence Crisis.** Distributed storage without native economic incentives degrades rapidly. Studies show over 90% of IPFS content becomes unreachable within six months. Without payment for storage, node operators have no reason to keep data alive. Users are forced back to centralized pinning services that reintroduce subscription dependency, censorship risk, and single points of failure — everything IPFS was designed to eliminate.
 
-The reality of the current IPFS ecosystem is that it is a powerful routing and addressing layer, but it is fundamentally not a permanent storage layer or a reliable economic layer.
+**The Innovation Crisis.** Derivative works generate no automatic compensation for foundational contributors. Open-source developers, researchers, and creative commons contributors bear the cost of producing foundational work while the value flows entirely to those who build on top of it. The result is a structural underfunding of the knowledge layer that every application depends on.
 
-IPFS nodes operate on an honor system. If a node runs out of space, it performs Garbage Collection, deleting any data that is not explicitly "pinned." This leads to pervasive data decay and link rot across the network, undermining the core promise of permanent, resilient data persistence.
+---
 
-## II. Why Existing Solutions Are Insufficient
+## Why Existing Solutions Fall Short
 
-The ecosystem currently offers a false choice between centralized trust and industrial complexity to solve data decay, while ignoring critical operational failures caused by the lack of native incentives.
+**Centralized pinning services** (Pinata, Infura) restore the trust model IPFS was designed to eliminate. Persistence is guaranteed by a billing contract with a vendor, not by a protocol mechanism. Vendors can censor, deplatform, or shut down.
 
-### 1. Centralized Pinning Services
+**Filecoin** addresses persistence through cryptographic proofs but imposes industrial-scale barriers — specialized hardware, FIL token collateral, complex deal-making — and operates adjacent to the retrieval layer rather than integrated into it. It solves permanence at the cost of accessibility.
 
-Current solutions like manual pinning, IPFS Cluster, or commercial pinning services (e.g., Pinata) require the user to pay an upfront fee to a trusted third party to host their data.
+**Arweave** provides one-time permanent storage but offers no flexibility for dynamic data, no native retrieval incentives, and high upfront costs that prohibit casual use.
 
-- Critique: This re-introduces the centralized trust model that IPFS was designed to eliminate. Persistence is guaranteed by a billing contract with a trusted vendor, not by the protocol's native economic mechanism.
-    
+**Storj** is the closest comparable in economic model — incentivized hosts, distributed storage — but uses a proprietary token rather than Bitcoin, fragmenting liquidity away from the most established monetary network available.
 
-### 2. The Complexity of Decentralized Storage (The Filecoin Problem)
+None of these solutions address all three crises. None provide cryptographic timestamping, self-sustaining persistence economics, and automated creator compensation in a single accessible protocol.
 
-Filecoin offers a robust, cryptographically-proven solution for decentralized storage, but its design creates massive barriers to entry:
+---
 
-- High Barrier to Entry: Becoming a Filecoin Storage Provider requires specialized hardware, massive capacity, and locking up significant native FIL tokens as collateral (Pledging). This limits participation to large, industrial-scale miners.
-    
-- Complex Overhead: The protocol relies on computationally intensive cryptographic proofs (PoRep, PoSt) to validate storage deals. This complexity adds overhead and excludes the vast majority of casual, individual hosts who could provide true network resilience.
-    
-- Slow Retrieval: Filecoin is optimized for long-term, archival storage via fixed-term deals, often making "hot data" retrieval costly and slow because it operates adjacent to, rather than integrated within, the high-speed data exchange layer (BitSwap).
-    
+## The IPFS-Sats Solution
 
-### 3. Operational Failures: Reciprocity, QoS, and Routing
+IPFS-Sats resolves all three crises through four integrated components.
 
-Beyond the core storage decay problem, the lack of a native economic layer causes systemic failure in the day-to-day operation of the IPFS network:
+**SatSwap — Atomic Block-for-Sats Exchange**
 
-- Free-Riding: BitSwap's reliance on "tit-for-tat" reciprocity fails in practice, leading to many nodes consuming massive amounts of data without ever contributing blocks in return. This resource drain discourages hosts from staying online.
-    
-- Lack of Quality of Service (QoS): Users cannot signal the urgency of a retrieval request. All data is treated equally, resulting in unpredictable and often high latency, as there is no mechanism to "pay for speed" or guaranteed bandwidth.
-    
-- Unincentivized Infrastructure: Nodes that perform critical, high-load services like running the Distributed Hash Table (DHT) for peer discovery or operating as public Relay Nodes receive zero compensation for their bandwidth and CPU usage, leading to brittle, slow routing infrastructure.
-    
+SatSwap is the protocol's foundational exchange primitive. Any node can request any content block. Any host can serve it. Payment settles atomically with delivery via Lightning HTLC — the block is released only when payment confirms, and payment returns if the block is not delivered. The exchange is the verification step: a host that delivers a valid block has proven it holds the block. No separate proof-of-storage mechanism. No trusted intermediary. No free-riding.
 
-## III. The IPFS Sats Solution: Dual Economic Mechanism for Persistence
+SatSwap replaces BitSwap's reciprocity model — which fails in practice because nodes consume data without contributing — with direct bilateral payment. Serve a block, earn sats. Stop serving, earn nothing. The economic gradient enforces availability without commanding it.
 
-IPFS Sats is designed to fill the missing gap by introducing a Dual Economic Mechanism directly integrated with BitSwap, leveraging the speed and low cost of the Lightning Network to incentivize both high-speed data delivery and long-term storage commitment.
+**Bitcoin Timestamping via Records Database**
 
-### A. Mechanism 1: Atomic Retrieval Payments (Sats/Block Exchange)
+Every Metadata Bundle — the combination of a content identifier and its governance rules — is committed to the Bitcoin blockchain as a Bundle Hash via OP_RETURN. This creates a permanent, globally verifiable proof of existence anchored to Bitcoin block height, verifiable by anyone with a Bitcoin node, requiring no protocol-specific infrastructure.
 
-This mechanism incentivizes the instant delivery of data and guarantees availability for "hot" or frequently accessed content. It also acts as the immediate economic solution for operational friction.
+These commitments are recorded in a distributed, permissionless Records Database alongside Host Registry Records and Content Flag Records — a fully transparent, publicly queryable discovery and provenance layer. Anyone can query which hosts serve a given block, when a piece of content was anchored to Bitcoin, and the full fork provenance chain of any derivative work.
 
-- Pay-Per-Block Retrieval: Users pay tiny amounts of Bitcoin (Sats) instantly for the cryptographic assurance of receiving a single block (CID) of content via a modified BitSwap negotiation.
-    
-- Trustless Reciprocity: By making the exchange atomic (Block for Sat), it instantly resolves the free-riding problem inherent in the existing BitSwap protocol.
-    
-- Price Signaling for QoS: Users can offer a slightly higher Sats/Byte rate to signal urgency, allowing hosts to prioritize high-value requests and offer premium, low-latency service.
-    
-- Result: Creates a real-time, fluid market for data retrieval, eliminating large, centralized billing accounts, and ensuring reliable data exchange.
-    
+**Lightning Yield Wallet — Self-Sustaining Persistence**
 
-### B. Mechanism 2: Persistence Bounties (Sats/Time Commitment)
+A Lightning Yield Wallet bonded to each piece of content generates passive income through Lightning Network liquidity participation — routing fees and channel leasing. That yield automatically funds SatSwap payments to hosts, making content persistence self-sustaining without ongoing manual funding, subscription payments, or platform dependency.
 
-This mechanism incentivizes long-term storage for "cold" or rarely accessed data, solving the Garbage Collection problem.
+The LYW is simultaneously a savings account with yield built in, a Bitcoin timestamping service, a self-sustaining persistence engine, and a programmable distribution instrument. A creator can hash any document — a research dataset, a family archive, a legal agreement — fund a LYW, and that LYW begins generating Lightning yield immediately, independent of whether the content is ever commercially accessed.
 
-- Host Commitment: A user pays a Lightning invoice representing a bounty to a specific host to commit to holding a CID for a defined period (e.g., 6 or 12 months).
-    
-- Proof Structure: The protocol includes a lightweight mechanism where the host must be able to periodically sign a challenge using the stored CID's data as a secret, proving the data's persistence without requiring complex, industrial-scale cryptographic proofs like PoSt.
-    
-- Result: Guarantees data persistence beyond immediate retrieval demand, ensuring long-term archive viability by economically punishing the deletion of bounty-backed CIDs.
-    
+**Per-Content DAO — Automated Attribution and Compensation**
 
-### C. Key Components & Advantages (Updated)
+Each piece of content has its own Per-Content DAO, structured around a three-key architecture: a Content Binding Key establishing creator authority and governance constraints, a Human Authority Key representing the DAO's voting membership, and an Execution Key automating revenue distribution, host payments, and fork royalty routing without requiring human action on every transaction.
 
+When a derivative work is created, the fork relationship is encoded in the Metadata Bundle's provenance fields. When the child DAO receives payment — from any source — its smart contract automatically routes the upstream royalty percentage to the parent content's LYW address before distributing the remainder to its own members. Attribution and compensation are enforced by code, not legal contract, not platform policy, not goodwill.
 
-| Component                     | Function                                                                               | Advantage                                                                                           |
-| ----------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Lightning Network Integration | Provides instant, low-cost micro-transactions for all payments.                        | Eliminates high transaction fees and slow settlement times for the entire economic layer.           |
-| BitSwap Protocol Modification | Embeds verifiable payment conditions directly into the block exchange negotiation.     | Creates a truly trustless exchange, eliminating free-riders and enabling QoS signaling.             |
-| Persistence Bounties          | Incentivizes long-term data holding independent of retrieval frequency.                | Solves the IPFS Garbage Collection and link rot problem natively.                                   |
-| Inclusion of Casual Hosts     | Low barrier to entry—any node capable of running a Lightning wallet can become a host. | Maximizes the distribution of data and incentivizes the running of critical routing infrastructure. |
+---
 
-## IV. Getting Started (WIP)
+## What's in This Repository
 
-The IPFS Sats proposal is currently in active development. I am seeing developers and coders who would be interested in working on the application.
+**White Paper** — The complete protocol specification for IPFS-Sats v0.4. Organized in five parts:
+- Part 1: Foundation — Abstract, the three crises, requirements for a native solution
+- Part 2: Technical Architecture — Content addressing, Metadata Bundle, economic layer, DAO governance, host discovery, swarm delivery, competitive economics
+- Part 3: Rights Infrastructure — Three-key architecture, LYW economics, DAO governance operations, Right to Verify, Right to Fork, IP management
+- Part 4: Protocol Specifications — All schemas: Metadata Wrapper, Records Database, DAO Configuration, Fork Relationships, LYW State Ledger, SatSwap exchange messages, Host Registry Records, Anchor Records, Content Flag Records; Smart Contract Operations, API Specifications
+- Part 5: Ecosystem — Use Cases, Implementation Roadmap, Economic Model, Why This Matters, Getting Involved
 
-### Roadmap & Next Steps
+**Use Cases** — Extended use case documentation across creator monetization, academic and research, legal and evidentiary, open-source software, journalism, archival, and enterprise applications.
 
-1. Phase I (Current): Defining the BitSwap negotiation standard for payment and persistence bounty integration.
-    
-2. Phase II: Implementing a reference client library (e.g., in Go or Rust) that seamlessly integrates Lightning payment channels.
-    
-3. Phase III: Beta testing and cross-node compatibility proofs.
-    
+**SatSwap Specification** — The four-message handshake protocol (WANT, QUOTE, PAYMENT_HASH, BLOCK) in standalone reference format for implementers.
 
-Stay tuned for documentation on installation and running your own Lightning-incentivized IPFS Node!
+---
 
+## Who This Is For
+
+**Protocol Developers** — The most important immediate need is a Go developer with Lightning Network and content-addressed storage experience to build the reference SatSwap node and Records Database implementation. The SatSwap four-message handshake is minimal and well-defined. A conforming implementation is weeks of work, not months. See the white paper Part 4 for complete specifications.
+
+**Content Creators** — Publish content, initialize a LYW, and earn sats directly through access payments, zaps, and fork royalties — without platform intermediaries. Early creators who demonstrate the economic loop closing are the proof of concept the ecosystem needs.
+
+**Hosts** — Store content blocks and serve them via SatSwap exchanges. Earn sats per block delivered. No minimum scale. No staking requirement. No specialized hardware. Serve a valid block, receive payment. See the white paper Section 3.5 for host discovery and Section 10.7 for the Host Registry Record schema.
+
+**Application Developers** — Build on the protocol API to create decentralized media platforms, provenance explorers, rights management dashboards, immutable document repositories, content discovery engines, or any application that needs permanent content identity, Bitcoin-verified provenance, or direct micropayment monetization. The protocol has no application-layer functionality of its own — every useful experience is an opportunity for an application developer.
+
+---
+
+## Key Design Decisions
+
+**No protocol-level fees.** Every payment is bilateral and direct — requester to host, creator to host, child DAO to parent DAO. There is no central treasury, no shared pool, no protocol take rate. The absence of protocol-level fees is not a gap in the economic model. It is the economic model.
+
+**IPFS is a reference implementation, not a requirement.** The core primitive is CID-based content addressing. Any system that produces CID-compatible identifiers and participates in the SatSwap exchange and Records Database layers is a conforming participant.
+
+**SatSwap is not a modification of BitSwap.** SatSwap replaces BitSwap's reciprocity model with direct payment. It is a distinct protocol that happens to solve the same routing problem BitSwap was designed for, through a fundamentally different economic mechanism.
+
+**No new token.** All payments are denominated in sats — Bitcoin. The protocol routes economic value through the deepest, most liquid monetary network available rather than creating a new one.
+
+---
+
+## Get Involved
+
+The project repository is open. Pull requests, issues, and forks are welcome.
+
+The Bitcoin and Lightning developer communities are the natural home for this conversation. If you are a developer who sees the architecture and wants to build it, start with the SatSwap specification and the Records Database wire protocol in Part 4 of the white paper.
+
+For community engagement, find the project on Nostr and at Seattle BitDevs meetups.
+
+*The protocol does not build the future. It creates the conditions from which the future can emerge.*
