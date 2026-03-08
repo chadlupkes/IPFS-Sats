@@ -1,210 +1,343 @@
-## 5.2.4 Developer Specifications: Operational Functions 🛠️
+# Developer Implementation Guide: LYW Operational Mechanics
 
-This section provides the clean pseudocode for the primary functions executed by the **$\text{Key 3}$ Smart Contract Environment** to manage host compensation, monitor wallet health, and execute the economic failsafes.
+This guide provides pseudocode for the primary functions executed by the Key 3 Smart Contract Environment to manage host payments, monitor LYW health, and execute economic failsafes.
 
-### 1\. Host Compensation and Proof-of-Storage Payment
+---
 
-This function executes the core $\text{sats}$-for-data exchange, verifying storage and paying hosts from the compound pool.
+## 1. Host Payment Model
 
-```javascript
-/**
- * Executes a payment batch for verified hosts storing the content.
- * Triggered periodically (e.g., monthly).
- * * @param {object} dao - The DAO metadata (contains content_cid, budget, split).
- * @param {object} lyw - The current Lightning Yield Wallet state.
- * @returns {object} Payment record (including verification results).
- */
-async function payHostsForStorage(dao, lyw) {
-    const { monthly_budget, performance_weighted } = dao.smart_contract.host_payments;
+Hosts are not paid from a DAO-managed budget on a monthly schedule. They earn per block delivered through SatSwap exchange completions. The HTLC mechanism provides atomicity — the payment settles simultaneously with block delivery when the preimage is revealed. No separate payment batch is required.
 
-    // 1. FUND CHECK & ALERT
-    if (lyw.compound_pool < monthly_budget) {
-        await triggerLowBalanceAlert(dao.cid, monthly_budget - lyw.compound_pool);
-        return { status: "insufficient_funds" };
-    }
-
-    // 2. VERIFICATION LOOP: Proof-of-Storage Challenge
-    const hosts = await getHostsForContent(dao.content_cid);
-    const verifiedHosts = [];
-    let totalPaid = 0;
-
-    for (const host of hosts) {
-        const challenge = createChallenge(dao.content_cid);
-        const proof = await requestStorageProof(host.did, challenge);
-
-        if (await verifyMerkleProof(proof, dao.content_cid, challenge)) {
-            verifiedHosts.push(prepareHostVerificationRecord(host, proof, challenge));
-        } else {
-            await removeHostFromRegistry(host.did, dao.content_cid);
-        }
-    }
-
-    // 3. PAYMENT CALCULATION (Equal or Performance-Weighted)
-    const paymentDistribution = calculatePaymentDistribution(
-        verifiedHosts, 
-        monthly_budget, 
-        performance_weighted
-    );
-
-    // 4. EXECUTE ATOMIC LIGHTNING PAYMENTS
-    const paymentResults = await executeLightningBatch(paymentDistribution);
-    
-    // 5. UPDATE STATE
-    totalPaid = paymentResults.filter(r => r.status === "paid").reduce((sum, r) => sum + r.amount, 0);
-    lyw.compound_pool -= totalPaid;
-    await updateLYW(lyw);
-    await recordPaymentBatch(dao, paymentResults, totalPaid);
-
-    return paymentResults;
-}
-```
-
------
-
-### 2\. Viability and Health Monitoring
-
-This set of functions determines the financial stability of the $\text{LYW}$ and triggers alerts based on the remaining Persistence Runway.
+Key 3's role in host payments is:
+- Monitoring `drawdown_mode` to determine whether the LYW can fund SatSwap exchanges
+- Updating the LYW State Ledger after each exchange completion
+- Transitioning `drawdown_mode` when the balance threshold is crossed
 
 ```javascript
 /**
- * Assesses the LYW's financial health and determines the remaining runway.
- * * @param {object} lyw - The current Lightning Yield Wallet state.
- * @param {object} dao - The DAO metadata (costs, expected yield).
- * @returns {object} The current health state and runway.
+ * Called by Key 3 after each SatSwap exchange completion.
+ * Updates the LYW State Ledger to record the host payment.
+ * The HTLC has already settled atomically — this is bookkeeping only.
+ *
+ * @param {string} lyw_address
+ * @param {Object} exchangeRecord - Completed SatSwap exchange details
  */
-function assessLYWHealth(lyw, dao) {
-    // Note: Assuming yieldAPY is stable for this calculation
-    const yieldAPY = dao.yield_sources[0].expected_apy;
-    const monthlyCosts = dao.smart_contract.host_payments.monthly_budget;
+async function recordHostPayment(lyw_address, exchangeRecord) {
+  const lyw = await getLYW(lyw_address);
+  const ledger = lyw.state_ledger;
 
-    // Calculate net flow
-    const monthlyYield = (lyw.balance * yieldAPY) / 12;
-    const monthlyNet = monthlyYield - monthlyCosts;
+  // Record the payment in the current cycle's expenses
+  ledger.expenses.host_payments_sats += exchangeRecord.amount_sats;
+  ledger.expenses.cycle_expenses_sats += exchangeRecord.amount_sats;
 
-    // Determine runway (Infinity if sustainable)
-    const runway = monthlyNet >= 0
-        ? Infinity
-        : lyw.compound_pool / Math.abs(monthlyNet);
+  // Update available balance
+  ledger.balance.available_sats -= exchangeRecord.amount_sats;
+  ledger.balance.total_sats     -= exchangeRecord.amount_sats;
 
-    if (runway === Infinity) return { state: "healthy", runway: "indefinite" };
-    if (runway > 12) return { state: "warning", runway_months: runway };
-    if (runway > 3) return { state: "critical", runway_months: runway };
-    if (runway > 0) return { state: "emergency", runway_months: runway };
-    
-    return { state: "depleted", runway_months: 0 };
+  // Check whether drawdown threshold has been crossed
+  await evaluateDrawdownMode(lyw_address, ledger);
+
+  ledger.last_updated_block = await getCurrentBlockHeight();
+  await updateLYW(lyw);
 }
 
 /**
- * Executes monitoring and triggers necessary notifications/actions.
- * Triggered continuously (e.g., daily).
+ * Evaluates whether drawdown_mode should activate or deactivate.
+ * Called after any balance-changing event.
+ *
+ * drawdown_mode activates when available_sats can no longer cover
+ * the estimated cost of the next host payment cycle.
+ * drawdown_mode deactivates when available_sats recovers above that threshold.
+ *
+ * @param {string} lyw_address
+ * @param {Object} ledger - Current LYW State Ledger
  */
-async function monitorAndNotify() {
-    const health = assessLYWHealth(await getLYW(), await getDAO());
+async function evaluateDrawdownMode(lyw_address, ledger) {
+  const dao = await getDAOByLYW(lyw_address);
 
-    switch(health.state) {
-        case "warning":
-            // Notify creator every 30 days
-            if (isTimeForAlert(lyw.last_warning, 30)) await notifyCreators(dao, "LOW BALANCE WARNING");
-            break;
-            
-        case "critical":
-            // Notify creator every 7 days; prompt for action
-            if (isTimeForAlert(lyw.last_warning, 7)) await notifyCreators(dao, "CRITICAL BALANCE ALERT");
-            break;
-            
-        case "emergency":
-            // Notify creator daily
-            await notifyCreators(dao, "EMERGENCY: FUNDS NEARLY GONE");
-            await handleEmergencyPinning(dao); // Execute self-pinning failsafe
-            break;
-            
-        case "depleted":
-            await handleDepletion(lyw, dao); // Initiate 30-day grace period
-            break;
-    }
+  // Estimate next cycle host cost from recent expense history
+  const estimatedCycleCost = ledger.expenses.host_payments_sats;
+
+  const sufficientFunds = ledger.balance.available_sats >= estimatedCycleCost;
+  const currentlyInDrawdown = ledger.expenses.drawdown_mode;
+
+  if (!sufficientFunds && !currentlyInDrawdown) {
+    // Activate drawdown mode — suspend host SatSwap payments
+    ledger.expenses.drawdown_mode = true;
+    await notifyCreator(dao, {
+      type: "DRAWDOWN_MODE_ACTIVATED",
+      available_sats: ledger.balance.available_sats,
+      message: "LYW balance below hosting cost threshold. Host payments suspended. Creator yield distribution continues."
+    });
+  }
+
+  if (sufficientFunds && currentlyInDrawdown) {
+    // Deactivate drawdown mode — resume host SatSwap payments
+    ledger.expenses.drawdown_mode = false;
+    ledger.balance.cycles_at_threshold = 0; // Reset sunset counter
+    await notifyCreator(dao, {
+      type: "DRAWDOWN_MODE_DEACTIVATED",
+      available_sats: ledger.balance.available_sats,
+      message: "LYW balance recovered. Host payments resumed."
+    });
+  }
 }
 ```
 
------
+---
 
-### 3\. Failsafe and Recovery Mechanisms
+## 2. Health Monitoring
 
-These functions manage the automated actions taken when the balance is critical or depleted.
+LYW health is assessed at each distribution cycle using three indicators: yield coverage, drawdown state, and sunset proximity. All three are derived from the LYW State Ledger — no external inputs required.
 
 ```javascript
 /**
- * Automatically pins content to the creator's IPFS node if funds are low and the creator is online.
- * * @param {object} dao - The DAO metadata.
+ * Assesses the LYW's economic health at a distribution cycle boundary.
+ * Returns a structured health report for Key 3 action and creator notification.
+ *
+ * @param {string} lyw_address
+ * @returns {Object} Health state and recommended action
  */
-async function handleEmergencyPinning(dao) {
-    const creator = dao.members[0];
-    
-    // Check if creator node is running (Requires service integration)
-    const creatorNode = await checkCreatorNodeOnline(creator.did);
-    
-    if (creatorNode.online) {
-        // Use Key 2 signature to authorize pinning on the creator's behalf
-        await creatorNode.pin(dao.content_cid);
-        
-        await notifyCreators(dao, "Emergency failsafe: Content pinned to your node.");
-    }
+async function assessLYWHealth(lyw_address) {
+  const lyw = await getLYW(lyw_address);
+  const ledger = lyw.state_ledger;
+
+  // Yield coverage: does monthly liquidity yield cover monthly host costs?
+  const monthlyYield = ledger.liquidity_yield.deployed_balance_sats
+    * (ledger.liquidity_yield.yield_rate_ppm / 1_000_000) / 12;
+  const monthlyHostCost = ledger.expenses.host_payments_sats;
+  const yieldCoversHostCosts = monthlyYield >= monthlyHostCost;
+
+  // Sunset proximity: how close is the balance to the sunset threshold?
+  const totalSats = ledger.balance.total_sats;
+  const sunsetThreshold = ledger.balance.sunset_threshold_sats;
+  const cyclesAtThreshold = ledger.balance.cycles_at_threshold;
+
+  // Determine health state
+  let state, message;
+
+  if (!ledger.expenses.drawdown_mode && yieldCoversHostCosts) {
+    state = "healthy";
+    message = "LYW is self-sustaining. Yield covers hosting costs.";
+
+  } else if (ledger.expenses.drawdown_mode && yieldCoversHostCosts) {
+    state = "recovering";
+    message = "Drawdown mode active but yield still covers costs. Balance should recover.";
+
+  } else if (ledger.expenses.drawdown_mode && !yieldCoversHostCosts && cyclesAtThreshold < 3) {
+    state = "warning";
+    message = "Drawdown mode active. Yield below hosting cost threshold. Consider increasing LYW funding.";
+
+  } else if (cyclesAtThreshold >= 3 && totalSats > sunsetThreshold) {
+    state = "critical";
+    message = "Multiple cycles below hosting threshold. Host availability degrading.";
+
+  } else if (totalSats <= sunsetThreshold) {
+    state = "sunset_evaluation";
+    message = `Balance below sunset threshold (${sunsetThreshold} sats). Sunset evaluation active. cycles_at_threshold: ${cyclesAtThreshold}.`;
+
+  } else {
+    state = "unknown";
+    message = "Unable to determine health state — check LYW State Ledger directly.";
+  }
+
+  return {
+    state,
+    message,
+    drawdown_mode:           ledger.expenses.drawdown_mode,
+    available_sats:          ledger.balance.available_sats,
+    total_sats:              totalSats,
+    yield_covers_host_costs: yieldCoversHostCosts,
+    cycles_at_threshold:     cyclesAtThreshold,
+    sunset_threshold_sats:   sunsetThreshold
+  };
 }
 
 /**
- * Initiates the 30-day grace period upon LYW depletion.
+ * Executes monitoring at each distribution cycle boundary.
+ * Sends creator notifications scaled to health state severity.
+ *
+ * @param {string} lyw_address
+ * @param {string} dao_cid
  */
-async function handleDepletion(lyw, dao) {
-    if (!lyw.grace_period_started) {
-        // Set the 30-day expiration time
-        lyw.grace_period_started = Date.now();
-        lyw.grace_period_expires = Date.now() + (30 * 24 * 60 * 60 * 1000);
-        
-        // Notify all stakeholders (creators and hosts)
-        await notifyCreators(dao, "LYW Depleted - 30 Day Grace Period Active.");
-        await notifyHosts(dao.content_cid, "Grace period started. May unpin after 30 days.");
-        
-    } else if (Date.now() > lyw.grace_period_expires) {
-        // If 30 days passed without replenishment, release hosts
-        dao.smart_contract.hosts_released = true;
-        await notifyCreators(dao, "Grace Period Expired - Hosts Released.");
-    }
+async function monitorAndNotify(lyw_address, dao_cid) {
+  const health = await assessLYWHealth(lyw_address);
+  const dao = await getDAO(dao_cid);
 
-    await updateLYW(lyw);
-    await updateDAO(dao);
-}
+  switch (health.state) {
+    case "healthy":
+      // No action required
+      break;
 
-/**
- * Handles the replenishment of the LYW by the creator.
- * @param {number} amount - Sats deposited.
- */
-async function topUpLYW(lyw, dao, amount) {
-    // 1. Process BTC/Lightning deposit and update balances
-    lyw.balance += amount;
-    lyw.compound_pool += amount;
+    case "recovering":
+      // Informational — no urgency
+      await notifyCreator(dao, { type: "RECOVERING", ...health });
+      break;
 
-    // 2. Clear Failsafe flags
-    lyw.grace_period_started = null;
-    dao.smart_contract.hosts_released = false;
+    case "warning":
+      // Notify at distribution cycle cadence (~4 weeks)
+      await notifyCreator(dao, { type: "WARNING", ...health });
+      break;
 
-    // 3. Notify network of restored persistence
-    await notifyCreators(dao, "✅ LYW Replenished - Persistence Restored.");
-    
-    // The next execution of payHostsForStorage will resume payments.
-    await updateLYW(lyw);
-    await updateDAO(dao);
+    case "critical":
+      // Notify at each distribution cycle — prompt for LYW top-up
+      await notifyCreator(dao, { type: "CRITICAL", ...health });
+      break;
+
+    case "sunset_evaluation":
+      // Notify at each distribution cycle
+      // cycles_at_threshold is incrementing toward the duration_blocks threshold
+      await notifyCreator(dao, { type: "SUNSET_EVALUATION", ...health });
+      await evaluateSunsetCondition(lyw_address, dao_cid);
+      break;
+  }
 }
 ```
 
-## The Lightning Yield Wallet's Self-Sustaining Model: Summary of the Closed-Loop Cycle ♻️
+---
 
-The **Lightning Yield Wallet ($\text{LYW}$)** transforms content persistence into a passive, self-funding investment by creating a closed-loop economic system. This model guarantees long-term content availability by linking financial yield directly to verifiable hosting incentives, replacing the traditional "pay monthly or lose data" model with a "deposit once, earn forever" mechanism.
+## 3. Sunset Evaluation
 
-The entire self-sustaining cycle flows through these seven steps:
+When the LYW's total balance remains below `sunset_threshold_sats` for the number of blocks configured in `lifecycle.sunset_condition.duration_blocks`, the sunset condition is confirmed and the pre-approved archival action executes automatically.
 
-1.  **Initial Deposit:** The creator funds the $\text{LYW}$ by depositing $\text{sats}$, which are used to open a **Lightning Network channel** for the content's lifespan.
-2.  **Yield Generation:** The principal of the $\text{LYW}$ is deployed into liquidity markets (e.g., liquidity leasing and $\text{L3}$ DAOs) to **generate continuous Bitcoin yield**.
-3.  **Automatic Distribution:** The earned yield is automatically split according to the DAO's configuration (**Creator/Compound Split**) to compensate the creator and fuel growth.
-4.  **Host Payments:** The **compound pool** funds ongoing, atomic micropayments ($\text{Proof-of-Storage}$) to hosts, ensuring the content's persistent storage and high availability.
-5.  **Surplus Compounding:** Any surplus remaining after host payments and creator payouts is **compounded back** into the $\text{LYW}$ balance, increasing the principal and generating greater future yield.
-6.  **Monitoring and Alerting:** A transparent **Health Monitoring system (5.2.4)** continuously assesses the wallet's financial runway, providing advance warnings to the creator before funds become critical.
-7.  **Failsafes:** Automated mechanisms, including the **30-day grace period** and **Creator Node Self-Pinning**, prevent data loss even if the funding eventually depletes, ensuring content degrades gracefully back to the original source.
+This is not a failure mode — it is a graceful lifecycle completion. Content that has reached economic exhaustion is transitioned to public availability rather than simply disappearing.
+
+```javascript
+/**
+ * Evaluates whether the sunset condition has been met.
+ * Called at each distribution cycle when in sunset_evaluation state.
+ * Executes the pre-approved archival action when duration_blocks is reached.
+ *
+ * @param {string} lyw_address
+ * @param {string} dao_cid
+ */
+async function evaluateSunsetCondition(lyw_address, dao_cid) {
+  const lyw = await getLYW(lyw_address);
+  const ledger = lyw.state_ledger;
+  const dao = await getDAO(dao_cid);
+
+  const sunsetConfig = dao.lifecycle.sunset_condition;
+  const archivalAction = dao.lifecycle.archival_action;
+
+  // Increment cycles_at_threshold counter
+  ledger.balance.cycles_at_threshold += 1;
+
+  // Convert cycles to approximate block count
+  // (distribution_period_blocks per cycle)
+  const blocksAtThreshold =
+    ledger.balance.cycles_at_threshold * dao.smart_contract.yield_config.distribution_period_blocks;
+
+  if (blocksAtThreshold >= sunsetConfig.duration_blocks) {
+    // Sunset condition confirmed — execute pre-approved archival action
+    await executeSunsetAction(dao_cid, archivalAction);
+  } else {
+    // Sunset not yet triggered — record updated counter and continue
+    await updateLYW(lyw);
+  }
+}
+
+/**
+ * Executes the pre-approved archival action on sunset confirmation.
+ * The most common action is public_domain_release (CC0 license).
+ *
+ * @param {string} dao_cid
+ * @param {Object} archivalAction - From dao.lifecycle.archival_action
+ */
+async function executeSunsetAction(dao_cid, archivalAction) {
+  const dao = await getDAO(dao_cid);
+
+  switch (archivalAction.action_type) {
+    case "public_domain_release":
+      // Update content license to CC0
+      // Requires Key 3 execution (pre-approved — no Key 2 vote needed at this step)
+      await updateContentLicense(dao.content_cid, archivalAction.new_license_cid);
+      await notifyCreator(dao, {
+        type: "SUNSET_CONFIRMED",
+        message: "Content license updated to CC0. Content is now in the public domain."
+      });
+      break;
+
+    case "archive_dao_transfer":
+      // Transfer governance to a public archive DAO
+      await transferDAOGovernance(dao_cid, archivalAction.archive_dao_cid);
+      await notifyCreator(dao, {
+        type: "SUNSET_CONFIRMED",
+        message: "Governance transferred to archive DAO."
+      });
+      break;
+
+    case "freeze":
+      // Freeze current state — no license change, no governance transfer
+      await freezeDAO(dao_cid);
+      await notifyCreator(dao, {
+        type: "SUNSET_CONFIRMED",
+        message: "DAO frozen. Content state preserved at last known configuration."
+      });
+      break;
+  }
+}
+```
+
+---
+
+## 4. LYW Top-Up (Funding Recovery)
+
+When a creator funds a depleted or degraded LYW, the recovery sequence reactivates host payments and resets the sunset counter.
+
+```javascript
+/**
+ * Processes a LYW top-up from the creator.
+ * Updates the LYW State Ledger and re-evaluates drawdown_mode.
+ *
+ * @param {string} lyw_address
+ * @param {number} amount_sats - Sats received via Lightning payment
+ */
+async function topUpLYW(lyw_address, amount_sats) {
+  const lyw = await getLYW(lyw_address);
+  const ledger = lyw.state_ledger;
+
+  // Update balances
+  ledger.balance.available_sats += amount_sats;
+  ledger.balance.total_sats     += amount_sats;
+  ledger.liquidity_yield.deployed_balance_sats += amount_sats;
+
+  // Re-evaluate drawdown state — may deactivate if balance now sufficient
+  await evaluateDrawdownMode(lyw_address, ledger);
+
+  // Reset sunset counter if balance is above sunset threshold
+  if (ledger.balance.total_sats > ledger.balance.sunset_threshold_sats) {
+    ledger.balance.cycles_at_threshold = 0;
+  }
+
+  ledger.last_updated_block = await getCurrentBlockHeight();
+  await updateLYW(lyw);
+
+  const dao = await getDAOByLYW(lyw_address);
+  await notifyCreator(dao, {
+    type: "LYW_TOPPED_UP",
+    amount_sats,
+    new_balance: ledger.balance.available_sats,
+    drawdown_mode: ledger.expenses.drawdown_mode
+  });
+}
+```
+
+---
+
+## 5. The Closed-Loop Cycle: Summary
+
+The LYW's self-sustaining model operates through six steps:
+
+1. **Initial Funding:** The creator funds the LYW. Capital is deployed into Lightning channels to begin generating liquidity yield.
+
+2. **Yield Generation:** The deployed balance earns yield through channel leasing, routing fees, and other Lightning liquidity activity. Yield accumulates in `liquidity_yield.cycle_income_sats`.
+
+3. **Automatic Distribution:** At each `distribution_period_blocks` interval, Key 3 distributes cycle income to DAO members per the `distribution_split` configuration. Compound fraction stays in the LYW and is redeployed, growing the yield principal.
+
+4. **Host SatSwap Payments:** When `drawdown_mode` is false, Key 3 funds host SatSwap exchange completions from `available_sats`. Hosts earn per block delivered — atomic with delivery, no verification step required.
+
+5. **Monitoring and Alerts:** Key 3 evaluates health at each distribution cycle. Notifications scale to severity: drawdown activation, critical balance, sunset evaluation. The creator receives advance warning well before the sunset threshold is reached.
+
+6. **Graceful Lifecycle Completion:** If the balance remains below `sunset_threshold_sats` for the configured `duration_blocks`, the pre-approved archival action executes — typically a CC0 public domain release. Content degrades to publicly accessible rather than simply disappearing.
+
+**There is no debt, no grace period, and no external arbitrator.** Economic state is fully encoded in the LYW State Ledger and DAO Configuration Object. Key 3 reads state and executes pre-approved actions — nothing more.
