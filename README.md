@@ -64,11 +64,11 @@ When a derivative work is created, the fork relationship is encoded in the Metad
 ## What's in This Repository
 
 **White Paper** — The complete protocol specification for IPFS-Sats v0.4. Organized in five parts:
-- Part 1: Foundation — Abstract, the three crises, requirements for a native solution
-- Part 2: Technical Architecture — Content addressing, Metadata Bundle, economic layer, DAO governance, host discovery, swarm delivery, competitive economics
-- Part 3: Rights Infrastructure — Three-key architecture, LYW economics, DAO governance operations, Right to Verify, Right to Fork, IP management
-- Part 4: Protocol Specifications — All schemas: Metadata Wrapper, Records Database, DAO Configuration, Fork Relationships, LYW State Ledger, SatSwap exchange messages, Host Registry Records, Anchor Records, Content Flag Records; Smart Contract Operations, API Specifications
-- Part 5: Ecosystem — Use Cases, Implementation Roadmap, Economic Model, Why This Matters, Getting Involved
+- <a href="whitepaper/01abstract.md">Part 1</a>: Foundation — Abstract, the three crises, requirements for a native solution
+- <a href="whitepaper/03technicalArchitecture.md">Part 2</a>: Technical Architecture — Content addressing, Metadata Bundle, economic layer, DAO governance, host discovery, swarm delivery, competitive economics
+- <a href="whitepaper/041threeKeyArchitecture.md">Part 3</a>: Rights Infrastructure — Three-key architecture, LYW economics, DAO governance operations, Right to Verify, Right to Fork, IP management
+- <a href="whitepaper/1010corecontent.md">Part 4</a>: Protocol Specifications — All schemas: Metadata Wrapper, Records Database, DAO Configuration, Fork Relationships, LYW State Ledger, SatSwap exchange messages, Host Registry Records, Anchor Records, Content Flag Records; Smart Contract Operations, API Specifications
+- <a href="whitepaper/1300usecases.md">Part 5</a>: Ecosystem — Use Cases, Implementation Roadmap, Economic Model, Why This Matters, Getting Involved
 
 **Use Cases** — Extended use case documentation across creator monetization, academic and research, legal and evidentiary, open-source software, journalism, archival, and enterprise applications.
 
