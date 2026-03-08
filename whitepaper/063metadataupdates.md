@@ -1,48 +1,54 @@
-## 6.3 Metadata Bundle Updates & Propagation 📡
+# 6.3 Metadata Bundle Updates and Propagation 📡
 
-While the underlying media content stored on $\text{IPFS}$ is fundamentally **immutable** (any change generates a new Content $\text{CID}$), the rules governing that content are dynamic. The **Metadata Bundle** serves as the lightweight, mutable container for these economic and commercial rules. This section details how a successful $\text{DAO}$ vote translates into a technical update that is propagated and strictly enforced across all storage providers and gateways.
+While the underlying content is fundamentally immutable — any change to the content itself generates a new Content CID — the rules governing that content are dynamic. The **Metadata Wrapper** is the governable layer: a structured document that defines the economic and commercial terms under which the content is accessed, distributed, and compensated. When a DAO vote passes and its execution delay expires, the result is a new Metadata Wrapper, not new content.
 
-### The Structure of the Metadata Bundle
+This distinction is load-bearing. The content never changes. What changes is the set of rules the network enforces around it — and those rules are always current, always verifiable, and always anchored to Bitcoin through the Anchor Record that records each governance update.
 
-The Metadata Bundle is a lightweight $\text{JSON}$ object associated with the content's master Smart Contract. It acts as the "operating system" for the content, dictating how the network interacts with the static files.
+---
 
-| Component | Description | Example Data |
-| :--- | :--- | :--- |
-| **Economic Logic** | The current Yield Distribution Table and Access Pricing (cost in $\text{\$SATS}$), and Zap allocation split. | `{"price_sats": 1500, "creator_share": 0.50, ...}` |
-| **Rights Management** | Licensing status, remix permissions, and regional restrictions for access/forking. | `{"license": "CC-BY-NC-SA", "remix_perm": true, ...}` |
-| **Pointer (Payload)** | The $\text{IPFS CID}$ of the immutable media files (the "Payload"). | `"ipfs_cid": "QmSong..."` |
-| **Version History** | A cryptographic hash chain linking to previous versions of the metadata for full auditability. | `"prev_cid": "QmzAP..."` |
+## The Metadata Wrapper as the Governable Layer
 
-### The Atomic Bundle Update Mechanism
+The Metadata Wrapper is the structured component of the Metadata Bundle that encodes all governable parameters for a piece of content. It is the part of the bundle that DAO votes can update. The Content CID it is paired with remains unchanged.
 
-When a governance proposal passes the required Threshold and completes the mandatory Execution Delay (as defined in 6.1 and 6.2), the system initiates an **Atomic Bundle Update**:
+| Component | Description | Example |
+|---|---|---|
+| **Economic Terms** | Current yield distribution, access pricing in sats, and zap allocation split | `{"price_sats": 1500, "creator_share": 0.50, ...}` |
+| **Rights Management** | Licensing status, remix permissions, fork approval status | `{"license": "CC-BY-NC-SA", "remix_permitted": true, ...}` |
+| **Content Pointer** | The Content CID of the immutable content this wrapper governs | `{"content_cid": "<content-cid>"}` |
+| **Version Chain** | A cryptographic link to the previous Metadata Wrapper, providing a complete and auditable governance history | `{"prev_bundle_hash": "<prior-bundle-hash>"}` |
 
-1.  **State Transition:** The $\text{DAO}$ Smart Contract commits the new parameters to the blockchain state.
-2.  **Regeneration & Re-Hashing:** A new Metadata Bundle ($\text{JSON}$) is generated using the new rules, and this bundle is cryptographically hashed to create a new **Governance $\text{CID}$ ($\text{CID}_{gov}$)**.
-3.  **Source of Truth:** The Smart Contract executes a transaction to update its `CurrentMetadataPointer` variable, pointing it to the new $\text{CID}_{gov}$. This single, immutable transaction serves as the verifiable **Source of Truth** for the entire network.
+The combination of the Content CID and the current Metadata Wrapper is the **Metadata Bundle**. The hash of that combination is the **Bundle Hash**. Every governance update produces a new Metadata Wrapper, a new Metadata Bundle, and a new Bundle Hash — each anchored to Bitcoin via the Anchor Record written to the Records Database (Section 3.5).
 
-### Propagation and Enforcement to Content Hosts
+---
 
-Content Hosts (Storage Providers) must enforce the new rules immediately to remain compliant and eligible for continuous yield payments. This is achieved through an event-driven **"Push-Pull" architecture**:
+## The Governance Update Sequence
 
-#### The Push (Event Emission)
+When a proposal passes the required threshold and the execution delay expires (as defined in Sections 6.1 and 6.2), Key 3 initiates the following update sequence:
 
-Upon updating the `CurrentMetadataPointer`, the Smart Contract emits a standard **`MetadataUpdate` event** containing:
+1. **State Transition:** Key 3 commits the new parameters from the passed proposal to the DAO's governing smart contract, producing an updated Metadata Wrapper.
+2. **Bundle Regeneration:** The new Metadata Wrapper is combined with the unchanged Content CID to form a new Metadata Bundle. The Bundle Hash is computed from this combination.
+3. **Anchor Record Publication:** The new Bundle Hash is embedded in the next natural Lightning channel operation via OP_RETURN, establishing a Bitcoin timestamp. After channel confirmation, a new Anchor Record is written to the Records Database — the authoritative, network-wide source of truth for the current governance state of this content.
 
-* The new **$\text{CID}_{gov}$**.
-* The **Effective Block Number** at which the new rules must be enforced.
+The Anchor Record is the single point of truth the entire network converges on. Any node querying the Host Discovery Layer for this content CID will receive the current Bundle Hash from the Records Database and can verify it against the Bitcoin timestamp independently.
 
-#### The Pull (Node Synchronization)
+---
 
-All active Content Hosts run a lightweight service ("The Watcher") that subscribes to and monitors these events from the contracts of the content they host.
+## Propagation Through the Host Discovery Layer
 
-1.  **Detection & Fetch:** The Watcher detects the `MetadataUpdate` event and immediately retrieves the new Metadata Bundle ($\text{JSON}$) via $\text{IPFS}$ using the new $\text{CID}_{gov}$.
-2.  **Validation:** The node verifies that the update was initiated by the correct, approved $\text{DAO}$ Smart Contract.
-3.  **Application:** The node updates its local gateway configuration (e.g., adjusts the payment requirement, or $\text{SATS}$ routing logic for incoming retrieval requests).
+Under 0.3, propagation relied on a separate event subscription service running on each host node. In 0.4, this function is handled natively by the Host Discovery Layer and the Records Database already defined in Section 3.5. No additional synchronization infrastructure is required.
 
-#### Synchronization and Hard Enforcement
+Hosts are registered participants in the Host Discovery Layer. As part of normal operation, hosts query the Records Database to verify that their cached content matches the current Anchor Record for a given Content CID. When a governance update produces a new Anchor Record with a new Bundle Hash, that updated record becomes the authoritative state. The next query cycle returns the new Bundle Hash, and hosts update their local enforcement parameters accordingly.
 
-To prevent **race conditions** where users and hosts are operating under conflicting rules, updates are strictly enforced based on **Block Height**:
+The network converges on the new governance state through the same discovery infrastructure it uses for all content routing — not through a separate propagation mechanism layered on top.
 
-* **Effective Block:** The `MetadataUpdate` event specifies a future block number (e.g., $\text{CurrentBlock} + 100$) as the point of enforcement. This buffer zone allows time for global node synchronization.
-* **Hard Enforcement:** Once the **Effective Block** is mined, all nodes must strictly enforce the new Metadata Bundle. Any node continuing to serve content under the old, deprecated rules (e.g., serving content at a lower price than mandated) will fail **Proof-of-Commerce** checks and may be penalized by the protocol, ensuring consistent rules across the decentralized network.
+---
+
+## Enforcement Through SatSwap
+
+Enforcement of current governance terms does not require a separate compliance check. It is a natural consequence of how SatSwap exchanges work.
+
+Every SatSwap negotiation is governed by the terms embedded in the current Metadata Wrapper, identified by the current Bundle Hash. A requesting node presents the current Bundle Hash — retrieved from the Records Database — and the exchange proceeds under the terms that hash represents. A host operating on stale governance terms will quote parameters that do not match the current Bundle Hash. The requesting node will not complete the exchange. Payment flows only through successful SatSwap trades, and successful trades require matching current terms.
+
+A host that fails to update after a governance change is not penalized through a separate enforcement action. It simply stops completing trades, stops earning, and drops in the Host Discovery Layer's performance ranking until it falls below the threshold for continued inclusion. The economic incentive to stay current is the same incentive that drives all host behavior: sats flow to hosts that serve correctly, and stop flowing to those that do not.
+
+This is the correct enforcement model for a decentralized network — not a compliance check imposed from outside, but an economic gradient that makes correct behavior the path of least resistance.
