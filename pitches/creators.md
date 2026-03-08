@@ -1,11 +1,65 @@
-## Pitch to Content Creators (Songwriters)
+# Pitch to Content Creators
 
-Imagine you’ve just finished writing your next hit song. To get it to your audience, you must navigate a true labyrinth: submitting to labels, negotiating away masters and publishing rights, clearing the song with a Performance Rights Organization (PRO), then uploading to a digital distributor, who in turn lists it on various streaming platforms. At every step—from recording studio costs to distribution fees and administrative overhead—a piece of your potential revenue is taken. This complex, multi-layered bureaucracy means your work is filtered through a dozen middlemen, leaving you with minimal control, delayed payments, and an opaque view into who is listening and how much they are actually paying for your art.
+## The Labyrinth Has a Door
 
-The core challenge in the current system is proving ownership and processing payments without a central authority. As a songwriter, your creative rights are fractured into multiple streams—mechanical, performance, synchronization—each requiring a separate organization to track, license, and pay out royalties. This setup not only drastically slows down the payment cycle, often taking months for micropayments to accumulate and clear, but it also creates a massive transparency gap. You are forced to trust that the data from streaming giants and collecting societies is accurate, often receiving cents on the dollar for millions of plays while feeling powerless to verify the count or dispute the terms.
+You finish a song. To get it to your audience, you navigate a true labyrinth: labels, rights negotiations, Performance Rights Organizations, digital distributors, streaming platforms. At every step a piece of your revenue is taken — recording costs, distribution fees, administrative overhead, platform cuts. Months pass between a listener pressing play and a fraction of a cent reaching your account. You are forced to trust that the data from streaming giants and collecting societies is accurate, with no real mechanism to verify the count or dispute the terms.
 
-This is where the IPFS Sats 2.0 infrastructure steps in to collapse the labyrinth. Using this new protocol, a songwriter would bypass virtually all the traditional middlemen. When your song is finished, you simply use the protocol to register the work. The song file itself and its associated metadata (artist, title, licensing terms, price per stream/download) are instantly pinned to the InterPlanetary File System (IPFS), creating an immutable, distributed, and instantly verifiable record of your creation. This single action is your proof of creation, distribution, and rights management, all rolled into one.
+The core problem is not that the music industry is predatory, though it often is. The core problem is structural: proving ownership and processing payments without a central authority has historically required building an entire industry of intermediaries to do it. IPFS-Sats makes both of those things possible at the protocol layer — without the intermediaries.
 
-The powerful shift happens with monetization through Sats (Satoshis, the smallest unit of Bitcoin). Instead of waiting six months for a bank transfer from a distributor, every interaction—every stream, download, or licensed use—triggers an instant, transparent micro-payment directly from the listener or licensee to your digital wallet. The song’s metadata contains the smart contract that dictates the royalty splits, ensuring your collaborators are paid instantly, too. With IPFS Sats, you retain 100% ownership, control your licensing terms, and turn a slow, opaque revenue stream into a real-time, peer-to-peer flow of value that cuts out the administrative overhead, putting the vast majority of the revenue directly into the hands of the creator.
+---
 
-We believe this infrastructure is the future of content ownership and monetization. It is built to restore control and maximize value for creators like you. We are currently seeking feedback from forward-thinking artists to ensure the protocol addresses real-world challenges. We would love for you to review a draft of the IPFS Sats White Paper and share your perspective on how this system could transform your songwriting career.
+## What the Protocol Does for You
+
+**Proof of creation, permanent and unforgeable.**
+
+When you finish a piece of work — a song, a photograph, a research paper, a screenplay, a software library — you publish it to the protocol. Your content is broken into content-addressed blocks, each identified by a cryptographic hash of its data. The combination of your content identifier and your governance rules is bundled into a Metadata Bundle, and the cryptographic fingerprint of that bundle is committed to the Bitcoin blockchain via OP_RETURN.
+
+That commitment is your proof of existence. It says: this specific work, by this specific creator, existed at this specific Bitcoin block height. It is permanently verifiable by anyone with a Bitcoin node. No institution controls it. No platform can revoke it. If someone publishes the same work later and claims priority, the Anchor Records table shows which commitment appeared in an earlier Bitcoin block. That record cannot be forged.
+
+**Monetization without intermediaries.**
+
+Every piece of content you publish has its own Per-Content DAO — a governance structure you configure. Your DAO has a Lightning Yield Wallet address. When a listener accesses your content, payment flows directly from their Lightning wallet to yours in sats. No distributor. No platform taking 30%. No six-month settlement cycle. The payment settles in seconds.
+
+If you collaborate with other creators, your DAO's revenue distribution configuration handles the splits automatically. Your co-writer's share goes directly to their LYW address the moment payment arrives. No collecting society required. No trust required between collaborators — the DAO's smart contract executes the split by code.
+
+**Persistence that doesn't depend on a platform.**
+
+Your content is served by a decentralized network of hosts, each earning sats per block delivered via SatSwap exchange. Your Lightning Yield Wallet generates passive income — Lightning liquidity yield — that automatically funds those host payments. Your content persists as long as your LYW has sufficient balance to pay hosts, independent of whether any platform continues to operate.
+
+This means a song you published five years ago and stopped actively promoting continues to exist, continues to be accessible, and continues to generate income whenever someone accesses it — without you paying a monthly pinning fee or maintaining a relationship with a hosting service.
+
+**The Right to Fork — working for you in both directions.**
+
+If someone builds on your work — samples your beat, translates your article, extends your software library, remixes your photograph — they encode that relationship in their Metadata Bundle. When their derivative work earns income, their DAO's smart contract automatically routes the upstream royalty percentage to your LYW address before distributing anything to themselves. You earn from every downstream creation, automatically, indefinitely.
+
+This changes the calculus of sharing. Under the current system, sharing your work openly means losing control of how it is used and receiving nothing when it generates value for others. Under IPFS-Sats, sharing your work openly means every downstream use that generates income sends a portion upstream to you. The more your work is built upon, the more you earn. Open becomes the rational choice.
+
+**The LYW as a personal economic instrument — even before you have an audience.**
+
+Here is something that matters especially if you are early in your career or skeptical that the protocol will generate income immediately: a Lightning Yield Wallet generates Lightning liquidity yield independent of whether your content is ever commercially accessed.
+
+You hash your work, fund a LYW, and that LYW immediately begins participating in Lightning Network liquidity provision — routing fees, channel leasing. The yield is generated by the network's demand for liquidity, not by demand for your content. Your content is the key that initializes the economic instrument. What the content is, whether anyone accesses it, whether it has commercial value yet — none of that determines whether the LYW generates yield.
+
+This means the protocol is useful from day one, not after you have built an audience. It means a creator with ten listeners and a creator with ten million listeners both have access to the same economic instrument. The scale differs; the mechanism is identical.
+
+---
+
+## What This Looks Like in Practice
+
+A songwriter finishes a track. She publishes it to the protocol, configures her Per-Content DAO with a 70% share to herself and 30% to her producer, sets a per-access price in sats, and funds a LYW. Her LYW immediately begins generating Lightning yield. Her track's Metadata Bundle is committed to Bitcoin — permanent proof of authorship and publication date.
+
+A listener discovers the track through an application built on the IPFS-Sats API. She pays the access price in sats. The payment settles instantly: 70% to the songwriter's LYW, 30% to the producer's LYW. No intermediary. No delay. The songwriter can see the payment arrive in real time.
+
+Six months later, a producer samples eight seconds of the track for a new song. He encodes the sample relationship in his Metadata Bundle, setting a 15% upstream royalty to the original songwriter. Every time his track earns income, 15% flows automatically to the songwriter's LYW. She does not need to know he exists. She does not need to negotiate a license. The protocol handles it.
+
+Three years later, the original platform the listener used to discover the track shuts down. The track is still available — hosted by the SatSwap network, funded by the songwriter's LYW yield. The Anchor Record proving her authorship is still in the Bitcoin blockchain. The fork royalties from the sampled track are still flowing.
+
+---
+
+## Where to Start
+
+The white paper is at github.com/chadlupkes/IPFS-Sats. Section 5 covers the Lightning Yield Wallet in detail. Section 6 covers Per-Content DAO governance. Section 8 covers the Right to Fork from the creator's perspective.
+
+The protocol is in active development. Creator feedback on what the protocol gets right and what real-world challenges it has not yet addressed is genuinely useful — the use cases document in the repository is where that conversation lives.
+
+If you are a creator who sees what this infrastructure enables and wants to be part of demonstrating it, the best thing you can do is publish something to the testnet when it launches and let the economic loop close for the first time with real content.
