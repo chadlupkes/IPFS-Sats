@@ -1,53 +1,74 @@
 # 12. API Specifications 🌐
 
-The $\text{IPFS-Sats API}$ provides a $\text{RESTful}$ interface designed to enable seamless, programmatic interaction with the content and governance layers of the protocol. It ensures all operations, particularly those involving value transfer ($\text{Zaps}$ and $\text{Royalties}$), are verifiable, immutable, and secured via cryptographically-signed message payloads.
+The following endpoints represent a minimal reference API for the IPFS-Sats protocol. They demonstrate the interface surface across the protocol's five functional categories — content operations, Records Database queries, governance, fork management, and LYW status — and are intended to give developers enough structure to build conforming implementations and application-layer tools.
+
+This is a reference specification, not a frozen production contract. Implementations may extend these endpoints and add application-specific functionality within the bounds of the protocol architecture. A comprehensive API specification will be developed collaboratively with early implementers and maintained in the project repository at github.com/chadlupkes/IPFS-Sats.
+
+All endpoints accept and return JSON. Value amounts are denominated in millisatoshis (msats) unless otherwise noted. Requests that modify state require a cryptographic signature from the relevant DID key.
 
 ---
 
-## 12.1 Core Endpoints (Content & Monetization)
+## 12.1 Content Operations
 
-These endpoints handle the fundamental operations of content storage, retrieval, authenticity verification, and direct creator monetization.
+These endpoints handle the core content lifecycle: publishing, retrieval, anchoring, and verification.
 
 | Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/v2/content/upload` | $\text{POST}$ | Publishes new content to the network. The request includes the raw data and the Metadata Bundle, resulting in a unique $\text{CID}$ anchored to the Bitcoin blockchain. |
-| `/api/v2/content/{cid}` | $\text{GET}$ | Retrieves the raw content data and associated Metadata Bundle, including its current version and historical provenance details. |
-| `/api/v2/content/verify` | $\text{POST}$ | Allows a user to check the integrity of a locally-stored file against the immutable hash ($\text{CID}$) recorded on the network, ensuring the content has not been tampered with ($\text{Right to Verify}$). |
-| `/api/v2/payment/zap` | $\text{POST}$ | Facilitates instant, unidirectional micro-payments (**"Zaps"**) to a content creator. Payments are executed via an integrated $\text{Lightning Network}$ gateway, enabling atomic value-for-content exchange. |
+|---|---|---|
+| `/api/v1/content/publish` | POST | Publishes a new Metadata Wrapper to the network. Returns the Content CID and Bundle Hash. Does not anchor to Bitcoin — anchoring is a separate operation triggered after the Metadata Wrapper is published. |
+| `/api/v1/content/anchor` | POST | Initiates the Bitcoin anchoring process for a Bundle Hash via OP_RETURN on a Lightning channel operation. Returns the resulting Anchor Record CID once the channel transaction is confirmed. See Section 3.2 for the full six-step anchoring sequence. |
+| `/api/v1/content/{cid}` | GET | Retrieves the Metadata Wrapper for the specified Content CID, including current governance state and fork provenance fields. |
+| `/api/v1/content/verify` | POST | Verifies a piece of content against its two independent proofs: (1) Bitcoin timestamp proof — confirms the Bundle Hash appears in the Anchor Records table and matches an OP_RETURN in the referenced Bitcoin block; (2) Lightning availability proof — confirms the content is currently retrievable via a SatSwap exchange. Returns the result of both proofs independently. See Section 7. |
 
 ---
 
-## 12.2 DAO Operations (Governance)
+## 12.2 Records Database Queries
 
-These endpoints govern the interactions with the protocol's $\text{Decentralized Autonomous Organization (DAO)}$, allowing for community-driven updates, fee adjustments, and resolution of content disputes via the smart contract.
+These endpoints expose the three Records Database tables (Section 10.2) to application-layer query engines. All three tables are fully public and require no authentication to read.
 
 | Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/v2/dao/proposal` | $\text{POST}$ | Submits a new governance proposal for community review and voting. Requires sufficient stake (proposal_threshold) and logs the proposal payload immutably. |
-| `/api/v2/dao/vote` | $\text{POST}$ | Allows staked token holders to register their cryptographic vote ($\text{Yes/No/Abstain}$) on an active proposal, with weight calculated based on the $\text{DAO}$'s defined rules (Section 10.3). |
-| `/api/v2/dao/execute` | $\text{POST}$ | Triggers the execution of a proposal's embedded smart contract function, provided the vote has met the required consensus and quorum thresholds. |
-| `/api/v2/dao/ledger/{cid}` | $\text{GET}$ | Queries the **Mutable State Accounting Ledger** for the specified content $\text{DAO}$, providing real-time financial health, assets, and liabilities (Section 10.5). |
+|---|---|---|
+| `/api/v1/records/hosts/{block_cid}` | GET | Queries the Host Registry Records table for hosts currently serving the specified block-level CID. Accepts optional filter parameters: `max_msats`, `min_uptime_score`. Returns an array of matching Host Registry Records. |
+| `/api/v1/records/anchor/{bundle_hash}` | GET | Queries the Anchor Records table for the Anchor Record associated with the specified Bundle Hash. Returns the Bitcoin block height, transaction ID, and OP_RETURN data confirming the timestamp proof. |
+| `/api/v1/records/flags/{content_cid}` | GET | Queries the Content Flag Records table for all flags associated with the specified Content CID. Accepts optional filter parameters: `confirmed_only`, `min_severity`. Returns an array of matching Content Flag Records. |
+| `/api/v1/records/search` | POST | Queries Anchor Records by Metadata Wrapper fields — creator DID, title, tags, license type, or any other indexed field. Returns matching Bundle Hashes and their associated Metadata Wrappers. This is the primary entry point for application-layer content discovery engines. |
 
 ---
 
-## 12.3 Fork Management (Attribution & Royalties)
+## 12.3 Governance Operations
 
-The fork management $\text{API}$ is critical for enabling derivative works while protecting creators' rights, automating the distribution of revenue across the entire lineage of a content piece ($\text{Fork Economics}$).
+These endpoints interact with the Per-Content DAO governance layer, enabling proposal submission, voting, and state queries.
 
 | Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/v2/fork/create` | $\text{POST}$ | Registers a new derivative work ($\text{Child}$) by linking a new_cid to its parent_cid. This action automatically inherits and activates the parent content's defined royalty split structure (Section 10.4). |
-| `/api/v2/fork/royalties/{cid}` | $\text{GET}$ | Provides a transparent ledger query detailing all revenue generated by a specific $\text{CID}$ (or its forks) and the automated distribution of payments to all upstream contributors. |
-| `/api/v2/fork/provenance/{cid}` | $\text{GET}$ | Traces the complete lineage of a content piece, detailing all parent $\text{CIDs}$, subsequent $\text{Forks}$, and the full **Attribution Chain** back to the original genesis source (Section 10.4). |
+|---|---|---|
+| `/api/v1/dao/proposal` | POST | Submits a new governance proposal for a specified Content CID. Requires the submitting member's income share to meet the `proposal_threshold`. Request body includes the proposed action (from `allowed_actions`), proposed parameters, and submitter DID signature. |
+| `/api/v1/dao/vote` | POST | Registers a DAO member's cryptographically signed vote (yes / no / abstain) on an active proposal. Vote weight is calculated from the member's current income share percentage per Section 10.3. |
+| `/api/v1/dao/execute/{proposal_id}` | POST | Triggers Key 3 execution of a passed proposal after the `execution_delay_blocks` has elapsed. Verifies that quorum and passage thresholds were met before executing. |
+| `/api/v1/dao/state/{content_cid}` | GET | Returns the current `mutable_state_cid` and its contents for the specified content's DAO — active income distribution, current license terms, and membership list. |
 
 ---
 
-## 12.4 Lightning/Off-Chain Status (LYW & Liquidity) ⚡
+## 12.4 Fork Management
 
-These new endpoints are essential for providing **fast, verifiable, off-chain state** that allows users and pinning services to confirm liquidity and content funding status *before* a batch commitment is made to the Bitcoin main chain.
+These endpoints support the Right to Fork — registering derivative works, querying royalty flows, and tracing provenance chains.
 
-| Endpoint | Method | Description | Verification Required |
-| :--- | :--- | :--- | :--- |
-| **NEW:** `/api/v2/lyw/status/{cid}` | $\text{GET}$ | Queries the current **Lightning Yield Wallet (LYW) balance** and **pinning status** for a specific $\text{CID}$. This data is drawn from the service's *internal ledger*. | **Cryptographic Signature** by the service's $\text{DID}$ key. |
-| **NEW:** `/api/v2/lyw/did/{service\_id}` | $\text{GET}$ | Retrieves the **Decentralized Identifier (DID)** and its associated **Service Endpoint** for the operator managing the $\text{LYW}$. | $\text{No}$ (Public Metadata) |
-| `/api/v2/content/upload` | $\text{POST}$ | *(Modified)* Now includes a field for the **LYW Funding Transaction ID** for initial on-chain lock, if applicable. | $\text{N/A}$ |
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/v1/fork/register` | POST | Registers a new derivative work by publishing a Metadata Wrapper with `is_fork: true` and populated `fork_provenance` fields, including the `parent_bundle_hash` and the Child's defined `upstream_percentage`. The Child sets its own royalty terms — the Parent cannot impose them. |
+| `/api/v1/fork/royalties/{content_cid}` | GET | Returns the royalty flow record for the specified CID — inbound royalties received from Child DAOs and outbound royalties routed to Parent LYW addresses — as recorded in the LYW State Ledger. |
+| `/api/v1/fork/provenance/{content_cid}` | GET | Traces the complete lineage of a content piece by resolving the Attribution Chain (Section 10.4). Returns the ordered list of ancestor Bundle Hashes from the immediate Parent back to the genesis work, with creator DID and royalty terms at each level. |
+
+---
+
+## 12.5 LYW Status and Lightning Operations
+
+These endpoints expose the LYW's economic state and Lightning Network operational status for a given piece of content.
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/v1/lyw/status/{content_cid}` | GET | Returns the current LYW State Ledger snapshot for the specified content — deployed balance, current cycle income, host payments, yield rate, drawdown mode status, and `cycles_at_threshold`. Signed by the service's DID key. See Section 10.5. |
+| `/api/v1/lyw/did/{node_id}` | GET | Returns the Decentralized Identifier and associated service endpoint for the LYW operator managing the specified node. Public metadata, no authentication required. |
+| `/api/v1/lyw/zap` | POST | Initiates a direct Lightning micropayment (zap) to a content creator's LYW address. Returns a BOLT11 invoice for the requested amount. Payment routes directly to the LYW; Key 3 records the inflow in the current cycle's `zap_income_sats` field. |
+
+---
+
+*For the full API specification including request and response schemas, error codes, authentication requirements, and implementation guidance, see the project repository at github.com/chadlupkes/IPFS-Sats.*
