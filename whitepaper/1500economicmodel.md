@@ -1,56 +1,84 @@
-# 15. Economic Model & Sustainability 💲
+# 15. Economic Model and Sustainability 💲
 
-This section details the financial architecture of $\text{IPFS-Sats}$, establishing a fair, transparent, and self-sustaining economic loop that incentivizes all participants for their contribution to network utility and security.
+The IPFS-Sats economic model is a set of direct, bilateral value exchanges between protocol participants. There is no central fee-collecting entity, no protocol treasury, and no shared pool. Every payment flows directly between the parties whose interaction generated it — content creator to host, user to creator, child DAO to parent creator — governed by the rules each Per-Content DAO configures for itself.
 
----
-
-## 15.1 Protocol Economics
-
-Protocol Economics defines the "take rate" of the network and how capital is managed to ensure long-term stability and security.
-
-### Revenue Sources
-
-These are the primary financial inputs that guarantee the protocol’s liquidity and security.
-
-* **Persistence Deposits (Archival Fees):** A **one-time, upfront deposit** paid by content creators to lock in perpetual storage. This capital forms the base of the **Yield-Backed Persistence Fund**.
-* **Transaction Fees ($\text{Zap Fees}$):** A minor percentage fee ($\text{T}_{\text{Zap}}$) taken from every $\text{Send Zap}$ micro-payment and any on-protocol exchange of content licenses.
-* **Royalty Service Fee:** A small percentage cut taken from automated royalty distributions generated via the Fork Management system, compensating the $\text{DAO}$ for enforcing the royalty smart contract.
-* **Liquidity Provider Fees:** Fees paid by high-volume users ($\text{LYW Providers}$) to secure high-priority channels and guaranteed throughput on the network.
-
-### Fee Structure
-
-The Fee Structure details how the network charges for its utility, ensuring transparency and competitiveness against centralized platforms.
-
-* **Storage Deposit Rate ($\mathbf{F_D}$):** This formula ensures the initial deposit is self-sustaining by calculating the required capital based on the expected yield and storage costs:
-    $$F_D = \frac{C_{\text{Storage}}}{R_{\text{Yield}}}$$
-    Where $C_{\text{Storage}}$ is the annualized cost of storing the data, and $R_{\text{Yield}}$ is the annualized yield rate of the persistence fund.
-* **Zap Transaction Fee ($\mathbf{T_{\text{Zap}}}$):** A low, flat percentage (e.g., $0.5\%$) applied to all $\text{Send Zap}$ transactions, remaining competitive with standard Bitcoin $\text{Lightning}$ routing fees.
-* **DAO Treasury Cut ($\mathbf{T_{\text{DAO}}}$):** A standardized percentage (e.g., $5\%$) of the total revenue generated from Royalty Service Fees and Transaction Fees that is directed to the **Treasury**.
-
-### Treasury Management
-
-The protocol's Treasury is governed by the $\text{DAO}$ and ensures long-term solvency, security, and development funding.
-
-* **Security & Reserve Fund:** A portion of the Treasury is held in stable assets to fund security audits, bug bounties, and act as a reserve against volatility in the yield market.
-* **Development Grants:** Funds are allocated via $\text{DAO}$ vote to finance the Core Protocol $\text{Devs}$ and provide $\text{Ecosystem Grants}$ to $\text{Application Devs}$ (Section 14).
+This section summarizes how value flows through the four participant types and why the model is self-sustaining without central coordination.
 
 ---
 
-## 15.2 Network Incentives
+## 15.1 The Four Value Flows
 
-Network Incentives ensure that the contributions of every stakeholder group are rewarded, driving the engine of the $\text{Flywheel}$ and aligning economic behavior with network utility.
+### 1. The LYW Yield Loop — Persistence Without Ongoing Payment
 
-### Host Rewards (The Supply Side)
+The Lightning Yield Wallet is the economic engine of content persistence. When a creator publishes content and funds a LYW, the deposited sats are deployed into Lightning Network liquidity positions — channel leasing and routing fee generation. This yield is the primary income stream: it runs continuously, independent of whether the content receives any access payments in a given period.
 
-* **Persistent Storage Reward:** Hosts who successfully verify continuous storage via **Proof-of-Storage** (Section 11.2) receive automated, real-time $\text{Sats}$ payments drawn from the yield of the Persistence Fund. Rewards are based on verifiable utility (storage size, retrieval speed, and uptime).
-* **Lightning Routing Fees:** Hosts operating $\text{Lightning}$ routing nodes earn standard fees for facilitating the $\text{Send Zap}$ transactions, aligning their economic incentive with the network's liquidity and payment reliability.
+The yield funds host SatSwap payments directly. As long as the LYW generates sufficient yield to cover hosting costs, the content persists — without the creator taking any further action, paying any further fees, or renewing any subscription. The persistence is self-sustaining by design.
 
-### Creator Benefits (The Value Side)
+The compound/distribute ratio in the DAO Configuration Object governs how the yield is split: a portion is distributed to DAO members as income, and the remainder is reinvested into the LYW's deployed balance, increasing the capital available for yield generation in future cycles. Content that compounds more grows its economic runway; content that distributes more pays its participants sooner. Both are valid governance choices.
 
-* **Highest Revenue Capture:** $\text{Content Creators}$ benefit from near-zero platform fees (only the low $\text{T}_{\text{Zap}}$ fee) and retain full content sovereignty, maximizing their revenue per interaction.
-* **Automated Royalties:** The Fork Management $\text{API}$ guarantees transparent and automatic payment of royalties from derivative works, solving the historical problem of expensive, unenforced $\text{IP}$ contracts ($\text{Right to Fork}$).
+**Why this is sustainable:** The yield is generated by the LYW's participation in Lightning Network liquidity provision — a service the network pays for regardless of the content's popularity. A piece of content with minimal access traffic can still persist indefinitely if its LYW balance is sufficient to generate yield above hosting costs.
 
-### User Value Proposition (The Demand Side)
+---
 
-* **Lower Access Costs:** Users benefit from highly efficient, low-cost access to content. $\text{Micropayments}$ ($\text{Zaps}$) replace prohibitive subscription models, offering fine-grained, pay-per-use access.
-* **Guaranteed Persistence & Authenticity:** Users are guaranteed that content they rely on will not disappear due to platform failure and that the content they download is **verifiably authentic** via the Query Provenance and Verify Authenticity endpoints ($\text{Right to Verify}$).
+### 2. The Access Income Loop — Popularity Compounds Durability
+
+Access payments — zaps from supporters, fees from readers and listeners, and fork royalty inflows from derivative works — flow directly into the content's LYW. They do not pass through any protocol intermediary. There is no protocol-level transaction fee.
+
+Access income is additive on top of the base liquidity yield. A popular piece of content receives more access payments, which increases the LYW's deployed balance, which increases the yield generated in future cycles, which increases the content's economic durability. Popularity compounds durability: the most-accessed content becomes the most persistent, without any central curation or intervention.
+
+The LYW State Ledger (Section 10.5) tracks both income streams separately — `liquidity_yield` and `access_income` — giving DAO members a clear view of the content's economic health and the relative contribution of each source.
+
+**Why this is sustainable:** Access income is entirely demand-driven. It supplements but does not replace the base yield. A creator who builds an audience earns more. A creator whose content serves a small but loyal audience earns less but may still persist indefinitely on yield alone. The economics adapt to the content's actual market without requiring a platform to make that judgment.
+
+---
+
+### 3. The Host Payment Flow — Direct Payment for Verified Delivery
+
+Hosts earn sats by delivering blocks via SatSwap exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming the block was delivered and releasing the payment. No delivery, no payment. No payment, no delivery.
+
+Payment flows directly from the content's LYW to the host's Lightning node. There is no protocol intermediary taking a routing fee beyond standard Lightning Network routing costs. Hosts set their own prices in their Host Registry Records. The market determines what prices are competitive through the discovery layer's ranking of hosts by price and reliability.
+
+When the LYW balance drops below the hosting cost threshold, the drawdown mode flag triggers and host payments are suspended. The remaining balance continues to pay out creator distribution only, ensuring the creator is protected while the content's economic situation is evaluated. No debt is incurred — the protocol never commits to payments it cannot fund.
+
+**Why this is sustainable:** Every host payment is funded by existing LYW balance. The host pricing market self-regulates: prices too high relative to the LYW yield rate will result in fewer SatSwap completions and lower host earnings, creating natural downward pressure. Prices too low will attract more hosts than necessary for a given piece of content, improving availability while distributing costs across more participants.
+
+---
+
+### 4. The Fork Royalty Cascade — Value Flows to Foundations
+
+When a Child DAO receives payment — from any source — its smart contract routes the `upstream_percentage` defined in its `fork_provenance` fields to the Parent content's LYW address automatically, before distributing the remainder to the Child's own members. This cascade propagates up the entire provenance chain: the Parent may itself be a derivative work with its own upstream obligations, routing a percentage further up to its Parent, and so on to the genesis work.
+
+There is no protocol intermediary in this flow. The Child DAO's smart contract executes the distribution. The Parent LYW receives the payment directly. The attribution chain encoded in the Metadata Wrapper is the only data structure required — no rights registry, no licensing clearinghouse, no legal intermediary.
+
+Fork royalty inflows appear in the Parent's LYW State Ledger under `access_income.fork_royalty_income_sats`. From the Parent's perspective they are indistinguishable from any other access income — they compound the LYW's balance and strengthen the content's persistence.
+
+**Why this is sustainable:** The royalty obligation is encoded by the Child at publication time and enforced by the Child's own governance code. The Parent does not need to monitor, claim, or pursue the payment. The economic incentive for the Child to honor its royalty terms is the same as its incentive to honor all its governance rules — the smart contract executes automatically and is auditable by anyone. A Child that attempts to route around its royalty obligations would need to publish a fraudulent Metadata Wrapper with a false or missing `parent_bundle_hash`, which would forfeit its provenance claim and therefore its standing in the attribution chain.
+
+---
+
+## 15.2 Why No Protocol-Level Fees
+
+Several design decisions lead to the same conclusion: there should be no protocol-level fee.
+
+**The protocol has no services to charge for.** The SatSwap transport layer moves blocks. The Records Database stores and serves records. Both functions are performed by participant nodes that are already compensated directly — hosts earn from SatSwap completions, Records Database nodes earn from being discoverable. A protocol-level fee on top of these direct payments would be rent extraction without a corresponding service.
+
+**Per-Content DAOs are the governance layer.** Each piece of content governs its own economics through its DAO Configuration Object. There is no protocol-level governance structure that needs funding from a treasury. Development of the core protocol is resourced through grants and ecosystem sponsorship as described in Section 14 — not through fees extracted from every transaction.
+
+**Fees would undermine the competitive economics argument.** Section 3.6 establishes that IPFS-Sats out-competes centralized storage on economics because the protocol's costs approach zero as the network scales. A protocol-level fee reintroduces a fixed cost that scales with usage — exactly the structure the protocol was designed to replace.
+
+The absence of protocol-level fees is not a gap in the economic model. It is the economic model.
+
+---
+
+## 15.3 Sustainability Summary
+
+| Value Flow | Source | Destination | Mechanism |
+|---|---|---|---|
+| **LYW liquidity yield** | Lightning Network liquidity provision | Host SatSwap payments and creator distribution | LYW deployed balance → yield → `yield_split` ratio |
+| **Access fees and zaps** | Content users and supporters | Content LYW | Direct Lightning payment to LYW address |
+| **Fork royalties — inbound** | Child DAO payment events | Parent content LYW | Automatic upstream routing by Child DAO smart contract |
+| **Fork royalties — outbound** | Content LYW payment events | Parent content LYW | `upstream_percentage` in `fork_provenance` fields |
+| **Host payments** | Content LYW | Host Lightning node | SatSwap exchange completion — atomic with block delivery |
+| **Creator distribution** | Content LYW | DAO member Lightning addresses | Key 3 yield distribution cycle per `distribution_period_blocks` |
+
+Every row in this table represents a direct bilateral payment between two parties. No row passes through a protocol intermediary. No row incurs a protocol fee. The sustainability of the system derives from the LYW's yield generation, not from the protocol's ability to extract value from the flows it enables.
