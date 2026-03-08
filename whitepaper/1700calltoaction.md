@@ -1,48 +1,85 @@
-# 17. Getting Involved: A Call to Action for the $\text{IPFS-Sats}$ Ecosystem 📢
+# 17. Getting Involved 📢
 
-The $\text{IPFS-Sats}$ protocol represents a fundamental shift toward a decentralized utility layer for content and value transfer. The success of this project is fundamentally dependent on the active, collaborative participation of a diverse, global community. We are committed to building the infrastructure in the open, with incentives aligned to reward genuine contribution and utility across all six stakeholder groups.
+The IPFS-Sats protocol is released as a public good. There is no central development organization, no token sale, no foundation controlling access. The reference architecture is here. The specifications are here. What gets built from them depends entirely on who picks this up and what they build with it.
+
+This section is an open invitation to the four participant types whose combined activity makes the protocol work. Each one's participation strengthens the incentives for all the others. The flywheel turns when all four are present.
+
+The project repository is at github.com/chadlupkes/IPFS-Sats. That is where the conversation starts.
 
 ---
 
-## 17.1 For Protocol Developers (The Core Builders)
+## 17.1 For Protocol Developers
 
-The $\text{IPFS-Sats}$ Core Protocol is an open-source initiative focused on engineering the highest-security, lowest-friction bridge between distributed content ($\text{IPFS}$) and sound money ($\text{Bitcoin Sats}$ via Layer 2).
+The most important thing that needs to happen is a working implementation of the SatSwap node and the Records Database. Everything else — applications, creator tools, host software — depends on those two primitives existing and being reliable.
 
-* **Open Source Contributions:** We are actively seeking contributions in low-level languages (e.g., Rust, Go) to optimize the foundational logic for content verification, instant routing, and the custom metadata schemas linking content hashes to payment addresses. This is a chance to write the **core economic plumbing** of the decentralized web.
-* **Integration Opportunities:** Protocol developers are needed to define and stress-test the reference implementation $\text{APIs}$ that allow application builders to interface seamlessly with the $\text{IPFS}$ pinning layer and the $\text{Lightning}$ transaction engine.
+The core implementation work is well-defined. The SatSwap four-message handshake (Section 10.6) is a minimal, implementation-agnostic exchange protocol. A developer familiar with Go and the Lightning Network could implement a conforming SatSwap node in weeks, not months. The Records Database wire protocol (Section 10.2) is modeled on Nostr relay architecture with libp2p peer discovery — both are mature, well-documented reference implementations.
 
-## 17.2 For Creators (The Lifeblood of Value)
+**What is needed:**
+- A Go developer with Lightning Network and content-addressed storage experience to build the reference SatSwap node
+- A Records Database node implementation conforming to the wire protocol in Section 10.2
+- Metadata Wrapper tooling — command-line tools for creating, signing, anchoring, and querying content
+- Protocol testnet infrastructure to validate that the economic loop closes end-to-end
 
-Content creators are the lifeblood of the network, driving traffic and establishing the value-for-value paradigm.
+This is foundational infrastructure work. The developer who builds the reference SatSwap implementation is writing the core economic plumbing of a system designed to outlast any platform built on top of it. The work is public, permanent, and attributable — and if the protocol's own Right to Fork mechanism is applied to the reference implementation itself, foundational contributors earn from every commercial deployment built on their work.
 
-* **Early Adoption Benefits:** Creators who adopt the $\text{IPFS-Sats}$ framework gain **$100\%$ digital sovereignty** over their work, ensuring content is censorship-resistant and permanently linked to their payment address. Early adopters receive instant, direct $\text{Sat}$ payments, cutting out the typical delays and high fees of centralized intermediaries.
-* **Community Governance:** We invite creators to participate in community governance and feedback channels to shape the protocol's feature set, ensuring the framework directly solves real-world challenges in content monetization, licensing, and collaboration.
+The Bitcoin and Lightning developer communities — including groups like Seattle BitDevs and contributors to the broader Bitcoin ecosystem — are the natural home for this conversation. If you are a developer who sees the architecture and wants to build it, the repository is open.
 
-## 17.3 For Investors (The Capital Providers)
+---
 
-The $\text{IPFS-Sats}$ project provides a unique opportunity for **non-speculative, asset-backed investment** in core Bitcoin infrastructure.
+## 17.2 For Content Creators
 
-* **Vision and Opportunity:** Investment is directed into the **Archival $\text{DAO}$**, the protocol's primary economic engine. This mechanism provides guaranteed funding for core development and secures high-value institutional content that generates **predictable, long-term revenue**. This model bypasses the complexity of tokenomics, offering investors a stake in genuine utility.
-* **Contact Information:** We welcome angel investors, venture funds, and institutional treasuries aligned with the Bitcoin Layer 2 ecosystem to discuss our capital return structure, which prioritizes the return of principal followed by an **evergreen revenue share paid directly in $\text{Sats}$**.
-    > Please contact [Placeholder: Insert Official Contact Email/Portal Here] for access to the investment thesis and financial modeling.
+Content creators are the participant type that proves the protocol works in the real world. A working SatSwap node and a correctly functioning LYW with real content earning real sats is the demonstration that matters — more than any white paper, more than any roadmap.
 
-## 17.4 For Hosts (Node Operators)
+**What the protocol gives creators:**
+- **Censorship-resistant hosting** — content is served by a decentralized swarm of hosts, each earning sats per block delivered. No platform can deplatform content that any host can serve.
+- **Bitcoin timestamping** — every Metadata Bundle is anchored to Bitcoin via OP_RETURN, providing permanent, globally verifiable proof of existence and authorship without any institution's cooperation
+- **Direct monetization** — zaps, access fees, and fork royalties flow directly to the creator's LYW. No platform intermediary. No transaction fee beyond standard Lightning routing costs.
+- **Perpetual persistence** — the LYW generates Lightning liquidity yield that funds host payments automatically. Content persists as long as the LYW balance supports it, without ongoing manual payment.
+- **The LYW as a personal economic instrument** — a creator can hash any document, fund a LYW, and that LYW immediately begins generating Lightning yield. The content doesn't need to be commercially accessed. The yield runs on the LYW's Lightning liquidity participation alone. This is a savings account, a timestamping service, a persistence engine, and a programmable distribution instrument — simultaneously, for any content, at any scale.
 
-The network is built on the principle of universal participation, rewarding verifiable service regardless of scale.
+Early creators who publish content and initialize LYWs during the testnet phase are doing more than testing the protocol. They are demonstrating the economic model to every developer, host, and application builder watching. The creator who earns the first real sat through a SatSwap exchange is the proof of concept the entire ecosystem is waiting for.
 
-* **Ranges of Capacity:** The architecture is designed to integrate capacity at every level. We seek $\text{Hosts}$ operating reliable infrastructure ranging from personal mobile devices and low-power home servers to institutional-grade cloud server farms. Every operational node contributes to network resilience and **earns revenue**.
-* **Full Participation:** $\text{Hosts}$ are compensated in $\text{Sats}$ based on two clear utility metrics: **verifiable storage and permanence** ($\text{IPFS Pinning Services}$) and **high-uptime liquidity** ($\text{Lightning Routing fees}$).
+Community feedback from creators is actively sought — through the project repository, through Nostr, and through the Bitcoin developer community. The protocol's feature set should be shaped by the people who will use it, not designed in isolation.
 
-## 17.5 For Application Developers (The Front-End Builders)
+---
 
-We seek innovators to build the necessary user-facing experiences that will drive mass adoption. The protocol provides the powerful backend; we need the user-friendly front-end.
+## 17.3 For Hosts
 
-* **Examples of Content Types:** The open $\text{API}$ supports the creation of content-specific applications across all media types, including, but not limited to: decentralized music streaming platforms, archival library interfaces, $\text{IP}$-focused licensing marketplaces, and creator-centric video platforms.
-* **Global Reach:** By building on $\text{IPFS-Sats}$, $\text{Application Developers}$ gain instant, global access to the **Bitcoin Lightning payment rail**, enabling micropayments and revenue collection from every market worldwide.
+Hosts are the supply side of the delivery network. Without hosts serving blocks, there is no content retrieval. Without content retrieval, there is no SatSwap revenue. The host network is the physical infrastructure on which everything else depends.
 
-## 17.6 For Lightning Yield Wallet Providers (The Financial Architects)
+**What hosting requires:**
+- A SatSwap node implementation (Phase 1 deliverable from Section 14)
+- A Lightning node with sufficient channel capacity to handle SatSwap payment flows
+- Storage capacity for the blocks the host chooses to serve
+- A published Host Registry Record in the Records Database advertising inventory, pricing, and performance metrics
 
-$\text{LYW Providers}$ are the financial architects who provide the necessary liquidity and institutional services to scale the protocol.
+**What hosting earns:**
+Hosts earn sats per block delivered via SatSwap exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment. There is no separate verification step, no proof-of-storage challenge, no staking requirement. Serve a valid block, receive payment. The economic model is as simple as the exchange primitive.
 
-* **The Use Case for Bitcoin Lightning:** The $\text{IPFS-Sats}$ protocol generates a massive, consistent flow of **high-frequency, content-driven micro-transactions**. This predictable volume offers $\text{LYW providers}$ a premium source of routing fees and channel utilization, transforming idle $\text{BTC}$ liquidity into an actively yielding asset.
-* **Economic Engines to build the future:** We seek deep technical partnership for $\text{API}$-level integration, leveraging $\text{LYW}$ expertise for institutional services such as automated channel balancing, compliance assurance, and seamless fiat/stablecoin settlement rails, thereby forming the **essential financial backbone** of the $\text{IPFS-Sats}$ content economy.
+The host pricing market self-regulates through the Host Discovery Layer. Hosts that price competitively and maintain high uptime scores appear higher in discovery results and receive more WANT messages. Hosts that price too high or maintain poor reliability receive fewer exchanges and earn less. The market signal is direct and immediate.
+
+**Who can host:**
+The architecture accommodates hosts at every scale — from a personal server running on home broadband to institutional-grade infrastructure serving petabytes of high-demand content. A host that serves a single piece of content for a single creator is a valid, earning participant. There is no minimum scale requirement. The network's resilience comes from the aggregate of many participants, not from any single large operator.
+
+---
+
+## 17.4 For Application Developers
+
+The protocol provides the backend. Application developers build the experiences through which creators and users interact with it. The protocol API (Section 12) is the interface surface — everything above it is an application-layer decision.
+
+**What the protocol enables applications to build:**
+- Decentralized media platforms where creators publish directly and earn per access without platform intermediaries
+- Provenance explorers and attribution chain visualizers built on the transparent Anchor Records table
+- Rights management dashboards querying fork royalty flows across entire content lineages
+- Immutable document repositories with Bitcoin timestamping for legal, academic, and journalistic use cases
+- Host reputation and network health monitoring tools built on the public Host Registry Records table
+- Content discovery engines querying the Records Database by creator DID, license type, tags, or any other Metadata Wrapper field
+- Per-Content DAO governance interfaces for managing membership, voting, and yield distribution
+
+Any application that needs permanent content identity, Bitcoin-verified provenance, direct micropayment monetization, or decentralized governance for digital content can be built on IPFS-Sats. The protocol does not compete with applications built on it — it has no application-layer functionality of its own. Every useful experience is an opportunity for an application developer.
+
+The reference applications described in Section 14.2 — a decentralized media platform and an immutable document repository — will be open-sourced as blueprints. Application developers who want to build in a specific vertical before those reference implementations exist are encouraged to engage through the project repository. The protocol specifications are complete enough to build against now.
+
+---
+
+*The project repository is at github.com/chadlupkes/IPFS-Sats. Pull requests, issues, and forks are welcome. The protocol is released as a public good — what it becomes depends on what the community builds with it.*
