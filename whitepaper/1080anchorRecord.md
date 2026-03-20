@@ -127,6 +127,4 @@ The economic incentive for Anchor Record persistence is the same as for all Reco
 
 ---
 
-## Note on Section 3.2 Reference
 
-Section 3.2 describes the Records Database as holding "two tables: Host Registry Records and Anchor Records." This was accurate at the time of that section's drafting. The Records Database was subsequently extended with a third table — Content Flag Records — described in Section 3.5 and specified in Section 10.9. The full three-table structure is the canonical 0.4 specification.
