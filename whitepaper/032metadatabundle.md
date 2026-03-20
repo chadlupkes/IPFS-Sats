@@ -152,7 +152,7 @@ After the channel transaction is confirmed, the application knows three things i
 - The block height where it was confirmed
 - The wallet address of the LYW that performed the operation
 
-These fields, combined with the Metadata Bundle CID and Bundle Hash, form the **Anchor Record** — a record written into the **Records Database**, the distributed application-layer database maintained within the Host Discovery Layer. The Records Database holds two tables: Host Registry Records (Section 10.7) and Anchor Records. The Anchor Record table's function is: given a Metadata Bundle CID, return the Bitcoin transaction that proves its existence.
+These fields, combined with the Metadata Bundle CID and Bundle Hash, form the **Anchor Record** — a record written into the **Records Database**, the distributed application-layer database maintained within the Host Discovery Layer. The Records Database holds three tables: Host Registry Records (Section 10.7), Anchor Records (Section 10.8) and Content Flag Records (Section 10.9). The Anchor Record table's function is: given a Metadata Bundle CID, return the Bitcoin transaction that proves its existence.
 
 **Anchor Record schema (required fields):**
 
