@@ -14,18 +14,22 @@ A Content Flag Record is written to the Records Database when a participant — 
 
 Flag records carry a category, a severity level, the submitting identity, and a confirmation status that updates as other participants independently verify or dispute the flag. The protocol stores and serves this data. What applications do with it is their decision.
 
+The protocol defines a reference vocabulary of three starting categories:
+
 | Flag Category | Severity | Description |
 |---|---|---|
 | **Malware / Security Threat** | Critical | Content containing code designed to exploit, compromise, or attack client systems |
 | **Illegal Content** | High | Content determined through confirmation to violate widely accepted international statutes |
 | **Spam / Harmful Content** | Medium | Low-quality, duplicative, or bot-generated content designed to degrade network or user experience |
 
+These categories are a starting vocabulary, not a complete taxonomy. Application operators may define additional categories, subdivide existing ones, or ignore the reference categories entirely in favor of their own classification systems. The schema is extensible by design. An adult content platform, a children's educational service, and a legal document archive will have legitimately different classification needs — the protocol accommodates all of them without privileging any.
+
 ### Confirmation and Validation
 
 A submitted flag enters the Records Database as pending. Confirmation occurs through one of two paths:
 
 - **Community confirmation:** Other participants independently submit flags against the same Content CID. When confirmed flags reach a threshold defined by the querying application, the flag becomes active in that application's context.
-- **Validator confirmation:** Application operators may designate validators — individuals or organizations whose flag submissions carry confirmation weight without requiring additional community verification. Who those validators are, how they are selected, and what authority they carry is entirely an application layer decision. The protocol provides the infrastructure; the brand operating a streaming service, a marketplace, or a distribution platform is responsible for defining its own trust model.
+- **Validator confirmation:** Application operators may designate validators — individuals or organizations whose flag submissions carry confirmation weight without requiring additional community verification. Who those validators are, how they are selected, and what authority they carry is entirely an application-layer decision. The protocol provides the infrastructure; the brand operating a streaming service, a marketplace, or a distribution platform is responsible for defining its own trust model.
 
 This design is deliberate. A children's educational platform and a general-purpose content archive have legitimately different standards for what constitutes harmful content. The protocol does not resolve that difference — it gives both platforms the data layer they need to resolve it themselves.
 
@@ -79,24 +83,42 @@ This process enforces clarity. There is no ambiguity about which version carries
 
 ---
 
-## 6.4.3 Enforcement and Remediation Forking
+## 6.4.3 Application-Layer Response Options
 
-When a high-severity Content Flag is confirmed against a Content CID, the protocol's response is economic isolation of the flagged content's revenue flows — not deletion or technical blocking, which would be inconsistent with the protocol's content-agnostic design.
+The protocol provides the signaling infrastructure. How applications respond to confirmed flag records is their decision, shaped by their platform standards, user base, and legal obligations. No response is mandated at the protocol level.
 
-### Protocol-Level Response
+The following options illustrate the range of actions available to application operators when a Content Flag Record reaches confirmed status in their context. These are design patterns, not requirements.
 
-When a confirmed high-severity flag is written to the Records Database:
+### Economic Response Options
 
-- **LYW payment suspension:** Outgoing payments from the flagged content's LYW are suspended. Sats continue to accumulate but do not distribute to the Creator or host pool while the flag is active.
-- **DAO operations freeze:** No new governance proposals can be submitted or executed against the flagged CID's DAO while the freeze is in effect.
-- **Participant protection:** Participants in the flagged content's DAO — hosts, initial depositors, and any other revenue recipients — are given a grace period to review their participation and adjust their position before the freeze becomes permanent.
+An application may choose to act on confirmed flags by adjusting the economic flows it routes or surfaces:
 
-### Path to Resolution — Remediation Fork
+- **Payment routing suspension:** Suspend routing of payments through the flagged content's LYW for users of that application. Sats may continue to accumulate in the LYW — the application simply stops directing payments toward it.
+- **Host deprioritization:** Route retrieval requests away from hosts serving flagged Content CIDs, reducing their SatSwap exchange frequency for that content within that application's context.
+- **Revenue display suppression:** Omit flagged Content CIDs from earnings dashboards, recommendation systems, or monetization surfaces the application controls.
 
-The Content Creator's mechanism for restoring economic activity under a confirmed high-severity flag is a remediation fork:
+### Governance Response Options
 
-1. **Economic suspension:** All sats distributions for the flagged Content CID are permanently suspended. The content remains on the network and its flag record remains queryable — the historical record is preserved.
-2. **Content modification:** The Creator modifies the flagged element, generating a new Content CID through re-hashing.
-3. **New DAO deployment:** A new DAO is deployed against the remediated Content CID. Participants may migrate their involvement to the new DAO. The new CID begins with no flag record.
+An application may choose to restrict governance activity around flagged content:
 
-The incentive structure is aligned: the only path back to economic participation runs through producing content that does not attract confirmed high-severity flags. The original flagged CID remains permanently visible in the Records Database — available for historical, legal, and investigative reference — but generates no further economic activity.
+- **Proposal suspension:** Decline to process or surface new governance proposals submitted against a flagged CID until the flag is resolved or disputed.
+- **DAO state freeze:** Decline to execute Key 3 operations for the flagged CID's DAO while the flag is active in that application's context.
+- **Participant notification:** Notify DAO members that a confirmed flag is active and allow a review period before applying further restrictions.
+
+### Remediation Fork Support
+
+The remediation fork is a mechanism available to any content creator regardless of application-layer policy. It does not require application permission — it is a protocol-level right.
+
+When a creator wishes to restore economic activity after their content has attracted confirmed flags in one or more application contexts:
+
+1. **Content modification:** The creator modifies the flagged element, generating a new Content CID through re-hashing.
+2. **New DAO deployment:** A new DAO is deployed against the remediated Content CID with the creator's preferred membership and distribution configuration.
+3. **Clean slate:** The new CID begins with no flag record. Applications that implement flag-based filtering will treat it as unflagged until new flags are submitted and confirmed against it.
+
+The original flagged CID remains in the Records Database permanently — available for historical, legal, and investigative reference. The creator's identity trail through the LYW and Creator DID fields remains queryable. The remediation fork restores economic participation; it does not erase history.
+
+### Why the Protocol Stays Out
+
+A protocol that hardcodes consequences for specific flag categories is making content moderation decisions on behalf of every application built on top of it — including applications in jurisdictions with different legal frameworks, platforms serving audiences with different standards, and use cases the protocol designers never anticipated.
+
+The transparency of the Records Database is the protocol's contribution to accountability. The consequences are the application's contribution. This division is not a weakness — it is what allows the protocol to serve a global, permissionless network without becoming a censorship layer wearing different clothes.
