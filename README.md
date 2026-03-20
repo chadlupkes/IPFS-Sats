@@ -112,4 +112,4 @@ For community engagement, find the project on Nostr and at Seattle BitDevs meetu
 
 ## Current Version
 
-The IPFS Sats white paper is currently on version 0.4, available on IPFS itself using CID QmbDuLbp71iU39NMaqKwvX2fF9QPDyoqj1Fo1kSUouFsF9
+The IPFS Sats white paper is currently on version 0.4, available on IPFS itself using CID QmbjJxtct2VYi5zoYZsFvVL3fK4bDwgjGBvWpmbd59hYGY
