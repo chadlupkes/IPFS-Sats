@@ -109,3 +109,7 @@ The Bitcoin and Lightning developer communities are the natural home for this co
 For community engagement, find the project on Nostr and at Seattle BitDevs meetups.
 
 *The protocol does not build the future. It creates the conditions from which the future can emerge.*
+
+## Current Version
+
+The IPFS Sats white paper is currently on version 0.4, available on IPFS itself using CID QmbDuLbp71iU39NMaqKwvX2fF9QPDyoqj1Fo1kSUouFsF9
