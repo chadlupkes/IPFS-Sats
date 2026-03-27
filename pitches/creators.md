@@ -24,7 +24,7 @@ If you collaborate with other creators, your DAO's revenue distribution configur
 
 **Persistence that doesn't depend on a platform.**
 
-Your content is served by a decentralized network of hosts, each earning sats per block delivered via SatSwap exchange. Your Lightning Yield Wallet generates passive income — Lightning liquidity yield — that automatically funds those host payments. Your content persists as long as your LYW has sufficient balance to pay hosts, independent of whether any platform continues to operate.
+Your content is served by a decentralized network of hosts, each earning sats per block delivered via AtomicSats exchange. Your Lightning Yield Wallet generates passive income — Lightning liquidity yield — that automatically funds those host payments. Your content persists as long as your LYW has sufficient balance to pay hosts, independent of whether any platform continues to operate.
 
 This means a song you published five years ago and stopped actively promoting continues to exist, continues to be accessible, and continues to generate income whenever someone accesses it — without you paying a monthly pinning fee or maintaining a relationship with a hosting service.
 
