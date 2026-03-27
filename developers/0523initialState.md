@@ -27,7 +27,7 @@ This example shows the JSON state of a newly published piece of content with a 1
   },
 
   "expenses": {
-    "host_payments_sats": 0,           // No host SatSwap exchanges completed yet
+    "host_payments_sats": 0,           // No host AtomicSats exchanges completed yet
     "fork_royalty_outflow_sats": 0,
     "cycle_expenses_sats": 0,
     "drawdown_mode": true              // True on initialization — host payments suspended
@@ -68,7 +68,7 @@ This example shows the JSON state of a newly published piece of content with a 1
 }
 ```
 
-**Note on host payments:** Hosts are not paid from a DAO-managed budget. They earn per block delivered through SatSwap exchange completions. The LYW's `available_sats` funds those payments when they occur. There is no `monthly_budget` field and no per-host allocation — the Host Discovery Layer's pricing market determines what hosts will accept per exchange.
+**Note on host payments:** Hosts are not paid from a DAO-managed budget. They earn per block delivered through AtomicSats exchange completions. The LYW's `available_sats` funds those payments when they occur. There is no `monthly_budget` field and no per-host allocation — the Host Discovery Layer's pricing market determines what hosts will accept per exchange.
 
 ---
 
@@ -96,7 +96,7 @@ Runway: Indefinite — yield exceeds costs at current assumptions
 
 ## State Narrative
 
-At initialization, the LYW's `drawdown_mode` is `true`. This is the correct and expected initial state — no third-party hosts have received payment yet, and the content's hosting is provided by the creator's own node. As the LYW's deployed capital generates its first yield cycle (~4 weeks), `available_sats` grows. Once yield income demonstrates it covers the hosting cost threshold, `drawdown_mode` automatically deactivates and host SatSwap payments begin.
+At initialization, the LYW's `drawdown_mode` is `true`. This is the correct and expected initial state — no third-party hosts have received payment yet, and the content's hosting is provided by the creator's own node. As the LYW's deployed capital generates its first yield cycle (~4 weeks), `available_sats` grows. Once yield income demonstrates it covers the hosting cost threshold, `drawdown_mode` automatically deactivates and host AtomicSats payments begin.
 
 The 1,000,000 sat funding is well above the minimum required for a small content file — the LYW will reach self-sustaining operations well before the first distribution cycle completes.
 
