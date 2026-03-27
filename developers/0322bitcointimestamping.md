@@ -343,6 +343,6 @@ async function verifyTimestamp(metadataBundleCID) {
 
 **The two proofs are distinct:**
 - **Bitcoin proof:** The Bundle Hash exists in a confirmed Bitcoin block — proves the content existed at that block height. Verifiable by any Bitcoin node. Cannot be forged.
-- **Availability proof:** The content is currently retrievable via SatSwap exchange — proves the content is live. Verifiable by initiating a WANT message.
+- **Availability proof:** The content is currently retrievable via AtomicSats exchange — proves the content is live. Verifiable by initiating a WANT message.
 
 Both proofs together constitute the Right to Verify.
