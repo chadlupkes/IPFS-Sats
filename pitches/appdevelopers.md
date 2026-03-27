@@ -14,7 +14,7 @@ If you have been waiting for a backend that solves content monetization without 
 
 **A discovery and data layer.** The Records Database is fully transparent and publicly queryable. Three tables: Host Registry Records (who is serving what content, at what price, with what reliability), Anchor Records (when was this content anchored to Bitcoin, what is its fork provenance), and Content Flag Records (community-reported concerns). A well-designed query engine on top of this data is a valuable application on its own. A content discovery experience, a provenance explorer, a rights management dashboard, a host reputation tracker — all of these are Records Database applications.
 
-**A payment layer.** The protocol API (Section 12 of the white paper) exposes SatSwap exchange initiation, LYW status queries, and DAO governance functions. Your application does not need to implement Lightning Network payment handling from scratch — it calls the protocol API and payments flow directly between participants in sats. No payment processor. No 30% platform fee. No monthly settlement cycle.
+**A payment layer.** The protocol API (Section 12 of the white paper) exposes AtomicSats exchange initiation, LYW status queries, and DAO governance functions. Your application does not need to implement Lightning Network payment handling from scratch — it calls the protocol API and payments flow directly between participants in sats. No payment processor. No 30% platform fee. No monthly settlement cycle.
 
 **A governance layer.** Each piece of content has its own Per-Content DAO with configurable membership, voting, and revenue distribution. Your application can expose governance interfaces for creators to manage their DAO, for collaborators to submit proposals and cast votes, and for licensees to request derivative work approval — all backed by smart contract execution, not platform policy.
 
@@ -24,7 +24,7 @@ If you have been waiting for a backend that solves content monetization without 
 
 The white paper's Use Cases document (github.com/chadlupkes/IPFS-Sats) describes the full landscape. A few starting points:
 
-**Decentralized media platform.** Creators publish content, initialize LYWs, set access prices. Users pay per access in sats via SatSwap. The platform application handles discovery, playback, and creator dashboards — the protocol handles identity, payment, and persistence. The platform takes no cut from creator revenue; its business model is its own service fees, paid directly by users.
+**Decentralized media platform.** Creators publish content, initialize LYWs, set access prices. Users pay per access in sats via AtomicSats. The platform application handles discovery, playback, and creator dashboards — the protocol handles identity, payment, and persistence. The platform takes no cut from creator revenue; its business model is its own service fees, paid directly by users.
 
 **Provenance and attribution explorer.** Query the Anchor Records table to show the full fork lineage of any piece of content — who built on whose work, what royalty flows are configured, what upstream creators have earned. This is a journalism tool, a research tool, and an IP management tool simultaneously.
 
