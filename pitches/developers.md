@@ -4,7 +4,7 @@
 
 IPFS-Sats is a protocol that combines CID-based content addressing, Bitcoin timestamping via OP_RETURN, Lightning Network micropayments, and per-content DAO governance to create self-sustaining infrastructure for permanent content availability and fair creator compensation. No new token. No ICO. No proprietary consensus mechanism. Bitcoin is the timestamping layer. Lightning is the payment layer. The protocol is the coordination layer that makes them work together for content.
 
-The white paper is complete. The specifications — SatSwap exchange messages, Records Database wire protocol, Metadata Bundle schemas, Host Registry Records, Anchor Records, DAO Configuration Objects — are written and internally consistent. What does not yet exist is a working implementation. That is what we are looking for help to build.
+The white paper is complete. The specifications — AtomicSats exchange messages, Records Database wire protocol, Metadata Bundle schemas, Host Registry Records, Anchor Records, DAO Configuration Objects — are written and internally consistent. What does not yet exist is a working implementation. That is what we are looking for help to build.
 
 ---
 
@@ -12,11 +12,11 @@ The white paper is complete. The specifications — SatSwap exchange messages, R
 
 Three things need to be built, in dependency order.
 
-**1. The SatSwap Node**
+**1. The AtomicSats Node**
 
-SatSwap is a four-message atomic block-for-sats exchange protocol — WANT, QUOTE, PAYMENT_HASH, BLOCK. A requesting node sends a WANT for a content block. A delivering node responds with a QUOTE and a BOLT11 Lightning invoice. The requester pays and sends the PAYMENT_HASH. The delivering node releases the block with the Lightning preimage. The HTLC settles atomically.
+AtomicSats is a four-message atomic block-for-sats exchange protocol — WANT, QUOTE, PAYMENT_HASH, BLOCK. A requesting node sends a WANT for a content block. A delivering node responds with a QUOTE and a BOLT11 Lightning invoice. The requester pays and sends the PAYMENT_HASH. The delivering node releases the block with the Lightning preimage. The HTLC settles atomically.
 
-That is the complete protocol. A Go developer with Lightning Network experience — LND or Core Lightning — can build a conforming SatSwap node from the specification in Section 10.6 of the white paper. The implementation is a Lightning node that also serves content blocks. Not a Lightning wallet attached to a content node. A single unified implementation where payment settlement is native.
+That is the complete protocol. A Go developer with Lightning Network experience — LND or Core Lightning — can build a conforming AtomicSats node from the specification in Section 10.6 of the white paper. The implementation is a Lightning node that also serves content blocks. Not a Lightning wallet attached to a content node. A single unified implementation where payment settlement is native.
 
 This is the foundational primitive. Everything else depends on it working.
 
@@ -36,11 +36,11 @@ This is the tooling that lets creators interact with the protocol without buildi
 
 ## The Technical Scope in Detail
 
-**Lightning Network integration.** The SatSwap node requires HTLC creation, invoice generation, payment verification, and preimage management. LND's gRPC API and Core Lightning's JSON-RPC API are both viable integration surfaces. The implementation must handle the payment-in-flight verification step — confirming a PAYMENT_HASH corresponds to a valid in-flight HTLC before releasing a block — without exposing the preimage prematurely.
+**Lightning Network integration.** The AtomicSats node requires HTLC creation, invoice generation, payment verification, and preimage management. LND's gRPC API and Core Lightning's JSON-RPC API are both viable integration surfaces. The implementation must handle the payment-in-flight verification step — confirming a PAYMENT_HASH corresponds to a valid in-flight HTLC before releasing a block — without exposing the preimage prematurely.
 
-**Content-addressed block store.** The SatSwap node requires a CID-based block store — IPFS is the reference implementation, go-ipfs provides the block store interface directly. The block store interface is: `Put(cid, data)`, `Get(cid) → data`, `Has(cid) → bool`. Any implementation satisfying this interface is conforming.
+**Content-addressed block store.** The AtomicSats node requires a CID-based block store — IPFS is the reference implementation, go-ipfs provides the block store interface directly. The block store interface is: `Put(cid, data)`, `Get(cid) → data`, `Has(cid) → bool`. Any implementation satisfying this interface is conforming.
 
-**Host Discovery Layer.** The SatSwap node queries the Records Database for Host Registry Records matching a requested CID. This requires a DHT query interface against the Records Database peer network. The query returns a ranked list of hosts by uptime score and price, from which the requesting node selects counterparties for parallel WANT dispatch.
+**Host Discovery Layer.** The AtomicSats node queries the Records Database for Host Registry Records matching a requested CID. This requires a DHT query interface against the Records Database peer network. The query returns a ranked list of hosts by uptime score and price, from which the requesting node selects counterparties for parallel WANT dispatch.
 
 **Records Database replication.** The Records Database nodes gossip records to peers using a protocol modeled on Nostr relay-to-relay replication. Records are append-only, content-addressed, and signed by their publisher's DID. Conflict resolution is last-write-wins per record type, with Anchor Records treated as immutable once published.
 
@@ -54,7 +54,7 @@ The protocol is released as a public good. There is no central organization, no 
 
 There is also something more durable, built into the protocol itself: the Right to Fork applies to the reference implementation.
 
-If you build the reference SatSwap node and release it under a license that encodes fork provenance — and the protocol provides exactly the mechanism to do that — then every commercial application built on your implementation owes you an upstream royalty, automatically, enforced by the Child DAO's smart contract, indefinitely. You do not need to negotiate licenses. You do not need to pursue infringers. You do not need a legal team. The protocol handles it.
+If you build the reference AtomicSats node and release it under a license that encodes fork provenance — and the protocol provides exactly the mechanism to do that — then every commercial application built on your implementation owes you an upstream royalty, automatically, enforced by the Child DAO's smart contract, indefinitely. You do not need to negotiate licenses. You do not need to pursue infringers. You do not need a legal team. The protocol handles it.
 
 The developer who writes foundational Bitcoin infrastructure and releases it as a public good, and earns from every downstream commercial deployment automatically — that is a different relationship to open-source contribution than the one the current ecosystem offers.
 
@@ -74,7 +74,7 @@ If you are a developer who wants to write foundational code that serves the same
 
 The white paper is at github.com/chadlupkes/IPFS-Sats.
 
-Start with Section 10.6 (SatSwap Exchange Message Spec) and the standalone SatSwap Protocol Specification in the repository. That is the first implementation target and the critical path dependency for everything else.
+Start with Section 10.6 (AtomicSats Exchange Message Spec) and the standalone AtomicSats Protocol Specification in the repository. That is the first implementation target and the critical path dependency for everything else.
 
 Section 10.2 (Records Database Specification) is the second implementation target.
 
