@@ -151,7 +151,7 @@ Retrieves the Metadata Wrapper for the specified Content CID.
 **Notes:**
 - `anchored: false` is a valid state — content is live and payable before Bitcoin anchoring completes
 - Bitcoin proof details (block height, txid) are in the Anchor Record, retrieved via `/api/v1/records/anchor/{bundle_hash}`
-- The response does not include raw content data — content is retrieved directly via CID through the SatSwap layer
+- The response does not include raw content data — content is retrieved directly via CID through the AtomicSats layer
 
 ---
 
@@ -182,7 +182,7 @@ Verifies a piece of content against its two independent proofs. Returns each pro
   "availability_proof": {
     "verified": true,
     "responding_hosts": 4,
-    "message": "Content retrievable via SatSwap exchange"
+    "message": "Content retrievable via AtomicSats exchange"
   },
   "right_to_verify": true
 }
@@ -190,7 +190,7 @@ Verifies a piece of content against its two independent proofs. Returns each pro
 
 **Notes:**
 - Bitcoin proof: verifies the Bundle Hash appears in the Anchor Records table and matches an OP_RETURN in the referenced Bitcoin block. Requires only a Bitcoin node — no trust in any service.
-- Availability proof: confirms the content is currently retrievable by initiating a SatSwap WANT message and receiving a valid QUOTE response.
+- Availability proof: confirms the content is currently retrievable by initiating an AtomicSats WANT message and receiving a valid QUOTE response.
 - Both proofs are independent. `right_to_verify: true` requires both. A valid Bitcoin proof with `availability_proof.verified: false` means the content existed at that block height but is not currently being served.
 
 ---
@@ -222,7 +222,7 @@ Queries the Host Registry Records table for hosts currently serving the specifie
       "price_msats": 1000,
       "uptime_score": 0.98,
       "last_seen_block": 875430,
-      "supported_protocols": ["satswap/1.0"]
+      "supported_protocols": ["atomicsats/1.0"]
     }
   ],
   "count": 4
@@ -614,7 +614,7 @@ Returns the current LYW State Ledger snapshot for the specified content.
 ```
 
 **Notes:**
-- `drawdown_mode: true` means host SatSwap payments are suspended — content may have reduced availability
+- `drawdown_mode: true` means host AtomicSats payments are suspended — content may have reduced availability
 - `cycles_at_threshold > 0` means sunset evaluation is active — the balance has been below `sunset_threshold_sats` for that many consecutive distribution cycles
 - The response is signed by the serving node's DID for authenticity verification
 
@@ -631,7 +631,7 @@ Returns the Decentralized Identifier and associated service endpoints for the LY
   "node_id": "node_xyz...",
   "did": "did:key:...",
   "public_key": "base58:...",
-  "satswap_endpoint": "https://node.example.com/satswap",
+  "atomicsats_endpoint": "https://node.example.com/atomicsats",
   "lyw_status_endpoint": "https://node.example.com/api/v1/lyw/status/"
 }
 ```
@@ -671,7 +671,7 @@ Initiates a direct Lightning micropayment to a content creator's LYW address. Re
 |---|---|---|
 | `400 Bad Request` | Missing required parameters or invalid JSON | Check request body against the schema above |
 | `401 Unauthorized` | Missing or invalid `X-API-KEY` or `X-SIG-AUTH` | Verify API key and re-sign the request payload with the correct DID key |
-| `402 Payment Required` | LYW `available_sats` insufficient to fund the requested SatSwap exchange | Add sats to the LYW via `/api/v1/lyw/zap` or a direct Lightning payment to `lyw_address` |
+| `402 Payment Required` | LYW `available_sats` insufficient to fund the requested AtomicSats exchange | Add sats to the LYW via `/api/v1/lyw/zap` or a direct Lightning payment to `lyw_address` |
 | `404 Not Found` | Requested CID, Bundle Hash, or node_id not found | Verify the identifier; a `404` on an Anchor Record is a valid intermediate state |
 | `409 Conflict` | Duplicate vote or proposal already active | Check active proposals via `/api/v1/dao/state/{content_cid}` |
 | `425 Too Early` | Proposal timelock has not elapsed | Wait until `timelock_expires_at_block` before calling `/api/v1/dao/execute` |
