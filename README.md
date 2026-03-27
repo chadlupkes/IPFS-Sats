@@ -35,11 +35,11 @@ None of these solutions address all three crises. None provide cryptographic tim
 
 IPFS-Sats resolves all three crises through four integrated components.
 
-**SatSwap — Atomic Block-for-Sats Exchange**
+**AtomicSats — Atomic Block-for-Sats Exchange**
 
-SatSwap is the protocol's foundational exchange primitive. Any node can request any content block. Any host can serve it. Payment settles atomically with delivery via Lightning HTLC — the block is released only when payment confirms, and payment returns if the block is not delivered. The exchange is the verification step: a host that delivers a valid block has proven it holds the block. No separate proof-of-storage mechanism. No trusted intermediary. No free-riding.
+AtomicSats is the protocol's foundational exchange primitive. Any node can request any content block. Any host can serve it. Payment settles atomically with delivery via Lightning HTLC — the block is released only when payment confirms, and payment returns if the block is not delivered. The exchange is the verification step: a host that delivers a valid block has proven it holds the block. No separate proof-of-storage mechanism. No trusted intermediary. No free-riding.
 
-SatSwap replaces BitSwap's reciprocity model — which fails in practice because nodes consume data without contributing — with direct bilateral payment. Serve a block, earn sats. Stop serving, earn nothing. The economic gradient enforces availability without commanding it.
+AtomicSats replaces BitSwap's reciprocity model — which fails in practice because nodes consume data without contributing — with direct bilateral payment. Serve a block, earn sats. Stop serving, earn nothing. The economic gradient enforces availability without commanding it.
 
 **Bitcoin Timestamping via Records Database**
 
@@ -49,7 +49,7 @@ These commitments are recorded in a distributed, permissionless Records Database
 
 **Lightning Yield Wallet — Self-Sustaining Persistence**
 
-A Lightning Yield Wallet bonded to each piece of content generates passive income through Lightning Network liquidity participation — routing fees and channel leasing. That yield automatically funds SatSwap payments to hosts, making content persistence self-sustaining without ongoing manual funding, subscription payments, or platform dependency.
+A Lightning Yield Wallet bonded to each piece of content generates passive income through Lightning Network liquidity participation — routing fees and channel leasing. That yield automatically funds AtomicSats payments to hosts, making content persistence self-sustaining without ongoing manual funding, subscription payments, or platform dependency.
 
 The LYW is simultaneously a savings account with yield built in, a Bitcoin timestamping service, a self-sustaining persistence engine, and a programmable distribution instrument. A creator can hash any document — a research dataset, a family archive, a legal agreement — fund a LYW, and that LYW begins generating Lightning yield immediately, independent of whether the content is ever commercially accessed.
 
@@ -67,22 +67,22 @@ When a derivative work is created, the fork relationship is encoded in the Metad
 - <a href="whitepaper/01abstract.md">Part 1</a>: Foundation — Abstract, the three crises, requirements for a native solution
 - <a href="whitepaper/03technicalArchitecture.md">Part 2</a>: Technical Architecture — Content addressing, Metadata Bundle, economic layer, DAO governance, host discovery, swarm delivery, competitive economics
 - <a href="whitepaper/041threeKeyArchitecture.md">Part 3</a>: Rights Infrastructure — Three-key architecture, LYW economics, DAO governance operations, Right to Verify, Right to Fork, IP management
-- <a href="whitepaper/1010corecontent.md">Part 4</a>: Protocol Specifications — All schemas: Metadata Wrapper, Records Database, DAO Configuration, Fork Relationships, LYW State Ledger, SatSwap exchange messages, Host Registry Records, Anchor Records, Content Flag Records; Smart Contract Operations, API Specifications
+- <a href="whitepaper/1010corecontent.md">Part 4</a>: Protocol Specifications — All schemas: Metadata Wrapper, Records Database, DAO Configuration, Fork Relationships, LYW State Ledger, AtomicSats exchange messages, Host Registry Records, Anchor Records, Content Flag Records; Smart Contract Operations, API Specifications
 - <a href="whitepaper/1300usecases.md">Part 5</a>: Ecosystem — Use Cases, Implementation Roadmap, Economic Model, Why This Matters, Getting Involved
 
 **Use Cases** — Extended use case documentation across creator monetization, academic and research, legal and evidentiary, open-source software, journalism, archival, and enterprise applications.
 
-**SatSwap Specification** — The four-message handshake protocol (WANT, QUOTE, PAYMENT_HASH, BLOCK) in standalone reference format for implementers.
+**AtomicSats Specification** — The four-message handshake protocol (WANT, QUOTE, PAYMENT_HASH, BLOCK) in standalone reference format for implementers.
 
 ---
 
 ## Who This Is For
 
-**Protocol Developers** — The most important immediate need is a Go developer with Lightning Network and content-addressed storage experience to build the reference SatSwap node and Records Database implementation. The SatSwap four-message handshake is minimal and well-defined. A conforming implementation is weeks of work, not months. See the white paper Part 4 for complete specifications.
+**Protocol Developers** — The most important immediate need is a Go developer with Lightning Network and content-addressed storage experience to build the reference AtomicSats node and Records Database implementation. The AtomicSats four-message handshake is minimal and well-defined. A conforming implementation is weeks of work, not months. See the white paper Part 4 for complete specifications.
 
 **Content Creators** — Publish content, initialize a LYW, and earn sats directly through access payments, zaps, and fork royalties — without platform intermediaries. Early creators who demonstrate the economic loop closing are the proof of concept the ecosystem needs.
 
-**Hosts** — Store content blocks and serve them via SatSwap exchanges. Earn sats per block delivered. No minimum scale. No staking requirement. No specialized hardware. Serve a valid block, receive payment. See the white paper Section 3.5 for host discovery and Section 10.7 for the Host Registry Record schema.
+**Hosts** — Store content blocks and serve them via AtomicSats exchanges. Earn sats per block delivered. No minimum scale. No staking requirement. No specialized hardware. Serve a valid block, receive payment. See the white paper Section 3.5 for host discovery and Section 10.7 for the Host Registry Record schema.
 
 **Application Developers** — Build on the protocol API to create decentralized media platforms, provenance explorers, rights management dashboards, immutable document repositories, content discovery engines, or any application that needs permanent content identity, Bitcoin-verified provenance, or direct micropayment monetization. The protocol has no application-layer functionality of its own — every useful experience is an opportunity for an application developer.
 
@@ -92,9 +92,9 @@ When a derivative work is created, the fork relationship is encoded in the Metad
 
 **No protocol-level fees.** Every payment is bilateral and direct — requester to host, creator to host, child DAO to parent DAO. There is no central treasury, no shared pool, no protocol take rate. The absence of protocol-level fees is not a gap in the economic model. It is the economic model.
 
-**IPFS is a reference implementation, not a requirement.** The core primitive is CID-based content addressing. Any system that produces CID-compatible identifiers and participates in the SatSwap exchange and Records Database layers is a conforming participant.
+**IPFS is a reference implementation, not a requirement.** The core primitive is CID-based content addressing. Any system that produces CID-compatible identifiers and participates in the AtomicSats exchange and Records Database layers is a conforming participant.
 
-**SatSwap is not a modification of BitSwap.** SatSwap replaces BitSwap's reciprocity model with direct payment. It is a distinct protocol that happens to solve the same routing problem BitSwap was designed for, through a fundamentally different economic mechanism.
+**AtomicSats is not a modification of BitSwap.** AtomicSats replaces BitSwap's reciprocity model with direct payment. It is a distinct protocol that happens to solve the same routing problem BitSwap was designed for, through a fundamentally different economic mechanism.
 
 **No new token.** All payments are denominated in sats — Bitcoin. The protocol routes economic value through the deepest, most liquid monetary network available rather than creating a new one.
 
@@ -104,7 +104,7 @@ When a derivative work is created, the fork relationship is encoded in the Metad
 
 The project repository is open. Pull requests, issues, and forks are welcome.
 
-The Bitcoin and Lightning developer communities are the natural home for this conversation. If you are a developer who sees the architecture and wants to build it, start with the SatSwap specification and the Records Database wire protocol in Part 4 of the white paper.
+The Bitcoin and Lightning developer communities are the natural home for this conversation. If you are a developer who sees the architecture and wants to build it, start with the AtomicSats specification and the Records Database wire protocol in Part 4 of the white paper.
 
 For community engagement, find the project on Nostr and at Seattle BitDevs meetups.
 
