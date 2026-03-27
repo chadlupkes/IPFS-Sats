@@ -2,13 +2,13 @@
 
 ## Serve Blocks. Earn Sats. No Minimum Scale.
 
-The IPFS-Sats protocol needs a distributed network of hosts to serve content blocks to requesters. Every host earns sats per block delivered via SatSwap exchange. The mechanism is the same whether you are running a personal server on home broadband or operating a commercial data center. Capacity determines how much you can earn. Reliability determines how often you are selected. Nothing else.
+The IPFS-Sats protocol needs a distributed network of hosts to serve content blocks to requesters. Every host earns sats per block delivered via AtomicSats exchange. The mechanism is the same whether you are running a personal server on home broadband or operating a commercial data center. Capacity determines how much you can earn. Reliability determines how often you are selected. Nothing else.
 
 ---
 
 ## How Hosting Works
 
-A SatSwap host is a Lightning node that serves content blocks. Not a Lightning wallet attached to a content server — a single unified implementation where block delivery and payment settlement are the same operation.
+An AtomicSats host is a Lightning node that serves content blocks. Not a Lightning wallet attached to a content server — a single unified implementation where block delivery and payment settlement are the same operation.
 
 When a requester wants a content block, it queries the Host Discovery Layer for hosts that hold that block. Your Host Registry Record — the record you publish to the Records Database advertising your block inventory, pricing, Lightning endpoint, and uptime score — is what makes you visible in that query. The Discovery Layer returns a ranked list of candidate hosts. The requester sends WANT messages to the best candidates. You respond with a QUOTE and a Lightning invoice. The requester pays. You deliver the block with the Lightning preimage. The HTLC settles. You earned sats.
 
@@ -20,7 +20,7 @@ That is the complete earning mechanism. No separate storage contract to negotiat
 
 **You set your own price.** Your Host Registry Record contains your `price_msats_per_kb` — the price per kilobyte you charge for block delivery. The Host Discovery Layer uses this field, along with your uptime score, to rank you in requester queries. Price competitively and maintain high reliability: you appear higher in results, receive more WANT messages, earn more sats. Price too high or drop below the network's uptime norm: you receive fewer exchanges.
 
-**The market self-regulates.** There is no protocol authority setting prices or allocating hosting contracts. Requesters choose their counterparties based on price and reliability. Popular content — content with many requesters — creates more SatSwap revenue for hosts serving it, which attracts more hosts to cache and serve it, which increases availability and drives prices toward equilibrium. The same market mechanism that makes centralized CDNs efficient operates here without any central coordinator.
+**The market self-regulates.** There is no protocol authority setting prices or allocating hosting contracts. Requesters choose their counterparties based on price and reliability. Popular content — content with many requesters — creates more AtomicSats revenue for hosts serving it, which attracts more hosts to cache and serve it, which increases availability and drives prices toward equilibrium. The same market mechanism that makes centralized CDNs efficient operates here without any central coordinator.
 
 **Illustrative economics:**
 
@@ -32,7 +32,7 @@ That is the complete earning mechanism. No separate storage contract to negotiat
 
 These are illustrative. Actual earnings depend on your pricing, the demand for content you serve, and your uptime score. Popular content served reliably earns more. Hosts who cache content that is in high demand — content with active LYWs funding host payments — will find their capacity utilized more consistently.
 
-**Lightning channel capacity.** Hosts need sufficient inbound Lightning channel capacity to receive SatSwap payments. This is a much lower bar than operating a Lightning routing node — you are receiving payments for block delivery, not routing third-party payments through your node. A modest channel balance is sufficient for a personal-scale host.
+**Lightning channel capacity.** Hosts need sufficient inbound Lightning channel capacity to receive AtomicSats payments. This is a much lower bar than operating a Lightning routing node — you are receiving payments for block delivery, not routing third-party payments through your node. A modest channel balance is sufficient for a personal-scale host.
 
 ---
 
@@ -44,13 +44,13 @@ The protocol is designed for universal participation — the same mechanism work
 
 **Small operator scale.** A VPS or small dedicated server running full-time with meaningful storage and bandwidth. At this scale, hosting becomes a consistent income stream rather than a side contribution. Specializing in specific content types — academic datasets, media from a specific genre, software repositories — allows a small operator to become a reliable discovery result for that content category.
 
-**Commercial scale.** Data centers with large storage capacity and high-bandwidth connections. At commercial scale, the SatSwap exchange model rewards uptime and pricing discipline more than raw capacity. A commercial host that maintains a 99%+ uptime score and prices competitively will dominate discovery results for the content it serves. The protocol has no ceiling on scale.
+**Commercial scale.** Data centers with large storage capacity and high-bandwidth connections. At commercial scale, the AtomicSats exchange model rewards uptime and pricing discipline more than raw capacity. A commercial host that maintains a 99%+ uptime score and prices competitively will dominate discovery results for the content it serves. The protocol has no ceiling on scale.
 
 ---
 
 ## What You Need to Get Started
 
-**A SatSwap node implementation.** The reference implementation is the first deliverable of the IPFS-Sats development roadmap. Once available, running a SatSwap host requires installing the node software, connecting it to a Lightning node implementation (LND or Core Lightning), and pointing it at a content-addressed block store.
+**An AtomicSats node implementation.** The reference implementation is the first deliverable of the IPFS-Sats development roadmap. Once available, running an AtomicSats host requires installing the node software, connecting it to a Lightning node implementation (LND or Core Lightning), and pointing it at a content-addressed block store.
 
 **A Lightning node.** LND and Core Lightning are the two mature options. You likely already have one if you are active in the Lightning Network ecosystem.
 
@@ -74,6 +74,6 @@ You are not just earning sats. You are the infrastructure that makes the Right t
 
 The white paper is at github.com/chadlupkes/IPFS-Sats. Section 3.5 covers the Host Discovery Layer. Section 3.6 covers the swarm delivery model and how host participation creates network effects. Section 10.7 covers the Host Registry Record schema — the record you will publish to enter the market.
 
-The SatSwap Protocol Specification in the repository covers the four-message handshake in detail. That is the protocol your node will implement.
+The AtomicSats Protocol Specification in the repository covers the four-message handshake in detail. That is the protocol your node will implement.
 
 When the reference implementation is available, it will be at the same repository. If you are a host operator who wants to be involved in testnet deployment, open an issue and say so.
