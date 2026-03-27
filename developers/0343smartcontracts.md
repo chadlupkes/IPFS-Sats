@@ -330,7 +330,7 @@ async function distributeYield(dao_cid) {
     ledger.liquidity_yield.cycle_income_sats +
     ledger.access_income.cycle_income_sats;
 
-  // Total cycle expenses (host SatSwap payments + outbound fork royalties)
+  // Total cycle expenses (host AtomicSats payments + outbound fork royalties)
   const totalCycleExpenses = ledger.expenses.cycle_expenses_sats;
 
   // Distributable income: what remains after expenses
@@ -412,11 +412,11 @@ async function distributeYield(dao_cid) {
 
 ## 5. Host Payment Model
 
-**Host payments in IPFS-Sats 0.4 are not managed by the DAO's governance cycle.** Hosts earn per block delivered through SatSwap exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment.
+**Host payments in IPFS-Sats 0.4 are not managed by the DAO's governance cycle.** Hosts earn per block delivered through AtomicSats exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment.
 
-The DAO's role in host economics is indirect: the LYW's `available_sats` balance funds the Lightning payments that flow to hosts when SatSwap exchanges complete. Maintaining a healthy LYW balance ensures hosts continue to receive WANT messages and the content remains available. When `drawdown_mode` is true, host SatSwap payments are suspended — the LYW's income continues to flow to DAO members only, and content availability degrades as hosts that are no longer receiving payment reduce service.
+The DAO's role in host economics is indirect: the LYW's `available_sats` balance funds the Lightning payments that flow to hosts when AtomicSats exchanges complete. Maintaining a healthy LYW balance ensures hosts continue to receive WANT messages and the content remains available. When `drawdown_mode` is true, host AtomicSats payments are suspended — the LYW's income continues to flow to DAO members only, and content availability degrades as hosts that are no longer receiving payment reduce service.
 
-**There is no Proof-of-Storage challenge-response mechanism.** The SatSwap exchange is the proof of availability. A host that delivers a valid block — one whose hash matches the requested CID — has proven it holds that block. No separate verification step is required or implemented.
+**There is no Proof-of-Storage challenge-response mechanism.** The AtomicSats exchange is the proof of availability. A host that delivers a valid block — one whose hash matches the requested CID — has proven it holds that block. No separate verification step is required or implemented.
 
 ```javascript
 /**
@@ -435,7 +435,7 @@ async function checkHostPaymentCapacity(lyw_address) {
   const sunsetThreshold = ledger.balance.sunset_threshold_sats;
 
   if (drawdownMode) {
-    // LYW is below threshold — host SatSwap payments suspended
+    // LYW is below threshold — host AtomicSats payments suspended
     // Increment cycles_at_threshold counter
     ledger.balance.cycles_at_threshold += 1;
     await updateLYW(lyw);
@@ -469,9 +469,9 @@ async function checkHostPaymentCapacity(lyw_address) {
 
 | Event | Who pays | Mechanism | Timing |
 |---|---|---|---|
-| Content block requested | Requester → Host | SatSwap HTLC | Atomic with delivery |
-| LYW funds host payments | LYW → Host | SatSwap HTLC via Key 3 | Per exchange completion |
+| Content block requested | Requester → Host | AtomicSats HTLC | Atomic with delivery |
+| LYW funds host payments | LYW → Host | AtomicSats HTLC via Key 3 | Per exchange completion |
 | LYW balance depleted | — | drawdown_mode activates | Automatic threshold check |
 | LYW balance recovers | — | drawdown_mode deactivates | Automatic threshold check |
 
-For the full SatSwap exchange implementation, see the SatSwap Protocol Specification.
+For the full AtomicSats exchange implementation, see the AtomicSats Protocol Specification.
