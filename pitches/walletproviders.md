@@ -10,7 +10,7 @@ That second option is your market.
 
 ## The Opportunity
 
-The IPFS-Sats protocol creates a new class of Lightning wallet with a specific function: generate yield through Lightning liquidity participation, receive content access payments, distribute income to DAO members, and fund SatSwap host payments automatically. Managing all of that well — channel rebalancing, uptime, routing optimization, compliance infrastructure — is overhead that most content creators have no interest in handling themselves.
+The IPFS-Sats protocol creates a new class of Lightning wallet with a specific function: generate yield through Lightning liquidity participation, receive content access payments, distribute income to DAO members, and fund AtomicSats host payments automatically. Managing all of that well — channel rebalancing, uptime, routing optimization, compliance infrastructure — is overhead that most content creators have no interest in handling themselves.
 
 A Lightning service provider who can offer managed LYW services is offering something the market does not currently have: a Bitcoin-native savings and yield instrument specifically designed for content creators, with persistence and attribution built into the economic model.
 
@@ -24,9 +24,9 @@ The Lightning Yield Wallet has four functions simultaneously:
 
 **Yield generation.** The LYW deploys its sats balance into Lightning Network liquidity positions — channel leasing and routing fee generation. This yield is the primary income source and runs independent of whether the associated content is ever commercially accessed. A creator who hashes a personal document and funds a LYW earns the same class of yield as a creator with a million listeners.
 
-**Content access payments.** When a requester accesses content via SatSwap exchange, payment flows to the LYW address specified in the Metadata Bundle. The LYW receives this income and the DAO's Execution Key distributes it according to the revenue split configuration.
+**Content access payments.** When a requester accesses content via AtomicSats exchange, payment flows to the LYW address specified in the Metadata Bundle. The LYW receives this income and the DAO's Execution Key distributes it according to the revenue split configuration.
 
-**Host payment automation.** The LYW funds ongoing SatSwap payments to hosts serving the content. This is what makes persistence self-sustaining — the yield covers hosting costs without requiring the creator to make manual payments. A managed LYW service that maintains reliable channel capacity and uptime directly determines whether a creator's content stays available.
+**Host payment automation.** The LYW funds ongoing AtomicSats payments to hosts serving the content. This is what makes persistence self-sustaining — the yield covers hosting costs without requiring the creator to make manual payments. A managed LYW service that maintains reliable channel capacity and uptime directly determines whether a creator's content stays available.
 
 **Fork royalty receipt.** When derivative works generate income, upstream royalty percentages flow automatically to the parent content's LYW address. A managed LYW that handles these inflows correctly — logging them, distributing them per DAO configuration, reporting them to the creator — is providing genuine financial services, not just routing infrastructure.
 
