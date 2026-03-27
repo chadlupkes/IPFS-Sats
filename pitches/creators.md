@@ -52,7 +52,7 @@ A listener discovers the track through an application built on the IPFS-Sats API
 
 Six months later, a producer samples eight seconds of the track for a new song. He encodes the sample relationship in his Metadata Bundle, setting a 15% upstream royalty to the original songwriter. Every time his track earns income, 15% flows automatically to the songwriter's LYW. She does not need to know he exists. She does not need to negotiate a license. The protocol handles it.
 
-Three years later, the original platform the listener used to discover the track shuts down. The track is still available — hosted by the SatSwap network, funded by the songwriter's LYW yield. The Anchor Record proving her authorship is still in the Bitcoin blockchain. The fork royalties from the sampled track are still flowing.
+Three years later, the original platform the listener used to discover the track shuts down. The track is still available — hosted by the AtomicSats network, funded by the songwriter's LYW yield. The Anchor Record proving her authorship is still in the Bitcoin blockchain. The fork royalties from the sampled track are still flowing.
 
 ---
 
