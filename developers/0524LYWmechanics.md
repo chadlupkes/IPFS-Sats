@@ -6,21 +6,21 @@ This guide provides pseudocode for the primary functions executed by the Key 3 S
 
 ## 1. Host Payment Model
 
-Hosts are not paid from a DAO-managed budget on a monthly schedule. They earn per block delivered through SatSwap exchange completions. The HTLC mechanism provides atomicity — the payment settles simultaneously with block delivery when the preimage is revealed. No separate payment batch is required.
+Hosts are not paid from a DAO-managed budget on a monthly schedule. They earn per block delivered through AtomicSats exchange completions. The HTLC mechanism provides atomicity — the payment settles simultaneously with block delivery when the preimage is revealed. No separate payment batch is required.
 
 Key 3's role in host payments is:
-- Monitoring `drawdown_mode` to determine whether the LYW can fund SatSwap exchanges
+- Monitoring `drawdown_mode` to determine whether the LYW can fund AtomicSats exchanges
 - Updating the LYW State Ledger after each exchange completion
 - Transitioning `drawdown_mode` when the balance threshold is crossed
 
 ```javascript
 /**
- * Called by Key 3 after each SatSwap exchange completion.
+ * Called by Key 3 after each AtomicSats exchange completion.
  * Updates the LYW State Ledger to record the host payment.
  * The HTLC has already settled atomically — this is bookkeeping only.
  *
  * @param {string} lyw_address
- * @param {Object} exchangeRecord - Completed SatSwap exchange details
+ * @param {Object} exchangeRecord - Completed AtomicSats exchange details
  */
 async function recordHostPayment(lyw_address, exchangeRecord) {
   const lyw = await getLYW(lyw_address);
@@ -62,7 +62,7 @@ async function evaluateDrawdownMode(lyw_address, ledger) {
   const currentlyInDrawdown = ledger.expenses.drawdown_mode;
 
   if (!sufficientFunds && !currentlyInDrawdown) {
-    // Activate drawdown mode — suspend host SatSwap payments
+    // Activate drawdown mode — suspend host AtomicSats payments
     ledger.expenses.drawdown_mode = true;
     await notifyCreator(dao, {
       type: "DRAWDOWN_MODE_ACTIVATED",
@@ -72,7 +72,7 @@ async function evaluateDrawdownMode(lyw_address, ledger) {
   }
 
   if (sufficientFunds && currentlyInDrawdown) {
-    // Deactivate drawdown mode — resume host SatSwap payments
+    // Deactivate drawdown mode — resume host AtomicSats payments
     ledger.expenses.drawdown_mode = false;
     ledger.balance.cycles_at_threshold = 0; // Reset sunset counter
     await notifyCreator(dao, {
@@ -334,7 +334,7 @@ The LYW's self-sustaining model operates through six steps:
 
 3. **Automatic Distribution:** At each `distribution_period_blocks` interval, Key 3 distributes cycle income to DAO members per the `distribution_split` configuration. Compound fraction stays in the LYW and is redeployed, growing the yield principal.
 
-4. **Host SatSwap Payments:** When `drawdown_mode` is false, Key 3 funds host SatSwap exchange completions from `available_sats`. Hosts earn per block delivered — atomic with delivery, no verification step required.
+4. **Host AtomicSats Payments:** When `drawdown_mode` is false, Key 3 funds host AtomicSats exchange completions from `available_sats`. Hosts earn per block delivered — atomic with delivery, no verification step required.
 
 5. **Monitoring and Alerts:** Key 3 evaluates health at each distribution cycle. Notifications scale to severity: drawdown activation, critical balance, sunset evaluation. The creator receives advance warning well before the sunset threshold is reached.
 
