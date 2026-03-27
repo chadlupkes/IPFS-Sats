@@ -1,4 +1,4 @@
-# SatSwap Protocol Specification
+# AtomicSats Protocol Specification
 ## Atomic Block-for-Sats Exchange for Content-Addressed Storage
 
 **Version:** 0.4  
@@ -10,11 +10,11 @@
 
 ## Abstract
 
-SatSwap is a four-message atomic exchange protocol for content-addressed block retrieval. Any node can request any content block; any node that holds that block can serve it; payment settles atomically with delivery via Lightning Network HTLC. No free-riding. No trusted intermediary. No persistent session state required between node pairs.
+AtomicSats is a four-message atomic exchange protocol for content-addressed block retrieval. Any node can request any content block; any node that holds that block can serve it; payment settles atomically with delivery via Lightning Network HTLC. No free-riding. No trusted intermediary. No persistent session state required between node pairs.
 
-SatSwap is not a modification of BitSwap. It is a distinct protocol that replaces BitSwap's reciprocity model — exchange blocks with peers who exchange blocks with you — with direct bilateral payment: serve a block, earn sats; request a block, pay sats. The economic mechanism is simpler, more robust, and does not require accounting for bilateral relationships across a peer graph.
+AtomicSats is not a modification of BitSwap. It is a distinct protocol that replaces BitSwap's reciprocity model — exchange blocks with peers who exchange blocks with you — with direct bilateral payment: serve a block, earn sats; request a block, pay sats. The economic mechanism is simpler, more robust, and does not require accounting for bilateral relationships across a peer graph.
 
-A SatSwap node is a Lightning node. Not a node that runs alongside a Lightning node — a node whose payment settlement is handled by the Lightning Network natively. The Lightning HTLC mechanism is what enforces the atomicity of every exchange at the protocol level, without any additional escrow, intermediary, or trust relationship.
+An AtomicSats node is a Lightning node. Not a node that runs alongside a Lightning node — a node whose payment settlement is handled by the Lightning Network natively. The Lightning HTLC mechanism is what enforces the atomicity of every exchange at the protocol level, without any additional escrow, intermediary, or trust relationship.
 
 The exchange is the verification step. A host that delivers a block whose hash matches the requested CID has proven it holds that block. There is no separate proof-of-storage mechanism. There is no challenge-response verification. The four-message handshake is sufficient.
 
@@ -41,9 +41,9 @@ The result is a network where content persistence depends on altruism, content a
 
 **BitSwap credit accounting** cannot solve the free-riding problem because debt in a network with no enforcement mechanism is not debt. It is a number that nodes may or may not honor.
 
-### 1.3 The SatSwap Solution
+### 1.3 The AtomicSats Solution
 
-SatSwap resolves the free-riding problem structurally, not through accounting. Every block retrieval requires payment. Payment settles atomically with delivery. A node that serves blocks earns sats continuously. A node that stops serving earns nothing. There is no debt, no credit, no bilateral relationship to maintain. The economic incentive is immediate, direct, and enforceable at the protocol level.
+AtomicSats resolves the free-riding problem structurally, not through accounting. Every block retrieval requires payment. Payment settles atomically with delivery. A node that serves blocks earns sats continuously. A node that stops serving earns nothing. There is no debt, no credit, no bilateral relationship to maintain. The economic incentive is immediate, direct, and enforceable at the protocol level.
 
 ---
 
@@ -65,11 +65,11 @@ SatSwap resolves the free-riding problem structurally, not through accounting. E
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                      SatSwap Node                            │
+│                    AtomicSats Node                           │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌─────────────────────┐     ┌──────────────────────────┐  │
-│  │   SatSwap Handler   │     │    Lightning Node        │  │
+│  │  AtomicSats Handler │     │    Lightning Node        │  │
 │  │                     │     │                          │  │
 │  │  WANT               │     │  HTLC management         │  │
 │  │  QUOTE              │◀───▶│  Invoice generation      │  │
@@ -88,13 +88,13 @@ SatSwap resolves the free-riding problem structurally, not through accounting. E
 └──────────────────────────────────────────────────────────────┘
 ```
 
-The SatSwap Handler and Lightning Node are unified — this is not a Lightning wallet attached to a content node. It is a single implementation where payment settlement is a native capability, not an integration.
+The AtomicSats Handler and Lightning Node are unified — this is not a Lightning wallet attached to a content node. It is a single implementation where payment settlement is a native capability, not an integration.
 
 ---
 
 ## 3. Host Discovery
 
-Before initiating a SatSwap exchange, a requesting node must locate hosts that hold the block it wants. This is handled by the Host Discovery Layer, which queries the Records Database for Host Registry Records matching the requested CID.
+Before initiating an AtomicSats exchange, a requesting node must locate hosts that hold the block it wants. This is handled by the Host Discovery Layer, which queries the Records Database for Host Registry Records matching the requested CID.
 
 ### 3.1 Host Registry Record Query
 
@@ -115,13 +115,13 @@ HOST_RECORD {
 }
 ```
 
-The requesting node receives a ranked list of candidate hosts, selects one or more based on price and uptime score, and initiates parallel SatSwap handshakes. The discovery step is entirely separate from the exchange — the four-message handshake assumes the requesting node already knows which host to contact.
+The requesting node receives a ranked list of candidate hosts, selects one or more based on price and uptime score, and initiates parallel AtomicSats handshakes. The discovery step is entirely separate from the exchange — the four-message handshake assumes the requesting node already knows which host to contact.
 
 ---
 
 ## 4. The Four-Message Handshake
 
-Every SatSwap exchange follows this sequence without exception:
+Every AtomicSats exchange follows this sequence without exception:
 
 ```
 Requesting Node              Delivering Node
@@ -227,7 +227,7 @@ BLOCK {
 
 ## 5. Atomicity Guarantee
 
-The atomicity of every SatSwap exchange is enforced by the Lightning Network's HTLC mechanism, not by the protocol itself.
+The atomicity of every AtomicSats exchange is enforced by the Lightning Network's HTLC mechanism, not by the protocol itself.
 
 ```
 Requesting Node                          Delivering Node
@@ -290,7 +290,7 @@ Costs (illustrative):
 Net at $100k BTC:             ~$10/month per TB hosted
 ```
 
-The economics improve with popular content: high-demand blocks are requested more frequently, generating more SatSwap revenue per unit of storage. Hosts that serve popular content earn more. This creates a natural incentive for hosts to cache and serve content that users actually want.
+The economics improve with popular content: high-demand blocks are requested more frequently, generating more AtomicSats revenue per unit of storage. Hosts that serve popular content earn more. This creates a natural incentive for hosts to cache and serve content that users actually want.
 
 ---
 
@@ -357,11 +357,11 @@ A host that consistently fails to deliver valid blocks — through offline statu
 
 ### 10.1 Prerequisites
 
-A conforming SatSwap implementation requires:
+A conforming AtomicSats implementation requires:
 
 - A Lightning node implementation (LND or Core Lightning are the mature options) with HTLC management capability
 - A content-addressed block store capable of CID-based lookup and retrieval
-- Network connectivity for both Lightning peer connections and SatSwap message exchange
+- Network connectivity for both Lightning peer connections and AtomicSats message exchange
 - A key pair for host DID generation and Host Registry Record signing
 
 The reference implementation language is Go. The Lightning Network ecosystem has the most mature Go tooling (LND, go-libp2p, go-cid).
@@ -369,11 +369,11 @@ The reference implementation language is Go. The Lightning Network ecosystem has
 ### 10.2 Reference Implementation Pseudocode
 
 ```go
-// SatSwap Node — Core Exchange Logic
+// AtomicSats Node — Core Exchange Logic
 
-package satswap
+package atomicsats
 
-type SatSwapNode struct {
+type AtomicSatsNode struct {
     blockStore  ContentAddressedBlockStore
     lightning   LightningNode
     discovery   HostDiscoveryLayer
@@ -382,7 +382,7 @@ type SatSwapNode struct {
 
 // REQUEST SIDE: Retrieve a block with payment
 
-func (n *SatSwapNode) RequestBlock(cid string, maxMsats uint64) ([]byte, error) {
+func (n *AtomicSatsNode) RequestBlock(cid string, maxMsats uint64) ([]byte, error) {
     // 1. Discover hosts that hold this block
     hosts := n.discovery.QueryHosts(cid, 10)
     if len(hosts) == 0 {
@@ -433,7 +433,7 @@ func (n *SatSwapNode) RequestBlock(cid string, maxMsats uint64) ([]byte, error) 
 
 // SERVE SIDE: Deliver a block in exchange for payment
 
-func (n *SatSwapNode) HandleWant(want WANT) (*QUOTE, error) {
+func (n *AtomicSatsNode) HandleWant(want WANT) (*QUOTE, error) {
     // 1. Check if we hold the block
     block, err := n.blockStore.Get(want.CID)
     if err != nil {
@@ -463,7 +463,7 @@ func (n *SatSwapNode) HandleWant(want WANT) (*QUOTE, error) {
     }, nil
 }
 
-func (n *SatSwapNode) HandlePaymentHash(ph PAYMENT_HASH) (*BLOCK, error) {
+func (n *AtomicSatsNode) HandlePaymentHash(ph PAYMENT_HASH) (*BLOCK, error) {
     // 1. Retrieve stored exchange state
     state := n.getExchangeState(ph.RequestID)
 
@@ -487,7 +487,7 @@ func (n *SatSwapNode) HandlePaymentHash(ph PAYMENT_HASH) (*BLOCK, error) {
 An intermediate node — one that receives a WANT for a block it does not hold locally — can participate in swarm delivery by issuing its own WANT upstream:
 
 ```go
-func (n *SatSwapNode) HandleWantAsIntermediary(want WANT) (*QUOTE, error) {
+func (n *AtomicSatsNode) HandleWantAsIntermediary(want WANT) (*QUOTE, error) {
     // Check local store first
     if n.blockStore.Has(want.CID) {
         return n.HandleWant(want)
@@ -523,7 +523,7 @@ The intermediary earns the spread between what it charges downstream and what it
 **Goal:** Single-block paid retrieval working end-to-end on testnet.
 
 **Deliverables:**
-- SatSwap node implementation in Go with integrated Lightning (LND)
+- AtomicSats node implementation in Go with integrated Lightning (LND)
 - Four-message handshake: WANT, QUOTE, PAYMENT_HASH, BLOCK
 - CID verification on block delivery
 - Host Registry Record publishing to Records Database testnet
@@ -569,23 +569,23 @@ The intermediary earns the spread between what it charges downstream and what it
 
 ## 12. Relationship to the IPFS-Sats Protocol Stack
 
-SatSwap is the transport layer of the IPFS-Sats protocol. It handles block retrieval and payment. Everything else is built on top of it:
+AtomicSats is the transport layer of the IPFS-Sats protocol. It handles block retrieval and payment. Everything else is built on top of it:
 
 | Layer | Component | Function |
 |---|---|---|
-| Transport | SatSwap | Atomic block-for-sats exchange |
+| Transport | AtomicSats | Atomic block-for-sats exchange |
 | Discovery | Host Discovery Layer / Records Database | Locating hosts, Anchor Records, Content Flag Records |
 | Economics | Lightning Yield Wallet | Generating yield to fund host payments |
 | Governance | Per-Content DAO | Revenue distribution, fork royalties, licensing |
 | Provenance | Metadata Bundle / Bitcoin OP_RETURN | Content identity and timestamping |
 
-SatSwap must work flawlessly before the layers above it can function. A creator whose LYW is funding host payments depends on SatSwap exchanges completing reliably. An application that monetizes content access depends on SatSwap as the payment primitive. The entire economic model of the IPFS-Sats protocol closes through SatSwap.
+AtomicSats must work flawlessly before the layers above it can function. A creator whose LYW is funding host payments depends on AtomicSats exchanges completing reliably. An application that monetizes content access depends on AtomicSats as the payment primitive. The entire economic model of the IPFS-Sats protocol closes through AtomicSats.
 
 ---
 
 ## 13. Get Involved
 
-The reference SatSwap implementation is the most important near-term deliverable in the IPFS-Sats ecosystem. Go developers with Lightning Network experience are invited build a conforming implementation from this specification. The four-message handshake is minimal. The intended timeline is weeks, not months.
+The reference AtomicSats implementation is the most important near-term deliverable in the IPFS-Sats ecosystem. Go developers with Lightning Network experience are invited to build a conforming implementation from this specification. The four-message handshake is minimal. The intended timeline is weeks, not months.
 
 **Repository:** github.com/chadlupkes/IPFS-Sats  
 **Community:** Bitcoin, Nostr, Lightning Dev communities  
@@ -595,4 +595,4 @@ The specification is as complete as I can make it. The next step is implementati
 
 ---
 
-*SatSwap is released as a public good. No patents. No restrictions. Build with it.*
+*AtomicSats is released as a public good. No patents. No restrictions. Build with it.*
