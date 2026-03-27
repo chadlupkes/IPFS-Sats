@@ -2,7 +2,7 @@
 
 The **Smart Contract Execution Key (Key 3)** is the operational engine of the Per-Content DAO. It enables trustless automation by executing routine, pre-approved financial and governance operations without human intervention for every transaction.
 
-**Key 3 executes; it does not decide.** Every operation Key 3 performs is either triggered by a completed Key 2 governance vote, by an automated threshold condition defined in the DAO Configuration Object, or by an external event (such as a SatSwap exchange completion) that satisfies a pre-approved condition. Key 3 has no discretionary authority.
+**Key 3 executes; it does not decide.** Every operation Key 3 performs is either triggered by a completed Key 2 governance vote, by an automated threshold condition defined in the DAO Configuration Object, or by an external event (such as an AtomicSats exchange completion) that satisfies a pre-approved condition. Key 3 has no discretionary authority.
 
 ---
 
@@ -54,7 +54,7 @@ Key 3 operates under a tightly scoped set of permissions defined in the DAO Conf
 
 | Key Combination | Authorized Operations |
 |---|---|
-| **Key 3 alone** | Distribute yield per income split; Fund host SatSwap exchange payments; Process content access payments; Renew Lightning liquidity leases; Execute approved proposals after timelock expiry |
+| **Key 3 alone** | Distribute yield per income split; Fund host AtomicSats exchange payments; Process content access payments; Renew Lightning liquidity leases; Execute approved proposals after timelock expiry |
 | **Key 3 + Key 2** | Change smart contract rules (requires DAO vote); Withdraw above auto-approved threshold; Grant new licenses |
 | **Key 3 cannot do** | Change DAO membership; Transfer ownership; Override DAO votes; Initiate operations not in allowed_operations list |
 
@@ -70,7 +70,7 @@ Hard-coded spending limits prevent errors or exploits from becoming catastrophic
     "requires_dao_approval_above_sats": 50000,
     "allowed_operations": [
       "yield_distribution",
-      "host_satswap_payment",
+      "host_atomicsats_payment",
       "content_access_payment",
       "fork_royalty_routing",
       "report_generation"
@@ -121,15 +121,15 @@ async function key3Sign(operation) {
 
   // 5. Operation-specific prerequisites
 
-  if (operation.type === "host_satswap_payment") {
-    // Prerequisite: a SatSwap exchange has completed for this block delivery.
+  if (operation.type === "host_atomicsats_payment") {
+    // Prerequisite: an AtomicSats exchange has completed for this block delivery.
     // The HTLC preimage reveal is the proof of delivery — no separate
     // storage verification is required or implemented.
-    const exchangeCompleted = await verifySatSwapExchange(
-      operation.satswap_exchange_id
+    const exchangeCompleted = await verifyAtomicSatsExchange(
+      operation.atomicsats_exchange_id
     );
     if (!exchangeCompleted) {
-      throw new Error("No completed SatSwap exchange found for this payment");
+      throw new Error("No completed AtomicSats exchange found for this payment");
     }
   }
 
@@ -169,10 +169,10 @@ Every Key 3 action is logged as a content-addressed record, providing full audit
     },
     {
       "block_height": 875441,
-      "operation": "host_satswap_payment",
+      "operation": "host_atomicsats_payment",
       "amount_sats": 10000,
       "recipient": "did:key:host_xyz...",
-      "satswap_exchange_id": "exchange_abc...",
+      "atomicsats_exchange_id": "exchange_abc...",
       "transaction_id": "def456..."
     },
     {
