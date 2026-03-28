@@ -8,13 +8,13 @@ This section provides a brief overview of each category. A comprehensive explora
 
 ## 13.1 Eliminating Economic Waste: Perpetual Archiving 💾
 
-Traditional data storage relies on ongoing subscription fees or high-collateral arrangements, reintroducing economic fragility and vendor lock-in. IPFS-Sats disrupts this model by replacing continuous payment obligations with a self-sustaining yield engine — the LYW generates passive income through Lightning liquidity provision, funding ongoing host SatSwap payments without requiring the original depositor to take any further action.
+Traditional data storage relies on ongoing subscription fees or high-collateral arrangements, reintroducing economic fragility and vendor lock-in. IPFS-Sats disrupts this model by replacing continuous payment obligations with a self-sustaining yield engine — the LYW generates passive income through Lightning liquidity provision, funding ongoing host AtomicSats payments without requiring the original depositor to take any further action.
 
 | Use Case | Waste Disrupted | IPFS-Sats Mechanism |
 |---|---|---|
 | **Scientific and Research Data** | Subscription fees and data decay | An initial LYW deposit generates ongoing Lightning liquidity yield that funds host payments perpetuably, ensuring large archival datasets persist for decades without centralized grants or annual budget renewals |
 | **Cultural Heritage and Public Records** | Platform mortality and upfront costs | Historic content and legal documents are secured with a self-sustaining economic model, preventing cultural loss when centralized platforms shut down — the content's persistence is decoupled from any single institution's survival |
-| **Decentralized Application Assets** | Vendor lock-in and censorship risk | Digital assets rely on incentivized, low-latency SatSwap delivery rather than centralized gateways that can be censored, seized, or shut down — atomic payment for retrieval ensures hosts are always economically motivated to serve |
+| **Decentralized Application Assets** | Vendor lock-in and censorship risk | Digital assets rely on incentivized, low-latency AtomicSats delivery rather than centralized gateways that can be censored, seized, or shut down — atomic payment for retrieval ensures hosts are always economically motivated to serve |
 
 ---
 
@@ -37,7 +37,7 @@ The current verification problem results in time and resources wasted attempting
 | Use Case | Waste Disrupted | IPFS-Sats Mechanism |
 |---|---|---|
 | **Government and Legal Data** | Corruptible records and centralized audit costs | Core government data is anchored to Bitcoin via OP_RETURN — the Bitcoin timestamp is globally verifiable by anyone with a Bitcoin node, providing irrefutable proof of existence that cannot be altered after the fact and does not depend on any government's continued cooperation |
-| **Digital Intelligence and Threat Feeds** | Volatile sources and tampered data | Intelligence assets are secured with content-addressed CIDs — the hash is the verification. Any participant can confirm that a retrieved file matches the original by computing its CID and comparing it to the Anchor Record. Threat feeds can be purchased via SatSwap micropayments by automated systems without human intermediaries. |
+| **Digital Intelligence and Threat Feeds** | Volatile sources and tampered data | Intelligence assets are secured with content-addressed CIDs — the hash is the verification. Any participant can confirm that a retrieved file matches the original by computing its CID and comparing it to the Anchor Record. Threat feeds can be purchased via AtomicSats micropayments by automated systems without human intermediaries. |
 | **Creator Protection and Anti-Plagiarism** | Costly litigation and forgery risk | If a party uploads stolen content, the Anchor Records table will show a later Bitcoin block height than the original creator's record. The earlier timestamp is cryptographically provable by anyone who queries the database — priority of creation is established by the blockchain, not by lawyers |
 
 ---
