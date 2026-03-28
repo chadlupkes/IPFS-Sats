@@ -12,10 +12,10 @@ This is a public good release in the tradition of Bitcoin and the Lightning Netw
 
 ### Key Deliverables
 
-- **SatSwap node** — a working implementation of the four-message handshake (Section 10.6) that any two nodes can use to exchange blocks for sats via Lightning
+- **AtomicSats node** — a working implementation of the four-message handshake (Section 10.6) that any two nodes can use to exchange blocks for sats via Lightning
 - **Records Database node** — a conforming implementation of the three-table database with the wire protocol defined in Section 10.2, including bootstrap, peer discovery, replication, and schema validation
 - **Metadata Wrapper tooling** — command-line tools for creating, signing, and publishing Metadata Wrappers and initiating Bitcoin anchoring via OP_RETURN on Lightning channel operations
-- **Host Discovery Layer** — a working query interface against the Host Registry Records table, enabling block-CID-to-host routing for SatSwap exchanges
+- **Host Discovery Layer** — a working query interface against the Host Registry Records table, enabling block-CID-to-host routing for AtomicSats exchanges
 - **Protocol testnet** — a public, incentivized testnet for developers to run nodes, publish content, and verify that the economic loop closes: content published → anchored → discoverable → retrievable for payment
 - **Security audit** — third-party audit of all core cryptographic primitives and smart contract logic before mainnet
 
@@ -68,7 +68,7 @@ Phase 2 activates the content and creator layer. Real content enters the network
 
 ### Flywheel Activation
 
-Phase 3 completes the flywheel. Standards adoption reduces integration friction for new participants. Ecosystem growth increases the volume of SatSwap exchanges, which increases host earnings, which attracts more hosts, which improves availability, which attracts more creators and users.
+Phase 3 completes the flywheel. Standards adoption reduces integration friction for new participants. Ecosystem growth increases the volume of AtomicSats exchanges, which increases host earnings, which attracts more hosts, which improves availability, which attracts more creators and users.
 
 | Flywheel Participant | Phase 3 Role | What Gets Proven |
 |---|---|---|
@@ -85,7 +85,7 @@ The IPFS-Sats economic flywheel has four participant types. Each one's participa
 
 **Protocol Developers** build and maintain the reference implementation and core tooling. Their work creates the foundation that makes all other participation possible.
 
-**Hosts** serve blocks via SatSwap exchanges and earn sats per delivery. More content on the network means more retrieval demand, which means more earning opportunity, which attracts more hosts, which improves availability for all content.
+**Hosts** serve blocks via AtomicSats exchanges and earn sats per delivery. More content on the network means more retrieval demand, which means more earning opportunity, which attracts more hosts, which improves availability for all content.
 
 **Content Creators** publish content, initialize Per-Content DAOs, fund LYWs, and earn from access fees, zaps, and fork royalties. More hosts means better availability for their content. Better availability means more retrievals. More retrievals means more earnings. The LYW's Lightning liquidity yield funds ongoing host payments, making persistence self-sustaining from the moment of publication.
 
