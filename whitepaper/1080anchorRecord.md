@@ -123,7 +123,7 @@ Applications should handle a `404` response from the Anchor Records query gracef
 
 Anchor Records are append-only. A node stores every valid Anchor Record it receives and forwards it to peers. There are no conflicts — each Anchor Record is uniquely identified by its `metadata_bundle_cid` and `tx_id`. Duplicate records received from multiple peers are deduplicated by this composite key and stored once.
 
-The economic incentive for Anchor Record persistence is the same as for all Records Database tables: participation in the discovery layer earns revenue through SatSwap exchanges, and that incentive covers the full database without requiring a separate economic wrapper per record type.
+The economic incentive for Anchor Record persistence is the same as for all Records Database tables: participation in the discovery layer earns revenue through AtomicSats exchanges, and that incentive covers the full database without requiring a separate economic wrapper per record type.
 
 ---
 
