@@ -170,7 +170,7 @@ These fields, combined with the Metadata Bundle CID and Bundle Hash, form the **
 
 The `wallet_address` is the critical linking field — it matches the `wallet_address` in the Metadata Wrapper's `ipfs_sats_metadata`, proving that the node publishing the Anchor Record is the same LYW managing the content's economics. The signature is verifiable against that wallet's public key. Additional fields such as `op_return_data` and `anchor_type` are optional extensions that applications may include.
 
-The Records Database provides the economic incentive for Anchor Record persistence. Nodes participate in the discovery layer because doing so earns them revenue through SatSwap exchanges — that incentive covers all tables in the database without requiring a separate economic wrapper per record.
+The Records Database provides the economic incentive for Anchor Record persistence. Nodes participate in the discovery layer because doing so earns them revenue through AtomicSats exchanges — that incentive covers all tables in the database without requiring a separate economic wrapper per record.
 
 **The trust hierarchy is clear:**
 - The Bundle Hash on-chain is the authoritative proof — immutable, globally verifiable, requiring no intermediary
