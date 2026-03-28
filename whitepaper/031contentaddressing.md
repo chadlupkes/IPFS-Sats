@@ -4,7 +4,7 @@ IPFS-Sats is built on a foundational cryptographic primitive: content addressing
 
 The core unit of this primitive is the **Content Identifier (CID)** — a self-describing, cryptographically derived identifier that serves simultaneously as an address for retrieving data and as proof of its integrity. Understanding how CIDs are created and verified is essential to understanding how IPFS-Sats provides trustless proof of authenticity and immutable timestamps.
 
-IPFS (InterPlanetary File System) is the reference implementation of a complete technology stack built on content addressing. It provides the chunking, hashing, DAG construction, and retrieval mechanisms that turn raw content hashing into a functional storage and distribution system, and it is the natural starting point for IPFS-Sats implementations. Any system that produces CID-compatible identifiers and participates in the SatSwap exchange and discovery layers is a conforming participant in the protocol, regardless of the underlying storage implementation.
+IPFS (InterPlanetary File System) is the reference implementation of a complete technology stack built on content addressing. It provides the chunking, hashing, DAG construction, and retrieval mechanisms that turn raw content hashing into a functional storage and distribution system, and it is the natural starting point for IPFS-Sats implementations. Any system that produces CID-compatible identifiers and participates in the AtomicSats exchange and discovery layers is a conforming participant in the protocol, regardless of the underlying storage implementation.
 
 ---
 
@@ -155,4 +155,4 @@ The content addressing primitive described in this section is implemented by IPF
 - IPLD (InterPlanetary Linked Data): https://ipld.io
 - Multiformats: https://multiformats.io
 
-IPFS-Sats does not reinvent content addressing. The protocol depends on the cryptographic properties of CIDs — determinism, tamper-evidence, and self-description — not on any specific implementation of the storage and retrieval layer. Implementations that produce CID-compatible identifiers and conform to the SatSwap exchange specification (Section 10.6) and Host Registry Record schema (Section 10.7) are full participants in the protocol.
+IPFS-Sats does not reinvent content addressing. The protocol depends on the cryptographic properties of CIDs — determinism, tamper-evidence, and self-description — not on any specific implementation of the storage and retrieval layer. Implementations that produce CID-compatible identifiers and conform to the AtomicSats exchange specification (Section 10.6) and Host Registry Record schema (Section 10.7) are full participants in the protocol.
