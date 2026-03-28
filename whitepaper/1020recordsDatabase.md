@@ -12,13 +12,13 @@ This specification defines what a conforming Records Database node must do. It d
 
 **Append-optimized.** Anchor Records and Content Flag Records are append-only — once written, they are never modified or deleted. Host Registry Records are the only mutable table: a host updates its record by publishing a new version with a higher timestamp, and the network converges on the freshest version.
 
-**Eventual consistency.** The database does not require global consensus. A record published to one node will propagate to connected peers through replication. Queries against nodes that have not yet received a recent update may return slightly stale results. This is acceptable — a stale Host Registry Record results in a failed SatSwap attempt and a retry, not a lost payment.
+**Eventual consistency.** The database does not require global consensus. A record published to one node will propagate to connected peers through replication. Queries against nodes that have not yet received a recent update may return slightly stale results. This is acceptable — a stale Host Registry Record results in a failed AtomicSats attempt and a retry, not a lost payment.
 
-**No trust required.** The database does not validate the truth of the claims stored within it. It validates schema conformance only. Truth is validated elsewhere: host inventory claims at the SatSwap exchange layer, Anchor Record claims against the Bitcoin blockchain, Content Flag claims through the confirmation process. The Records Database is a claims index, not an audit system.
+**No trust required.** The database does not validate the truth of the claims stored within it. It validates schema conformance only. Truth is validated elsewhere: host inventory claims at the AtomicSats exchange layer, Anchor Record claims against the Bitcoin blockchain, Content Flag claims through the confirmation process. The Records Database is a claims index, not an audit system.
 
 **Fully transparent and publicly queryable.** All three tables are open to any participant without permission or authentication. This transparency is the foundation for an ecosystem of application-layer query engines built on top of the protocol — content discovery tools, rights management dashboards, provenance explorers, royalty auditing tools, host reputation services, and network analytics. The protocol stores and serves; applications observe, query, and act. No special access is required and no gatekeeper controls what can be built.
 
-**Economic incentive for participation.** Nodes that participate in the Records Database earn SatSwap revenue by being discoverable to requesting clients. The incentive to maintain accurate, current records is the same incentive that drives all host behavior: correct participation earns sats, incorrect or stale participation earns less.
+**Economic incentive for participation.** Nodes that participate in the Records Database earn AtomicSats revenue by being discoverable to requesting clients. The incentive to maintain accurate, current records is the same incentive that drives all host behavior: correct participation earns sats, incorrect or stale participation earns less.
 
 ---
 
@@ -35,7 +35,7 @@ A Records Database node is any process that:
 
 **Full nodes** store all records across all three tables for all CIDs they are aware of. Full nodes provide the highest query reliability and earn the strongest reputation signal in the Host Discovery Layer.
 
-**Partial nodes** store records selectively — for example, only Host Registry Records for CIDs they currently serve, or only Anchor Records for content they have anchored. Partial nodes are valid participants. A SatSwap node that only publishes and maintains its own Host Registry Record is a conforming partial node.
+**Partial nodes** store records selectively — for example, only Host Registry Records for CIDs they currently serve, or only Anchor Records for content they have anchored. Partial nodes are valid participants. A AtomicSats node that only publishes and maintains its own Host Registry Record is a conforming partial node.
 
 **Query-only clients** query the database without maintaining records or participating in replication. Query-only clients are not nodes in the network sense — they are consumers of the interface. No publication or replication behavior is required of them.
 
@@ -43,7 +43,7 @@ A Records Database node is any process that:
 
 The minimum viable Records Database node:
 
-- Publishes and maintains its own Host Registry Record (if it is a SatSwap host)
+- Publishes and maintains its own Host Registry Record (if it is a AtomicSats host)
 - Responds to `query(cid)` requests for CIDs it serves
 - Replicates records it receives to at least two connected peers
 - Rejects schema-invalid records without propagating them
