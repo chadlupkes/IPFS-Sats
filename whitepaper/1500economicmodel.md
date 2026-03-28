@@ -12,7 +12,7 @@ This section summarizes how value flows through the four participant types and w
 
 The Lightning Yield Wallet is the economic engine of content persistence. When a creator publishes content and funds a LYW, the deposited sats are deployed into Lightning Network liquidity positions — channel leasing and routing fee generation. This yield is the primary income stream: it runs continuously, independent of whether the content receives any access payments in a given period.
 
-The yield funds host SatSwap payments directly. As long as the LYW generates sufficient yield to cover hosting costs, the content persists — without the creator taking any further action, paying any further fees, or renewing any subscription. The persistence is self-sustaining by design.
+The yield funds host AtomicSats payments directly. As long as the LYW generates sufficient yield to cover hosting costs, the content persists — without the creator taking any further action, paying any further fees, or renewing any subscription. The persistence is self-sustaining by design.
 
 The compound/distribute ratio in the DAO Configuration Object governs how the yield is split: a portion is distributed to DAO members as income, and the remainder is reinvested into the LYW's deployed balance, increasing the capital available for yield generation in future cycles. Content that compounds more grows its economic runway; content that distributes more pays its participants sooner. Both are valid governance choices.
 
@@ -34,13 +34,13 @@ The LYW State Ledger (Section 10.5) tracks both income streams separately — `l
 
 ### 3. The Host Payment Flow — Direct Payment for Verified Delivery
 
-Hosts earn sats by delivering blocks via SatSwap exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming the block was delivered and releasing the payment. No delivery, no payment. No payment, no delivery.
+Hosts earn sats by delivering blocks via AtomicSats exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming the block was delivered and releasing the payment. No delivery, no payment. No payment, no delivery.
 
 Payment flows directly from the content's LYW to the host's Lightning node. There is no protocol intermediary taking a routing fee beyond standard Lightning Network routing costs. Hosts set their own prices in their Host Registry Records. The market determines what prices are competitive through the discovery layer's ranking of hosts by price and reliability.
 
 When the LYW balance drops below the hosting cost threshold, the drawdown mode flag triggers and host payments are suspended. The remaining balance continues to pay out creator distribution only, ensuring the creator is protected while the content's economic situation is evaluated. No debt is incurred — the protocol never commits to payments it cannot fund.
 
-**Why this is sustainable:** Every host payment is funded by existing LYW balance. The host pricing market self-regulates: prices too high relative to the LYW yield rate will result in fewer SatSwap completions and lower host earnings, creating natural downward pressure. Prices too low will attract more hosts than necessary for a given piece of content, improving availability while distributing costs across more participants.
+**Why this is sustainable:** Every host payment is funded by existing LYW balance. The host pricing market self-regulates: prices too high relative to the LYW yield rate will result in fewer AtomicSats completions and lower host earnings, creating natural downward pressure. Prices too low will attract more hosts than necessary for a given piece of content, improving availability while distributing costs across more participants.
 
 ---
 
@@ -60,7 +60,7 @@ Fork royalty inflows appear in the Parent's LYW State Ledger under `access_incom
 
 Several design decisions lead to the same conclusion: there should be no protocol-level fee.
 
-**The protocol has no services to charge for.** The SatSwap transport layer moves blocks. The Records Database stores and serves records. Both functions are performed by participant nodes that are already compensated directly — hosts earn from SatSwap completions, Records Database nodes earn from being discoverable. A protocol-level fee on top of these direct payments would be rent extraction without a corresponding service.
+**The protocol has no services to charge for.** The AtomicSats transport layer moves blocks. The Records Database stores and serves records. Both functions are performed by participant nodes that are already compensated directly — hosts earn from AtomicSats completions, Records Database nodes earn from being discoverable. A protocol-level fee on top of these direct payments would be rent extraction without a corresponding service.
 
 **Per-Content DAOs are the governance layer.** Each piece of content governs its own economics through its DAO Configuration Object. There is no protocol-level governance structure that needs funding from a treasury. Development of the core protocol is resourced through grants and ecosystem sponsorship as described in Section 14 — not through fees extracted from every transaction.
 
@@ -98,11 +98,11 @@ This is what it means for the protocol to be infrastructure rather than a platfo
 
 | Value Flow | Source | Destination | Mechanism |
 |---|---|---|---|
-| **LYW liquidity yield** | Lightning Network liquidity provision | Host SatSwap payments and creator distribution | LYW deployed balance → yield → `yield_split` ratio |
+| **LYW liquidity yield** | Lightning Network liquidity provision | Host AtomicSats payments and creator distribution | LYW deployed balance → yield → `yield_split` ratio |
 | **Access fees and zaps** | Content users and supporters | Content LYW | Direct Lightning payment to LYW address |
 | **Fork royalties — inbound** | Child DAO payment events | Parent content LYW | Automatic upstream routing by Child DAO smart contract |
 | **Fork royalties — outbound** | Content LYW payment events | Parent content LYW | `upstream_percentage` in `fork_provenance` fields |
-| **Host payments** | Content LYW | Host Lightning node | SatSwap exchange completion — atomic with block delivery |
+| **Host payments** | Content LYW | Host Lightning node | AtomicSats exchange completion — atomic with block delivery |
 | **Creator distribution** | Content LYW | DAO member Lightning addresses | Key 3 yield distribution cycle per `distribution_period_blocks` |
 
 Every row in this table represents a direct bilateral payment between two parties. No row passes through a protocol intermediary. No row incurs a protocol fee. The sustainability of the system derives from the LYW's yield generation, not from the protocol's ability to extract value from the flows it enables.
