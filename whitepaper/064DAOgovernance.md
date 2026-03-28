@@ -52,7 +52,7 @@ The result is that anyone attempting to use the system for harmful purposes is s
 
 Hosts are not directly penalized for serving content that carries an active Content Flag Record. The protocol does not slash earnings or impose compliance penalties. However, the economic gradient naturally discourages serving flagged content:
 
-Applications that implement content filtering route retrieval requests away from hosts serving flagged Content CIDs. Those hosts complete fewer SatSwap exchanges, earn less from the affected content's LYW, and fall in the Host Discovery Layer's performance ranking for that content. Hosts that update their behavior return to full participation.
+Applications that implement content filtering route retrieval requests away from hosts serving flagged Content CIDs. Those hosts complete fewer AtomicSats exchanges, earn less from the affected content's LYW, and fall in the Host Discovery Layer's performance ranking for that content. Hosts that update their behavior return to full participation.
 
 This is the correct model for a decentralized network: not a penalty imposed from outside, but an economic signal that makes correct behavior the rational choice.
 
@@ -94,7 +94,7 @@ The following options illustrate the range of actions available to application o
 An application may choose to act on confirmed flags by adjusting the economic flows it routes or surfaces:
 
 - **Payment routing suspension:** Suspend routing of payments through the flagged content's LYW for users of that application. Sats may continue to accumulate in the LYW — the application simply stops directing payments toward it.
-- **Host deprioritization:** Route retrieval requests away from hosts serving flagged Content CIDs, reducing their SatSwap exchange frequency for that content within that application's context.
+- **Host deprioritization:** Route retrieval requests away from hosts serving flagged Content CIDs, reducing their AtomicSats exchange frequency for that content within that application's context.
 - **Revenue display suppression:** Omit flagged Content CIDs from earnings dashboards, recommendation systems, or monetization surfaces the application controls.
 
 ### Governance Response Options
