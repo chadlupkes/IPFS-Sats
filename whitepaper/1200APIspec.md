@@ -17,7 +17,7 @@ These endpoints handle the core content lifecycle: publishing, retrieval, anchor
 | `/api/v1/content/publish` | POST | Publishes a new Metadata Wrapper to the network. Returns the Content CID and Bundle Hash. Does not anchor to Bitcoin — anchoring is a separate operation triggered after the Metadata Wrapper is published. |
 | `/api/v1/content/anchor` | POST | Initiates the Bitcoin anchoring process for a Bundle Hash via OP_RETURN on a Lightning channel operation. Returns the resulting Anchor Record CID once the channel transaction is confirmed. See Section 3.2 for the full six-step anchoring sequence. |
 | `/api/v1/content/{cid}` | GET | Retrieves the Metadata Wrapper for the specified Content CID, including current governance state and fork provenance fields. |
-| `/api/v1/content/verify` | POST | Verifies a piece of content against its two independent proofs: (1) Bitcoin timestamp proof — confirms the Bundle Hash appears in the Anchor Records table and matches an OP_RETURN in the referenced Bitcoin block; (2) Lightning availability proof — confirms the content is currently retrievable via a SatSwap exchange. Returns the result of both proofs independently. See Section 7. |
+| `/api/v1/content/verify` | POST | Verifies a piece of content against its two independent proofs: (1) Bitcoin timestamp proof — confirms the Bundle Hash appears in the Anchor Records table and matches an OP_RETURN in the referenced Bitcoin block; (2) Lightning availability proof — confirms the content is currently retrievable via a AtomicSats exchange. Returns the result of both proofs independently. See Section 7. |
 
 ---
 
