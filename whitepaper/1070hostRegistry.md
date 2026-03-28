@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Host Registry Record is what a SatSwap node publishes to the Host Discovery Layer to make itself findable as a delivery participant. It declares what blocks the host holds, what it charges, how to reach it for payment, and how it has performed historically.
+The Host Registry Record is what an AtomicSats node publishes to the Host Discovery Layer to make itself findable as a delivery participant. It declares what blocks the host holds, what it charges, how to reach it for payment, and how it has performed historically.
 
 The Host Registry Records table is one of three fully transparent, permissionless tables in the Records Database (Section 10.2). Any participant — client, application, or analytics tool — can query the table directly. This transparency enables an ecosystem of application-layer tools built on the same public data surface: host reputation dashboards, network health monitors, pricing analytics, geographic availability maps, and any other application that needs to observe and reason about the delivery layer. The protocol stores and serves; applications observe and act.
 
@@ -16,7 +16,7 @@ A host publishing a Host Registry Record must advertise its inventory at the **i
 
 This is a deliberate design decision with a specific rationale.
 
-A host that holds a root CID but not all of its constituent blocks would, under root-level advertising, appear to the discovery layer as a complete source for that content. A requesting node would initiate a SatSwap exchange expecting full delivery, discover mid-transfer that certain blocks are unavailable, and be forced to trigger a new discovery event to locate the missing blocks. That mid-transfer failure imposes latency on the requesting node, complicates the payment flow, and degrades the reliability signal for the host.
+A host that holds a root CID but not all of its constituent blocks would, under root-level advertising, appear to the discovery layer as a complete source for that content. A requesting node would initiate an AtomicSats exchange expecting full delivery, discover mid-transfer that certain blocks are unavailable, and be forced to trigger a new discovery event to locate the missing blocks. That mid-transfer failure imposes latency on the requesting node, complicates the payment flow, and degrades the reliability signal for the host.
 
 Block-level advertising eliminates this failure mode. The discovery layer knows exactly which blocks each host holds before the first WANT message is sent. The requesting node can construct a complete delivery plan — which host serves which block — from the discovery result alone, and execute the full swarm in parallel without interruption.
 
@@ -45,7 +45,7 @@ HOST_REGISTRY_RECORD {
   // IDENTITY
   node_id:              string    // Unique identifier for this node (public key or DID)
   lightning_endpoint:   string    // BOLT11-compatible Lightning node endpoint for payment
-  protocol_version:     string    // SatSwap protocol version this node implements
+  protocol_version:     string    // AtomicSats protocol version this node implements
 
   // INVENTORY
   blocks: [
@@ -81,10 +81,10 @@ HOST_REGISTRY_RECORD {
 The host's unique network identifier, derived from its public key or Decentralized Identifier. This is the stable identity that reputation signals, payment records, and discovery queries reference. A host must use the same `node_id` consistently across record updates.
 
 **`lightning_endpoint`**
-The Lightning Network endpoint to which requesting nodes direct payment during the SatSwap handshake. This must be a reachable, active Lightning node endpoint at the time the record is published. The SatSwap exchange (Section 10.6) uses this endpoint during the QUOTE message.
+The Lightning Network endpoint to which requesting nodes direct payment during the AtomicSats handshake. This must be a reachable, active Lightning node endpoint at the time the record is published. The AtomicSats exchange (Section 10.6) uses this endpoint during the QUOTE message.
 
 **`protocol_version`**
-The version of the SatSwap exchange protocol this node implements. Requesting nodes use this to ensure compatibility before initiating an exchange. Nodes running incompatible protocol versions may not be able to complete a handshake.
+The version of the AtomicSats exchange protocol this node implements. Requesting nodes use this to ensure compatibility before initiating an exchange. Nodes running incompatible protocol versions may not be able to complete a handshake.
 
 ---
 
@@ -95,7 +95,7 @@ An array of block-level records, one entry per block the host currently holds an
 
 - `cid` — the block-level Content Identifier. This is the hash of the raw block data. For a host holding a complete file, every block CID in that file's content-addressed block graph appears as a separate entry.
 - `root_cid` — optional. The root CID of the file to which this block belongs. This field serves a swarm routing optimization: when present, a discovery query can return a complete map of which hosts hold which blocks for a given file, enabling the requesting node to plan the full swarm delivery before sending the first WANT. When absent, the block is discoverable by its individual block CID only, via the standard QUERY_HOSTS path.
-- `msats_per_block` — the price in millisatoshis the host charges to deliver this block via a SatSwap exchange. Hosts may price different blocks differently, allowing market-based pricing for high-demand content.
+- `msats_per_block` — the price in millisatoshis the host charges to deliver this block via an AtomicSats exchange. Hosts may price different blocks differently, allowing market-based pricing for high-demand content.
 
 **Why `root_cid` is optional at publication time.** A host that cached a block during a proxy swarm operation may not know which file that block belongs to. It holds the block, can serve it, and should advertise it — but cannot populate `root_cid` without additional information. The record is valid and useful without it. The mechanism for completing missing `root_cid` values over time is described in Section 10.7.5.
 
@@ -153,13 +153,13 @@ Write-back is bounded by the schema discipline defined in Section 10.7.6. The di
 
 **Historical retention.** Host Registry Records are superseded by updates rather than accumulated — the discovery layer reflects current network state, not historical archives. Organizations with jurisdictional, compliance, or legal obligations to retain historical host records manage that retention at the application layer, according to their own requirements. The protocol imposes no requirement and provides no mechanism for it.
 
-**Inventory accuracy.** A host that publishes a block CID it does not actually hold will fail the SatSwap exchange when a requesting node issues a WANT for that block. Repeated failures degrade the host's discovery ranking. The economic incentive to maintain accurate inventory is direct: inaccurate records produce failed exchanges, which produce negative reputation signals, which reduce the host's visibility in future discovery results.
+**Inventory accuracy.** A host that publishes a block CID it does not actually hold will fail the AtomicSats exchange when a requesting node issues a WANT for that block. Repeated failures degrade the host's discovery ranking. The economic incentive to maintain accurate inventory is direct: inaccurate records produce failed exchanges, which produce negative reputation signals, which reduce the host's visibility in future discovery results.
 
 ---
 
-## 10.7.6 Relationship to the SatSwap Exchange
+## 10.7.6 Relationship to the AtomicSats Exchange
 
-The Host Registry Record and the SatSwap Exchange Message Spec (Section 10.6) are adjacent but independent. The record is the pre-exchange declaration; the handshake is the exchange itself.
+The Host Registry Record and the AtomicSats Exchange Message Spec (Section 10.6) are adjacent but independent. The record is the pre-exchange declaration; the handshake is the exchange itself.
 
 A requesting node uses the record to decide whether to initiate an exchange: does this host hold the block I need, at a price I am willing to pay, with sufficient reliability metrics to be worth trying? If yes, it sends a WANT. From that point forward, the exchange protocol governs the interaction and the record plays no further role.
 
@@ -185,7 +185,7 @@ This separation preserves the protocol's layered architecture:
 
 - **Host Registry Record** — discovery function only. Who holds what block, at what price, reachable how.
 - **Anchor Records** — content identity and provenance. Which Metadata Bundle CID maps to which block CIDs, anchored to Bitcoin.
-- **SatSwap Exchange** — transport function only. The atomic block-for-sats primitive.
+- **AtomicSats Exchange** — transport function only. The atomic block-for-sats primitive.
 - **Metadata Bundle and its extensions** — content identity, rights, governance, and application-layer annotations.
 
 Each layer stays minimal, stable, and independent. Applications that need more build on top. The protocol does not grow to accommodate them.
@@ -194,4 +194,4 @@ Each layer stays minimal, stable, and independent. Applications that need more b
 
 ## Summary
 
-The Host Registry Record is the declaration a SatSwap node publishes to make itself available as a delivery participant. It advertises inventory at the individual block CID level — matching the QUERY_HOSTS interface in Section 10.2.4 — to enable precise pre-transfer routing and eliminate mid-swarm re-discovery failures. An optional `root_cid` field on each block entry provides swarm routing grouping, enabling a requesting node to plan complete parallel delivery for a file before sending the first WANT; when absent at publication time, the discovery layer may complete this field through a write-back process that produces a new signed record version rather than modifying the original. The Host Registry Records table is fully transparent and permissionless, providing the public data surface on which application-layer tools — reputation dashboards, network monitors, pricing analytics — are built. Clients discovering content by metadata query the Anchor Records table first to resolve Metadata Bundle CIDs to block CIDs, then query the Host Registry Records table for delivery routing. Unix timestamps manage operational freshness and are self-reported; optional `last_anchor` and `state_hash` fields provide periodic cryptographic verifiability by committing a state hash to Bitcoin via OP_RETURN on naturally occurring Lightning channel operations. Historical record retention is not a protocol requirement; schema extensions are bounded by discovery utility; and application-layer extensibility belongs in Metadata Bundle extensions and the Content Flag Records table (Section 10.9).
+The Host Registry Record is the declaration an AtomicSats node publishes to make itself available as a delivery participant. It advertises inventory at the individual block CID level — matching the QUERY_HOSTS interface in Section 10.2.4 — to enable precise pre-transfer routing and eliminate mid-swarm re-discovery failures. An optional `root_cid` field on each block entry provides swarm routing grouping, enabling a requesting node to plan complete parallel delivery for a file before sending the first WANT; when absent at publication time, the discovery layer may complete this field through a write-back process that produces a new signed record version rather than modifying the original. The Host Registry Records table is fully transparent and permissionless, providing the public data surface on which application-layer tools — reputation dashboards, network monitors, pricing analytics — are built. Clients discovering content by metadata query the Anchor Records table first to resolve Metadata Bundle CIDs to block CIDs, then query the Host Registry Records table for delivery routing. Unix timestamps manage operational freshness and are self-reported; optional `last_anchor` and `state_hash` fields provide periodic cryptographic verifiability by committing a state hash to Bitcoin via OP_RETURN on naturally occurring Lightning channel operations. Historical record retention is not a protocol requirement; schema extensions are bounded by discovery utility; and application-layer extensibility belongs in Metadata Bundle extensions and the Content Flag Records table (Section 10.9).
