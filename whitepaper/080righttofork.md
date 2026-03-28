@@ -41,7 +41,7 @@ When a new derivative work (the Child) is created from an existing piece of cont
 Child Bundle Hash --→ Parent Content CID
 ```
 
-This provenance requirement is enforced at the application layer through the `fork_provenance` fields in the Metadata Wrapper — not at the SatSwap transport layer, which remains content-agnostic. The transport layer moves blocks; the Metadata Bundle records lineage. This separation keeps the exchange protocol minimal while ensuring provenance is structurally encoded in the content layer where it belongs.
+This provenance requirement is enforced at the application layer through the `fork_provenance` fields in the Metadata Wrapper — not at the AtomicSats transport layer, which remains content-agnostic. The transport layer moves blocks; the Metadata Bundle records lineage. This separation keeps the exchange protocol minimal while ensuring provenance is structurally encoded in the content layer where it belongs.
 
 The linkage establishes verifiable provenance at the deepest layer of the data structure, making it impossible for a derivative work to exist on the protocol without citing its foundation. The integrity of the fork is cryptographically tied to the integrity of the original, grounded in the Right to Verify established in Section 7.
 
