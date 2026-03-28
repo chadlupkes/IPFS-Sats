@@ -1,8 +1,8 @@
-# 10.6 SatSwap Exchange Message Spec
+# 10.6 AtomicSats Exchange Message Spec
 
 ## The Exchange Primitive
 
-SatSwap defines a single, minimal exchange between two nodes: one node requests a block and pays for it; the other delivers the block and receives payment. This exchange is the primitive operation of the entire protocol.
+AtomicSats defines a single, minimal exchange between two nodes: one node requests a block and pays for it; the other delivers the block and receives payment. This exchange is the primitive operation of the entire protocol.
 
 The handshake does not distinguish between roles. A node requesting a block may be a client requesting content for end-user delivery, or an intermediate node requesting a block it does not hold locally in order to serve a downstream request. A node delivering a block may be a storage host, a caching node, or any intermediate node that holds the block and is willing to serve it at a stated price. The exchange is identical in all cases.
 
@@ -24,7 +24,7 @@ This role-agnosticism is load-bearing. It means the same implementation handles 
 
 ## 10.6.2 The Four-Message Handshake
 
-Every SatSwap exchange follows this sequence without exception:
+Every AtomicSats exchange follows this sequence without exception:
 
 ```
 Requesting Node          Delivering Node
@@ -154,4 +154,4 @@ The protocol has no visibility into whether a given node is an endpoint or an in
 
 ## Summary
 
-The SatSwap exchange is a four-message handshake — WANT, QUOTE, PAYMENT_HASH, BLOCK — between any two nodes. It is the protocol primitive from which all delivery topologies are composed. It is role-agnostic, stateless per exchange, and implementation-agnostic in wire format. Every hop in a swarm delivery, every single-host direct delivery, and every intermediate proxy operation uses this same handshake without modification. The atomicity of the exchange is enforced by the Lightning Network's HTLC mechanism: the delivering node reveals the preimage to release the block, which allows the payment to settle — and the requesting node cannot be charged for a block it does not receive.
+The AtomicSats exchange is a four-message handshake — WANT, QUOTE, PAYMENT_HASH, BLOCK — between any two nodes. It is the protocol primitive from which all delivery topologies are composed. It is role-agnostic, stateless per exchange, and implementation-agnostic in wire format. Every hop in a swarm delivery, every single-host direct delivery, and every intermediate proxy operation uses this same handshake without modification. The atomicity of the exchange is enforced by the Lightning Network's HTLC mechanism: the delivering node reveals the preimage to release the block, which allows the payment to settle — and the requesting node cannot be charged for a block it does not receive.
