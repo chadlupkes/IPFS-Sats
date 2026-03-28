@@ -38,26 +38,26 @@ All distribution events are recorded in the LYW State Ledger (Section 10.5) and 
 
 ## 11.2 Host Payments
 
-Key 3 pays hosts for content delivery directly through the SatSwap exchange mechanism. There is no separate proof-of-storage verification system.
+Key 3 pays hosts for content delivery directly through the AtomicSats exchange mechanism. There is no separate proof-of-storage verification system.
 
-### SatSwap as Proof of Availability
+### AtomicSats as Proof of Availability
 
-The SatSwap four-message handshake (Section 10.6) is itself the proof of availability. A host that delivers a valid block in response to a WANT — a block whose hash verifies against the requested CID — has proven it holds that block at that moment. Payment is atomic with delivery: the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment. No separate challenge-response mechanism is needed because the exchange primitive already provides the necessary proof.
+The AtomicSats four-message handshake (Section 10.6) is itself the proof of availability. A host that delivers a valid block in response to a WANT — a block whose hash verifies against the requested CID — has proven it holds that block at that moment. Payment is atomic with delivery: the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment. No separate challenge-response mechanism is needed because the exchange primitive already provides the necessary proof.
 
 ### Payment Flow
 
-Host payments flow from the LYW as SatSwap exchanges complete. Key 3 monitors completed exchanges and settles host payments per the pricing terms advertised in the host's Host Registry Record. The LYW State Ledger tracks these outflows in the `host_payments_sats` field of the current cycle.
+Host payments flow from the LYW as AtomicSats exchanges complete. Key 3 monitors completed exchanges and settles host payments per the pricing terms advertised in the host's Host Registry Record. The LYW State Ledger tracks these outflows in the `host_payments_sats` field of the current cycle.
 
 ### Drawdown Mode
 
-When the LYW balance drops below the hosting cost threshold, Key 3 automatically transitions to drawdown mode (`drawdown_mode: true` in the LYW State Ledger). In drawdown mode, host SatSwap payments are suspended. The remaining LYW balance continues to draw down for creator distribution only, ensuring the creator continues to receive yield while the content's economic viability is evaluated. No debt is incurred — expenses are never committed beyond what the LYW can currently pay.
+When the LYW balance drops below the hosting cost threshold, Key 3 automatically transitions to drawdown mode (`drawdown_mode: true` in the LYW State Ledger). In drawdown mode, host AtomicSats payments are suspended. The remaining LYW balance continues to draw down for creator distribution only, ensuring the creator continues to receive yield while the content's economic viability is evaluated. No debt is incurred — expenses are never committed beyond what the LYW can currently pay.
 
 ### Recovery from Drawdown
 
 When new revenue arrives and the LYW balance recovers above the hosting cost threshold, Key 3 automatically exits drawdown mode:
 
 1. `drawdown_mode` flag flips to false
-2. Host SatSwap payments resume at the normal rate
+2. Host AtomicSats payments resume at the normal rate
 3. The `cycles_at_threshold` counter in the LYW State Ledger resets to zero, pausing the sunset countdown
 4. If the recovered balance is sufficient to redeploy capital into Lightning liquidity positions, Key 3 re-engages liquidity leasing to restart passive yield generation
 
@@ -115,4 +115,4 @@ If Key 3 itself is compromised or becomes unresponsive, Key 1 and Key 2 cooperat
 
 ## Summary
 
-Key 3 automates the four core operational functions of the Per-Content DAO: yield distribution, host payments, governance execution, and lifecycle management. It operates within the authority boundaries set by Key 1 (constitutional constraints) and Key 2 (human governance decisions). Revenue flows into the LYW, upstream royalties route out atomically, and the remainder is governed by the compound/distribute ratio the DAO configures. Hosts are paid through SatSwap exchange completions — no separate proof-of-storage mechanism is required. Governance decisions made by Key 2 are executed by Key 3 after the voting period, verification, and execution delay defined in the DAO Configuration Object. Lifecycle transitions — drawdown mode, recovery, and sunset — are automated Key 3 responses to the content's economic health as tracked in the LYW State Ledger. Key 3 executes; it does not decide.
+Key 3 automates the four core operational functions of the Per-Content DAO: yield distribution, host payments, governance execution, and lifecycle management. It operates within the authority boundaries set by Key 1 (constitutional constraints) and Key 2 (human governance decisions). Revenue flows into the LYW, upstream royalties route out atomically, and the remainder is governed by the compound/distribute ratio the DAO configures. Hosts are paid through AtomicSats exchange completions — no separate proof-of-storage mechanism is required. Governance decisions made by Key 2 are executed by Key 3 after the voting period, verification, and execution delay defined in the DAO Configuration Object. Lifecycle transitions — drawdown mode, recovery, and sunset — are automated Key 3 responses to the content's economic health as tracked in the LYW State Ledger. Key 3 executes; it does not decide.
