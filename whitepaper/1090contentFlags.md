@@ -176,4 +176,4 @@ Content Flag Records are append-only. A node stores every valid flag it receives
 
 Deduplication: a duplicate flag from the same submitter for the same Content CID (identical `content_cid` + `submitted_by` + `flag_type`) is stored once.
 
-The economic incentive for Content Flag Record persistence is the same as for all Records Database tables: participation in the discovery layer earns revenue through SatSwap exchanges, and that incentive covers the full database without requiring a separate economic wrapper per record type.
+The economic incentive for Content Flag Record persistence is the same as for all Records Database tables: participation in the discovery layer earns revenue through AtomicSats exchanges, and that incentive covers the full database without requiring a separate economic wrapper per record type.
