@@ -10,17 +10,17 @@ The project repository is at github.com/chadlupkes/IPFS-Sats. That is where the 
 
 ## 17.1 For Protocol Developers
 
-The most important thing that needs to happen is a working implementation of the SatSwap node and the Records Database. Everything else — applications, creator tools, host software — depends on those two primitives existing and being reliable.
+The most important thing that needs to happen is a working implementation of the AtomicSats node and the Records Database. Everything else — applications, creator tools, host software — depends on those two primitives existing and being reliable.
 
-The core implementation work is well-defined. The SatSwap four-message handshake (Section 10.6) is a minimal, implementation-agnostic exchange protocol. A developer familiar with Go and the Lightning Network could implement a conforming SatSwap node in weeks, not months. The Records Database wire protocol (Section 10.2) is modeled on Nostr relay architecture with libp2p peer discovery — both are mature, well-documented reference implementations.
+The core implementation work is well-defined. The AtomicSats four-message handshake (Section 10.6) is a minimal, implementation-agnostic exchange protocol. A developer familiar with Go and the Lightning Network could implement a conforming AtomicSats node in weeks, not months. The Records Database wire protocol (Section 10.2) is modeled on Nostr relay architecture with libp2p peer discovery — both are mature, well-documented reference implementations.
 
 **What is needed:**
-- A Go developer with Lightning Network and content-addressed storage experience to build the reference SatSwap node
+- A Go developer with Lightning Network and content-addressed storage experience to build the reference AtomicSats node
 - A Records Database node implementation conforming to the wire protocol in Section 10.2
 - Metadata Wrapper tooling — command-line tools for creating, signing, anchoring, and querying content
 - Protocol testnet infrastructure to validate that the economic loop closes end-to-end
 
-This is foundational infrastructure work. The developer who builds the reference SatSwap implementation is writing the core economic plumbing of a system designed to outlast any platform built on top of it. The work is public, permanent, and attributable — and if the protocol's own Right to Fork mechanism is applied to the reference implementation itself, foundational contributors earn from every commercial deployment built on their work.
+This is foundational infrastructure work. The developer who builds the reference AtomicSats implementation is writing the core economic plumbing of a system designed to outlast any platform built on top of it. The work is public, permanent, and attributable — and if the protocol's own Right to Fork mechanism is applied to the reference implementation itself, foundational contributors earn from every commercial deployment built on their work.
 
 The Bitcoin and Lightning developer communities — including groups like Seattle BitDevs and contributors to the broader Bitcoin ecosystem — are the natural home for this conversation. If you are a developer who sees the architecture and wants to build it, the repository is open.
 
@@ -28,7 +28,7 @@ The Bitcoin and Lightning developer communities — including groups like Seattl
 
 ## 17.2 For Content Creators
 
-Content creators are the participant type that proves the protocol works in the real world. A working SatSwap node and a correctly functioning LYW with real content earning real sats is the demonstration that matters — more than any white paper, more than any roadmap.
+Content creators are the participant type that proves the protocol works in the real world. A working AtomicSats node and a correctly functioning LYW with real content earning real sats is the demonstration that matters — more than any white paper, more than any roadmap.
 
 **What the protocol gives creators:**
 - **Censorship-resistant hosting** — content is served by a decentralized swarm of hosts, each earning sats per block delivered. No platform can deplatform content that any host can serve.
@@ -37,7 +37,7 @@ Content creators are the participant type that proves the protocol works in the 
 - **Perpetual persistence** — the LYW generates Lightning liquidity yield that funds host payments automatically. Content persists as long as the LYW balance supports it, without ongoing manual payment.
 - **The LYW as a personal economic instrument** — a creator can hash any document, fund a LYW, and that LYW immediately begins generating Lightning yield. The content doesn't need to be commercially accessed. The yield runs on the LYW's Lightning liquidity participation alone. This is a savings account, a timestamping service, a persistence engine, and a programmable distribution instrument — simultaneously, for any content, at any scale.
 
-Early creators who publish content and initialize LYWs during the testnet phase are doing more than testing the protocol. They are demonstrating the economic model to every developer, host, and application builder watching. The creator who earns the first real sat through a SatSwap exchange is the proof of concept the entire ecosystem is waiting for.
+Early creators who publish content and initialize LYWs during the testnet phase are doing more than testing the protocol. They are demonstrating the economic model to every developer, host, and application builder watching. The creator who earns the first real sat through an AtomicSats exchange is the proof of concept the entire ecosystem is waiting for.
 
 Community feedback from creators is actively sought — through the project repository, through Nostr, and through the Bitcoin developer community. The protocol's feature set should be shaped by the people who will use it, not designed in isolation.
 
@@ -45,16 +45,16 @@ Community feedback from creators is actively sought — through the project repo
 
 ## 17.3 For Hosts
 
-Hosts are the supply side of the delivery network. Without hosts serving blocks, there is no content retrieval. Without content retrieval, there is no SatSwap revenue. The host network is the physical infrastructure on which everything else depends.
+Hosts are the supply side of the delivery network. Without hosts serving blocks, there is no content retrieval. Without content retrieval, there is no AtomicSats revenue. The host network is the physical infrastructure on which everything else depends.
 
 **What hosting requires:**
-- A SatSwap node implementation (Phase 1 deliverable from Section 14)
-- A Lightning node with sufficient channel capacity to handle SatSwap payment flows
+- An AtomicSats node implementation (Phase 1 deliverable from Section 14)
+- A Lightning node with sufficient channel capacity to handle AtomicSats payment flows
 - Storage capacity for the blocks the host chooses to serve
 - A published Host Registry Record in the Records Database advertising inventory, pricing, and performance metrics
 
 **What hosting earns:**
-Hosts earn sats per block delivered via SatSwap exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment. There is no separate verification step, no proof-of-storage challenge, no staking requirement. Serve a valid block, receive payment. The economic model is as simple as the exchange primitive.
+Hosts earn sats per block delivered via AtomicSats exchange completions. Payment is atomic with delivery — the HTLC settles when the preimage is revealed, simultaneously confirming delivery and releasing payment. There is no separate verification step, no proof-of-storage challenge, no staking requirement. Serve a valid block, receive payment. The economic model is as simple as the exchange primitive.
 
 The host pricing market self-regulates through the Host Discovery Layer. Hosts that price competitively and maintain high uptime scores appear higher in discovery results and receive more WANT messages. Hosts that price too high or maintain poor reliability receive fewer exchanges and earn less. The market signal is direct and immediate.
 
