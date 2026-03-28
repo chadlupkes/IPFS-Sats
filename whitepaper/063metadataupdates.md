@@ -43,11 +43,11 @@ The network converges on the new governance state through the same discovery inf
 
 ---
 
-## Enforcement Through SatSwap
+## Enforcement Through AtomicSats
 
-Enforcement of current governance terms does not require a separate compliance check. It is a natural consequence of how SatSwap exchanges work.
+Enforcement of current governance terms does not require a separate compliance check. It is a natural consequence of how AtomicSats exchanges work.
 
-Every SatSwap negotiation is governed by the terms embedded in the current Metadata Wrapper, identified by the current Bundle Hash. A requesting node presents the current Bundle Hash — retrieved from the Records Database — and the exchange proceeds under the terms that hash represents. A host operating on stale governance terms will quote parameters that do not match the current Bundle Hash. The requesting node will not complete the exchange. Payment flows only through successful SatSwap trades, and successful trades require matching current terms.
+Every AtomicSats negotiation is governed by the terms embedded in the current Metadata Wrapper, identified by the current Bundle Hash. A requesting node presents the current Bundle Hash — retrieved from the Records Database — and the exchange proceeds under the terms that hash represents. A host operating on stale governance terms will quote parameters that do not match the current Bundle Hash. The requesting node will not complete the exchange. Payment flows only through successful AtomicSats trades, and successful trades require matching current terms.
 
 A host that fails to update after a governance change is not penalized through a separate enforcement action. It simply stops completing trades, stops earning, and drops in the Host Discovery Layer's performance ranking until it falls below the threshold for continued inclusion. The economic incentive to stay current is the same incentive that drives all host behavior: sats flow to hosts that serve correctly, and stop flowing to those that do not.
 
