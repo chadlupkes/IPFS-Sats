@@ -2,7 +2,7 @@
 
 ## The Problem This Layer Solves
 
-SatSwap defines how a client pays a host for a block of data. It does not define how the client finds the host in the first place.
+AtomicSats defines how a client pays a host for a block of data. It does not define how the client finds the host in the first place.
 
 That gap is not a detail — it is a foundational requirement. Without a reliable answer to the question *"which hosts currently hold the blocks for CID X?"*, the exchange protocol has no starting point. A client cannot issue a WANT message to a host it cannot locate.
 
@@ -12,18 +12,18 @@ The Host Discovery Layer is the system that answers that question. It also serve
 
 ## 3.5.1 Architectural Position
 
-The Host Discovery Layer sits at the application layer, above the SatSwap exchange protocol and below the user-facing application. It is not part of SatSwap itself. This separation is deliberate and load-bearing.
+The Host Discovery Layer sits at the application layer, above the AtomicSats exchange protocol and below the user-facing application. It is not part of AtomicSats itself. This separation is deliberate and load-bearing.
 
-**SatSwap defines the exchange. Discovery defines the market.**
+**AtomicSats defines the exchange. Discovery defines the market.**
 
 Keeping them separate means:
 
 - Multiple discovery implementations can compete without modifying the exchange protocol
 - A host can participate in any number of discovery networks simultaneously
 - Discovery databases can be upgraded, replaced, or specialized without disrupting the payment layer
-- The core SatSwap specification remains minimal and stable
+- The core AtomicSats specification remains minimal and stable
 
-The relationship between layers is strictly one-directional: the discovery layer surfaces host candidates; the exchange layer executes the trade. Discovery has no visibility into whether a SatSwap exchange succeeds or fails unless that outcome is explicitly reported back as a reputation signal.
+The relationship between layers is strictly one-directional: the discovery layer surfaces host candidates; the exchange layer executes the trade. Discovery has no visibility into whether an AtomicSats exchange succeeds or fails unless that outcome is explicitly reported back as a reputation signal.
 
 ---
 
@@ -66,7 +66,7 @@ Any participant — user, application, or designated validator — can submit a 
 
 A full description of the Content Flag Record schema, flag categories, and the confirmation lifecycle is provided in Section 10.9. The protocol stores and serves this data. How applications act on it is an application layer decision.
 
-All three functions are served by the same distributed database infrastructure. The economic incentive for nodes to maintain all three tables comes from the same source: participation in the discovery layer earns revenue through SatSwap exchanges, and that incentive covers the full database.
+All three functions are served by the same distributed database infrastructure. The economic incentive for nodes to maintain all three tables comes from the same source: participation in the discovery layer earns revenue through AtomicSats exchanges, and that incentive covers the full database.
 
 ---
 
@@ -75,7 +75,7 @@ All three functions are served by the same distributed database infrastructure. 
 The distributed database underlying the Host Discovery Layer is the **Records Database** — a permissionless, application-layer database maintained collectively by participating nodes. It holds three tables:
 
 **Table 1: Host Registry Records**
-Maps CIDs to hosts willing to serve them, their Lightning endpoints, and their pricing. Populated by SatSwap nodes advertising their inventory. Full schema in Section 10.7.
+Maps CIDs to hosts willing to serve them, their Lightning endpoints, and their pricing. Populated by AtomicSats nodes advertising their inventory. Full schema in Section 10.7.
 
 **Table 2: Anchor Records**
 Links Metadata Bundle CIDs to Bitcoin transactions containing their Bundle Hash in OP_RETURN. Populated by LYW nodes after channel confirmation. Full schema in Section 10.8.
@@ -104,7 +104,7 @@ Searches against the discovery layer are not disposable events. Every query carr
 - Which CIDs are being requested
 - At what frequency
 - From which geographic regions or network segments
-- Whether the requesting client ultimately completed a SatSwap exchange
+- Whether the requesting client ultimately completed an AtomicSats exchange
 
 This query log, aggregated across the discovery network, is one of the most valuable signals in the system. It answers questions no individual host can answer alone:
 
@@ -136,7 +136,7 @@ write_flag(content_flag_record)   → confirmation
 
 Any system that correctly implements these operations, stores records in the defined schemas, and participates in a peer-replication network qualifies as a conforming discovery layer. A small network might run a single implementation. A mature network might have several competing discovery databases, each optimized for different trade-offs — one prioritizing low query latency, another prioritizing maximum host diversity, another specializing in archival or rarely-accessed content.
 
-Clients can be configured to query multiple discovery databases and merge results. The SatSwap exchange layer does not care which discovery layer surfaced a host candidate — it only cares whether the host delivers the block and receives payment.
+Clients can be configured to query multiple discovery databases and merge results. The AtomicSats exchange layer does not care which discovery layer surfaced a host candidate — it only cares whether the host delivers the block and receives payment.
 
 ---
 
@@ -146,7 +146,7 @@ The Records Database does not validate the claims stored within it. It does not 
 
 Validation happens elsewhere by design:
 
-- **Host inventory claims** are validated at the exchange layer through the atomic SatSwap handshake. The client pays only upon receiving a valid block; an invalid or missing block results in a failed payment.
+- **Host inventory claims** are validated at the exchange layer through the atomic AtomicSats handshake. The client pays only upon receiving a valid block; an invalid or missing block results in a failed payment.
 - **Anchor Record claims** are validated by any verifier who chooses to check: retrieve the Metadata Wrapper, compute the Bundle Hash locally, retrieve the referenced Bitcoin transaction, and compare the OP_RETURN data directly against the computed hash.
 - **Content Flag claims** are validated through the confirmation process: community participants independently verifying the flag, or application-designated validators providing confirmation weight according to the trust model their application defines. The protocol records confirmation state; it does not adjudicate it.
 
