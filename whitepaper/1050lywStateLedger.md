@@ -12,7 +12,7 @@ The LYW is not a passive wallet that drains toward zero as hosting costs are pai
 
 Content access payments — zaps from supporters, access fees from readers and listeners, and fork royalty inflows from derivative works — are additive income on top of the base liquidity yield. A well-configured LYW should be self-sustaining or growing. The sunset condition (Section 10.3) triggers only when liquidity yield has fallen below hosting cost for a sustained period, meaning the content's economic viability has genuinely ended — not because the account ran out of borrowed funds.
 
-There is no debt in this system. The drawdown-to-creator-only mechanism (Section 5.2) ensures that when the LYW balance drops below the hosting cost threshold, host SatSwap payments are suspended and the balance drawdown shifts to creator-only mode. Expenses are never incurred beyond what the LYW can currently pay.
+There is no debt in this system. The drawdown-to-creator-only mechanism (Section 5.2) ensures that when the LYW balance drops below the hosting cost threshold, host AtomicSats payments are suspended and the balance drawdown shifts to creator-only mode. Expenses are never incurred beyond what the LYW can currently pay.
 
 ---
 
@@ -45,7 +45,7 @@ There is no debt in this system. The drawdown-to-creator-only mechanism (Section
 
   // 3. EXPENSES: Outbound Payments
   "expenses": {
-    "host_payments_sats": 9800,        // Sats paid to hosts via SatSwap completions in current cycle
+    "host_payments_sats": 9800,        // Sats paid to hosts via AtomicSats completions in current cycle
     "fork_royalty_outflow_sats": 1200, // Sats routed to Parent LYW addresses as upstream royalties
     "cycle_expenses_sats": 11000,      // Total expenses in current cycle
     "drawdown_mode": false             // True when LYW balance is below hosting cost threshold
@@ -91,7 +91,7 @@ Zaps, access fees, and inbound fork royalties are tracked separately from liquid
 
 ### 3. Expenses: Outbound Payments
 
-Host SatSwap payments are the primary expense. They are paid per retrieval event as SatSwap exchanges complete — hosts earn sats for blocks served, not for storage committed in advance. `fork_royalty_outflow_sats` tracks upstream royalty payments routed to Parent LYW addresses, consistent with the fork provenance terms encoded in the Metadata Wrapper (Section 10.4).
+Host AtomicSats payments are the primary expense. They are paid per retrieval event as AtomicSats exchanges complete — hosts earn sats for blocks served, not for storage committed in advance. `fork_royalty_outflow_sats` tracks upstream royalty payments routed to Parent LYW addresses, consistent with the fork provenance terms encoded in the Metadata Wrapper (Section 10.4).
 
 The `drawdown_mode` flag is the key state indicator. When true, the LYW balance has dropped below the hosting cost threshold, host payments are suspended, and the remaining balance drawdown is reserved for creator distribution only. This is not a debt condition — it is a graceful degradation mode that ensures the creator continues to receive yield while the content's economic viability is evaluated.
 
