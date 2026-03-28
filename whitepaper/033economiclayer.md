@@ -58,7 +58,7 @@ The exchange follows a request-quote-pay-deliver sequence:
 5. **Verification:** The user verifies the delivered block's hash matches the expected CID
 6. **Settlement:** Payment settles instantly to the host upon successful delivery
 
-If delivery fails at any step, the HTLC expires and payment returns automatically to the user with no dispute resolution required. This exchange is formally specified as the **SatSwap protocol** in Section 10.6, which defines the precise message format and sequencing for implementation.
+If delivery fails at any step, the HTLC expires and payment returns automatically to the user with no dispute resolution required. This exchange is formally specified as the **AtomicSats protocol** in Section 10.6, which defines the precise message format and sequencing for implementation.
 
 ### Network Effects: The Virtuous Cycle
 
