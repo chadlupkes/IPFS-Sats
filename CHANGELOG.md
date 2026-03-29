@@ -10,7 +10,7 @@ Repository: [github.com/chadlupkes/IPFS-Sats](https://github.com/chadlupkes/IPFS
 
 The exchange primitive previously named "SatSwap" throughout the protocol is renamed to "AtomicSats" in all documents and repository files. This change was required because "SatSwap" is a registered trademark belonging to another project, a conflict that was not identified during v0.4 drafting. No architectural, structural, or substantive changes accompany the rename. The four-message handshake, message field definitions, specification section numbering, and all other protocol content remain identical to v0.4.
 
-Bitcoin-anchored via OpenTimestamps at block `<pending>`.
+Bitcoin-anchored via OpenTimestamps at block 942,688.
 
 ---
 
