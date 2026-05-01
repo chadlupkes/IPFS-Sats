@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AtomicSats Reference Implementation - Developer Guide</title>
+</head>
+<body>
+
+<h1>AtomicSats Reference Implementation - Developer Guide</h1>
+
+<p><strong>Status</strong>: Phase 0 – Initial Setup (structure only)</p>
+
+<h2>Goal</h2>
+<p>Build a minimal, correct, and easy-to-audit implementation of the AtomicSats exchange primitive so we can demonstrate real sats-for-block trading on testnet.</p>
+
+<h2>Project Layout (this folder)</h2>
+<pre>
+atomicsats/
+├── go.mod
+├── README_DEV.html       ← You are here
+├── cmd/
+│   └── atomicsats/       ← Main executable (CLI for testing)
+├── internal/
+│   ├── handshake/        ← Core four-message logic
+│   ├── lightning/        ← Lightning client wrapper (LND)
+│   ├── cidstore/         ← Local block storage by CID
+│   └── records/          ← Host Registry & Records Database stubs
+├── proto/                ← Message definitions (if using protobuf)
+└── test/                 ← End-to-end tests (regtest)
+</pre>
+
+<h2>Quick Start (for future contributors)</h2>
+<pre><code>git clone https://github.com/chadlupkes/IPFS-Sats.git
+cd IPFS-Sats/implementation/atomicsats
+go mod tidy
+go run ./cmd/atomicsats</code></pre>
+
+<h2>Current Phase (0)</h2>
+<ul>
+    <li>Module created</li>
+    <li>Basic dependencies declared</li>
+    <li>Developer documentation started</li>
+</ul>
+
+<h2>Next phases (we will add one at a time)</h2>
+<ol>
+    <li>Message definitions (WANT, QUOTE, PAYMENT_HASH, BLOCK)</li>
+    <li>Handshake logic + HTLC handling</li>
+    <li>Lightning integration (testnet first)</li>
+    <li>Local CID/block storage</li>
+    <li>Basic CLI for manual testing</li>
+</ol>
+
+<h2>How to Contribute</h2>
+<ul>
+    <li>All code must stay faithful to whitepaper Section 10.6.</li>
+    <li>Prefer simplicity and auditability over cleverness.</li>
+    <li>Test everything on Lightning regtest or signet first.</li>
+    <li>Open issues or PRs — Chad will review for protocol alignment.</li>
+</ul>
+
+<p>Questions or suggestions? Open an issue in the main repo or discuss on Nostr.</p>
+
+<p><em>Last updated: May 2026</em></p>
+
+</body>
+</html>
